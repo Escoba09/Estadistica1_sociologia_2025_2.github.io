@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Práctica dirigida 2</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Material para pds</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Inicio</a>
+</li>
+<li>
+  <a href="pd1.html">Práctica dirigida 1</a>
+</li>
+<li>
+  <a href="pd2.html">Práctica dirigida 2</a>
+</li>
+<li>
+  <a href="pd3.html">Práctica dirigida 3</a>
+</li>
+<li>
+  <a href="pd4.html">Práctica dirigida 4</a>
+</li>
+<li>
+  <a href="pd5.html">Práctica dirigida 5</a>
+</li>
+<li>
+  <a href="pd6.html">Práctica dirigida 6</a>
+</li>
+<li>
+  <a href="pd7.html">Práctica dirigida 7</a>
+</li>
+<li>
+  <a href="pd8.html">Práctica dirigida 8</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Práctica dirigida 2</h1>
+
+</div>
+
+
+<p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
+<p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
+<p>Semestre 2025 - 2</p>
+<p>En R, tenemos vectores, matrices, data.frames y listas.<br />
+Entender la lógica de estos objetos es importante antes de iniciar el
+trabajo con data secundaria.</p>
+<div id="crear-sets-de-datos" class="section level1">
+<h1>1. CREAR SETS DE DATOS</h1>
+<div id="crear-vectores" class="section level2">
+<h2>CREAR VECTORES</h2>
+<p>Un vector es una coleccion de uno o mas datos del mismo tipo. Un
+vector puede incluir datos numericos, datos en texto o datos logicos
+(verdadero/falso).</p>
+<p><strong>Vector de cadena de texto</strong></p>
+<pre class="r"><code>pais=c(&quot;Bolivia&quot;, &quot;Colombia&quot;, &quot;Ecuador&quot;, &quot;Peru&quot;, &quot;Argentina&quot;, &quot;Brasil&quot;, &quot;Chile&quot;, &quot;Paraguay&quot;, &quot;Uruguay&quot;)
+pais</code></pre>
+<pre><code>## [1] &quot;Bolivia&quot;   &quot;Colombia&quot;  &quot;Ecuador&quot;   &quot;Peru&quot;      &quot;Argentina&quot; &quot;Brasil&quot;   
+## [7] &quot;Chile&quot;     &quot;Paraguay&quot;  &quot;Uruguay&quot;</code></pre>
+<p><strong>Vector numerico</strong></p>
+<pre class="r"><code>hab2022_millones=c(12.22, 51.87, 18, 34.05, 46.23, 215.3, 19.6, 6.8, 3.4)
+hab2022_millones</code></pre>
+<pre><code>## [1]  12.22  51.87  18.00  34.05  46.23 215.30  19.60   6.80   3.40</code></pre>
+<p><strong>Vector logico</strong></p>
+<pre class="r"><code>miembro_CAN=c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)</code></pre>
+<p><strong>Para visualizar los vectores que hemos creado</strong>
+podemos colocar el nombre de los vectores creados (<code>pais</code>,
+<code>hab2022_millones</code>, <code>miembro_CAN</code>) o utilizar la
+funcion <code>print</code>.</p>
+</div>
+<div id="unir-vectores-en-una-matriz" class="section level2">
+<h2>UNIR VECTORES EN UNA MATRIZ</h2>
+<p>Los vectores pueden unirse en una matriz. Una matri es una estructura
+de datos bidimensional (files y columnas) que coniene elementos del
+mismo tipo (solo datos numéricos o solo caracteres).</p>
+<pre class="r"><code>datosA &lt;-cbind(pais, hab2022_millones, miembro_CAN) # cbind() une vectores, interpretando cada uno como una columna 
+datosA</code></pre>
+<pre><code>##       pais        hab2022_millones miembro_CAN
+##  [1,] &quot;Bolivia&quot;   &quot;12.22&quot;          &quot;TRUE&quot;     
+##  [2,] &quot;Colombia&quot;  &quot;51.87&quot;          &quot;TRUE&quot;     
+##  [3,] &quot;Ecuador&quot;   &quot;18&quot;             &quot;TRUE&quot;     
+##  [4,] &quot;Peru&quot;      &quot;34.05&quot;          &quot;TRUE&quot;     
+##  [5,] &quot;Argentina&quot; &quot;46.23&quot;          &quot;FALSE&quot;    
+##  [6,] &quot;Brasil&quot;    &quot;215.3&quot;          &quot;FALSE&quot;    
+##  [7,] &quot;Chile&quot;     &quot;19.6&quot;           &quot;FALSE&quot;    
+##  [8,] &quot;Paraguay&quot;  &quot;6.8&quot;            &quot;FALSE&quot;    
+##  [9,] &quot;Uruguay&quot;   &quot;3.4&quot;            &quot;FALSE&quot;</code></pre>
+<pre class="r"><code>datosB &lt;-rbind(pais, hab2022_millones, miembro_CAN) # rbind() une vectores, interpretando cada uno como una fila
+datosB </code></pre>
+<pre><code>##                  [,1]      [,2]       [,3]      [,4]    [,5]        [,6]    
+## pais             &quot;Bolivia&quot; &quot;Colombia&quot; &quot;Ecuador&quot; &quot;Peru&quot;  &quot;Argentina&quot; &quot;Brasil&quot;
+## hab2022_millones &quot;12.22&quot;   &quot;51.87&quot;    &quot;18&quot;      &quot;34.05&quot; &quot;46.23&quot;     &quot;215.3&quot; 
+## miembro_CAN      &quot;TRUE&quot;    &quot;TRUE&quot;     &quot;TRUE&quot;    &quot;TRUE&quot;  &quot;FALSE&quot;     &quot;FALSE&quot; 
+##                  [,7]    [,8]       [,9]     
+## pais             &quot;Chile&quot; &quot;Paraguay&quot; &quot;Uruguay&quot;
+## hab2022_millones &quot;19.6&quot;  &quot;6.8&quot;      &quot;3.4&quot;    
+## miembro_CAN      &quot;FALSE&quot; &quot;FALSE&quot;    &quot;FALSE&quot;</code></pre>
+<p>Como es posible observar, a pesar de que los vectores iniciales eran
+numéricos, de texto y lógicos, al unirse en una matriz, todos son
+interpretados como <code>cadenas de texto (chr)</code>.</p>
+<pre class="r"><code>str(datosA)</code></pre>
+<pre><code>##  chr [1:9, 1:3] &quot;Bolivia&quot; &quot;Colombia&quot; &quot;Ecuador&quot; &quot;Peru&quot; &quot;Argentina&quot; &quot;Brasil&quot; ...
+##  - attr(*, &quot;dimnames&quot;)=List of 2
+##   ..$ : NULL
+##   ..$ : chr [1:3] &quot;pais&quot; &quot;hab2022_millones&quot; &quot;miembro_CAN&quot;</code></pre>
+</div>
+<div id="unir-vectores-en-un-set-de-datos-dataframe"
+class="section level2">
+<h2>UNIR VECTORES EN UN SET DE DATOS (DATAFRAME)</h2>
+<p>Finalmente, podemos crear datasets uniendo vectores.<br />
+Los dataframes, a diferencia de las matrices, permiten crear bases con
+datos de diferentes tipos (numericos, caracteres, factores, etc.)</p>
+<pre class="r"><code>datosC&lt;- data.frame(pais, hab2022_millones, miembro_CAN)
+datosC</code></pre>
+<pre><code>##        pais hab2022_millones miembro_CAN
+## 1   Bolivia            12.22        TRUE
+## 2  Colombia            51.87        TRUE
+## 3   Ecuador            18.00        TRUE
+## 4      Peru            34.05        TRUE
+## 5 Argentina            46.23       FALSE
+## 6    Brasil           215.30       FALSE
+## 7     Chile            19.60       FALSE
+## 8  Paraguay             6.80       FALSE
+## 9   Uruguay             3.40       FALSE</code></pre>
+<p>Tambien podemos crear un dataset desde cero</p>
+<pre class="r"><code>datosD &lt;-data.frame(pais=c(&quot;Bolivia&quot;, &quot;Colombia&quot;, &quot;Ecuador&quot;, &quot;Peru&quot;, &quot;Argentina&quot;, &quot;Brasil&quot;, &quot;Chile&quot;, &quot;Paraguay&quot;, &quot;Uruguay&quot;), hab2022_millones=c(12.22, 51.87, 18, 34.05, 46.23, 215.3, 19.6, 6.8, 3.4), miembro_CAN=c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE))
+datosD</code></pre>
+<pre><code>##        pais hab2022_millones miembro_CAN
+## 1   Bolivia            12.22        TRUE
+## 2  Colombia            51.87        TRUE
+## 3   Ecuador            18.00        TRUE
+## 4      Peru            34.05        TRUE
+## 5 Argentina            46.23       FALSE
+## 6    Brasil           215.30       FALSE
+## 7     Chile            19.60       FALSE
+## 8  Paraguay             6.80       FALSE
+## 9   Uruguay             3.40       FALSE</code></pre>
+<p>Para entender las diferencias entre <code>data.frame</code> y
+<code>cbind</code>, podemos usar el comando <code>class</code> (que nos
+permite ver el “tipo” de datos)</p>
+<pre class="r"><code>class(datosA) # matriz</code></pre>
+<pre><code>## [1] &quot;matrix&quot; &quot;array&quot;</code></pre>
+<pre class="r"><code>class(datosC) # data.frame</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>class(datosC$miembro_CAN) #data.frame</code></pre>
+<pre><code>## [1] &quot;logical&quot;</code></pre>
+<pre class="r"><code>str(datosC) #cada vector mantiene su estructura original.</code></pre>
+<pre><code>## &#39;data.frame&#39;:    9 obs. of  3 variables:
+##  $ pais            : chr  &quot;Bolivia&quot; &quot;Colombia&quot; &quot;Ecuador&quot; &quot;Peru&quot; ...
+##  $ hab2022_millones: num  12.2 51.9 18 34 46.2 ...
+##  $ miembro_CAN     : logi  TRUE TRUE TRUE TRUE FALSE FALSE ...</code></pre>
+</div>
+<div id="ejercicio" class="section level2">
+<h2>EJERCICIO</h2>
+<p><strong>Ejercicio 1:</strong> Crea una base de datos de 3 filas y 5
+columnas, que contenga un variable numerica, otra logica y otra de
+texto.</p>
+</div>
+</div>
+<div id="importar-y-exportar-bases-de-datos" class="section level1">
+<h1>2. IMPORTAR Y EXPORTAR BASES DE DATOS</h1>
+<div id="establecer-directorio-de-trabajo" class="section level2">
+<h2>ESTABLECER DIRECTORIO DE TRABAJO</h2>
+<p>Cuando trabajamos en R es importante definir cual es nuestro espacio
+de trabajo (la carpeta en la que trabajaremos y se almacenaran nuestras
+BD, imagenes, etc.) <code>getwd()</code> muestra el directorio de
+trabajo actual, mientras que <code>setwd()</code>establece el directorio
+de trabajo.</p>
+<pre class="r"><code>getwd() # muestra el directorio de trabajo actual</code></pre>
+<pre><code>## [1] &quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;</code></pre>
+<pre class="r"><code>setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;) #indica el directorio de trabajo donde quiero trabajar.</code></pre>
+</div>
+<div id="instalar-paquetes" class="section level2">
+<h2>INSTALAR PAQUETES</h2>
+<p>Para importar/exportar algunos formatos es necesario instalar y abrir
+algunos paquetes.<br />
+En caso no se encuentren disponibles podras instalarlos con
+<code>install.packages("")</code>. Podemos guardarlo en formatos
+diferentes al original<br />
+Los paquetes que te permitiran abrir archivos en diferentes formatos
+son: <code>openxlsx</code> (<em>para archivos en xlsx</em>),
+<code>readxl</code> (<em>para archivos en xlsx</em>), <code>haven</code>
+(<em>para archivos de stata y spss</em>), <code>rio</code> (<em>para
+archivos en diferentes formatos</em>) entre otros.<br />
+</p>
+<p>Instalamos las librerias que usaremos en este laboratorio
+<code>rio</code>, <code>dplyr</code>, <code>lubridate</code>,
+<code>psych</code></p>
+</div>
+<div id="importar-bases-de-datos" class="section level2">
+<h2>IMPORTAR BASES DE DATOS</h2>
+<p>Trabajaremos con la base de datos del <a
+href="http://www.siseve.pe/web/">Siseve</a>.<br />
+R puede trabajar con diversos tipos de archivos (csv, excel, spss,
+stata, google, dropbox, entre otros)</p>
+<p><strong>Importar archivos excel</strong>. En este caso, importaremos
+nuestra base de datos que esta en excel.</p>
+<pre class="r"><code>siseve &lt;- import(&quot;Siseve2024.xlsx&quot;) # debo colocar el nombre de la base de datos tal como se encuentra guardado. </code></pre>
+</div>
+<div id="exportar-o-guardar-bases-de-datos" class="section level2">
+<h2>EXPORTAR O GUARDAR BASES DE DATOS</h2>
+<p>Los comandos para guardar archivos en diferentes formatos son:
+<code>write.csv(nombredebaseenR, "nombredebase.csv")</code>,
+<code>write_save(nombredebaseenR, "nombredebase.sav")</code>,
+<code>write_dta(nombredebaseenR, "nombredebase.dta")</code><br />
+En este caso exportaremos el documento a un formato en excel
+(.xlsx).</p>
+<pre class="r"><code>write.xlsx(siseve, file=&quot;siseve.xlsx&quot;) </code></pre>
+</div>
+<div id="ejercicio-1" class="section level2">
+<h2>EJERCICIO</h2>
+<p><strong>Ejercicio 2:</strong> Descarga una base de datos de la <a
+href="https://www.datosabiertos.gob.pe/">Plataforma Nacional de Datos
+Abiertos - Peru</a>. Importa la base de datos a R y exportala en un
+formato diferente al original.</p>
+</div>
+</div>
+<div id="exploraciones-preliminares" class="section level1">
+<h1>3. EXPLORACIONES PRELIMINARES</h1>
+<p>Realizamos algunas exploraciones</p>
+<pre class="r"><code>names(siseve) # brinda el nombre de las variables </code></pre>
+<pre><code>## [1] &quot;FECHA_REPORTE&quot;       &quot;DRE&quot;                 &quot;UGEL&quot;               
+## [4] &quot;NIVEL_EDUCATIVO&quot;     &quot;TIPO_REPORTE&quot;        &quot;TIPO_VIOLENCIA&quot;     
+## [7] &quot;SUBTIPO_VIOLENCIA&quot;   &quot;TIPO_ESTADO_REPORTE&quot;</code></pre>
+<pre class="r"><code>head(siseve) # brinda una idea de la estructura de la base (10 primeros casos)</code></pre>
+<pre><code>##   FECHA_REPORTE                    DRE                            UGEL
+## 1    2024-07-31              DRE Cusco                   UGEL Urubamba
+## 2    2024-07-31              DRE Cusco                   UGEL Urubamba
+## 3    2024-07-31              DRE Tacna                      UGEL Tacna
+## 4    2024-07-31 DRE Lima Metropolitana                 UGEL 03 Cercado
+## 5    2024-07-31             DRE Loreto UGEL Alto Amazonas - Yurimaguas
+## 6    2024-07-31 DRE Lima Metropolitana               UGEL 07 San Borja
+##   NIVEL_EDUCATIVO            TIPO_REPORTE TIPO_VIOLENCIA SUBTIPO_VIOLENCIA
+## 1        Primaria Personal IE a Escolares    Psicológica            Verbal
+## 2        Primaria Personal IE a Escolares    Psicológica            Verbal
+## 3        Primaria Personal IE a Escolares    Psicológica  Trato humillante
+## 4        Primaria Personal IE a Escolares    Psicológica            Verbal
+## 5      Secundaria Personal IE a Escolares    Psicológica            Verbal
+## 6      Secundaria         Entre Escolares         Física      Sin lesiones
+##               TIPO_ESTADO_REPORTE
+## 1 Pendiente de atención por la IE
+## 2 Pendiente de atención por la IE
+## 3 Pendiente de atención por la IE
+## 4             Atención en proceso
+## 5             Atención en proceso
+## 6             Atención en proceso</code></pre>
+<pre class="r"><code>str(siseve) # brinda una idea de la estructura de la base (tipos de variables, etc.)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    81714 obs. of  8 variables:
+##  $ FECHA_REPORTE      : POSIXct, format: &quot;2024-07-31&quot; &quot;2024-07-31&quot; ...
+##  $ DRE                : chr  &quot;DRE Cusco&quot; &quot;DRE Cusco&quot; &quot;DRE Tacna&quot; &quot;DRE Lima Metropolitana&quot; ...
+##  $ UGEL               : chr  &quot;UGEL Urubamba&quot; &quot;UGEL Urubamba&quot; &quot;UGEL Tacna&quot; &quot;UGEL 03 Cercado&quot; ...
+##  $ NIVEL_EDUCATIVO    : chr  &quot;Primaria&quot; &quot;Primaria&quot; &quot;Primaria&quot; &quot;Primaria&quot; ...
+##  $ TIPO_REPORTE       : chr  &quot;Personal IE a Escolares&quot; &quot;Personal IE a Escolares&quot; &quot;Personal IE a Escolares&quot; &quot;Personal IE a Escolares&quot; ...
+##  $ TIPO_VIOLENCIA     : chr  &quot;Psicológica&quot; &quot;Psicológica&quot; &quot;Psicológica&quot; &quot;Psicológica&quot; ...
+##  $ SUBTIPO_VIOLENCIA  : chr  &quot;Verbal&quot; &quot;Verbal&quot; &quot;Trato humillante&quot; &quot;Verbal&quot; ...
+##  $ TIPO_ESTADO_REPORTE: chr  &quot;Pendiente de atención por la IE&quot; &quot;Pendiente de atención por la IE&quot; &quot;Pendiente de atención por la IE&quot; &quot;Atención en proceso&quot; ...</code></pre>
+<pre class="r"><code>summary(siseve) #brinda un resumen de las variables de la base </code></pre>
+<pre><code>##  FECHA_REPORTE                        DRE                UGEL          
+##  Min.   :2013-09-16 00:00:00.00   Length:81714       Length:81714      
+##  1st Qu.:2018-08-24 00:00:00.00   Class :character   Class :character  
+##  Median :2022-03-31 00:00:00.00   Mode  :character   Mode  :character  
+##  Mean   :2020-11-05 21:35:29.75                                        
+##  3rd Qu.:2023-08-01 00:00:00.00                                        
+##  Max.   :2024-07-31 00:00:00.00                                        
+##  NIVEL_EDUCATIVO    TIPO_REPORTE       TIPO_VIOLENCIA     SUBTIPO_VIOLENCIA 
+##  Length:81714       Length:81714       Length:81714       Length:81714      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##  TIPO_ESTADO_REPORTE
+##  Length:81714       
+##  Class :character   
+##  Mode  :character   
+##                     
+##                     
+## </code></pre>
+<pre class="r"><code>describe(siseve) #brinda informacion general</code></pre>
+<pre><code>## Warning in FUN(newX[, i], ...): ningún argumento finito para min; retornando
+## Inf</code></pre>
+<pre><code>## Warning in FUN(newX[, i], ...): ningun argumento finito para max; retornando
+## -Inf</code></pre>
+<pre><code>##                      vars     n  mean    sd median trimmed   mad min  max range
+## FECHA_REPORTE           1 81714   NaN    NA     NA     NaN    NA Inf -Inf  -Inf
+## DRE*                    2 81714 13.43  5.94     15   13.50  4.45   1   26    25
+## UGEL*                   3 81714 72.74 72.50     40   64.68 51.89   1  223   222
+## NIVEL_EDUCATIVO*        4 81714 10.40  0.97     11   10.59  0.00   1   11    10
+## TIPO_REPORTE*           5 81714  1.43  0.49      1    1.41  0.00   1    2     1
+## TIPO_VIOLENCIA*         6 81714  1.72  0.74      2    1.65  1.48   1    3     2
+## SUBTIPO_VIOLENCIA*      7 81714 10.09  3.68     11   10.42  4.45   1   16    15
+## TIPO_ESTADO_REPORTE*    8 81714  1.99  0.49      2    2.00  0.00   1    5     4
+##                       skew kurtosis   se
+## FECHA_REPORTE           NA       NA   NA
+## DRE*                 -0.18    -0.35 0.02
+## UGEL*                 0.67    -1.03 0.25
+## NIVEL_EDUCATIVO*     -3.11    17.50 0.00
+## TIPO_REPORTE*         0.30    -1.91 0.00
+## TIPO_VIOLENCIA*       0.50    -1.05 0.00
+## SUBTIPO_VIOLENCIA*   -0.74    -0.38 0.01
+## TIPO_ESTADO_REPORTE*  2.84    18.18 0.00</code></pre>
+<p>Algunas bases de datos pueden incluir miles de variables o casos que
+no necesariamente son de nuestro interes. Por tanto, realizaremos
+algunas ediciones.  <em>Ojo: Es importante registrar siempre las
+ediciones y decisiones que realizamos para garantizar la
+replicabilidad</em></p>
+<div id="cambiar-nombres-de-la-base-de-datos" class="section level2">
+<h2>CAMBIAR NOMBRES DE LA BASE DE DATOS</h2>
+<p>Para duplicar la base de datos con otro nombre</p>
+<pre class="r"><code>siseve24 &lt;- siseve
+rm(siseve) #eliminamos siseve para no confundirnos</code></pre>
+</div>
+<div id="cambiar-nombres-a-variables" class="section level2">
+<h2>CAMBIAR NOMBRES A VARIABLES</h2>
+<p>Esta base de datos cuenta con variables que son autoexplicativas,
+pero no siempre es asi. Al nombrar variables, se sugiere trabajar
+siempre con minusculas y sin muchos “-”.</p>
+<pre class="r"><code>names(siseve24) &lt;- c(&quot;fecha&quot;, &quot;dre&quot;, &quot;ugel&quot;, &quot;nivel_educativo&quot;, &quot;tipo_reporte&quot;, &quot;tipo_violencia&quot;, &quot;subtipo_violencia&quot;, &quot;estado_reporte&quot;)
+names(siseve24) </code></pre>
+<pre><code>## [1] &quot;fecha&quot;             &quot;dre&quot;               &quot;ugel&quot;             
+## [4] &quot;nivel_educativo&quot;   &quot;tipo_reporte&quot;      &quot;tipo_violencia&quot;   
+## [7] &quot;subtipo_violencia&quot; &quot;estado_reporte&quot;</code></pre>
+<p>Tambien puedo cambiar solo el nombre de una variable. Por ejemplo,
+quiero cambiar el nombre de “dre” a “region”.</p>
+<pre class="r"><code>siseve24 &lt;- rename(siseve24, region = dre)
+names(siseve24) </code></pre>
+<pre><code>## [1] &quot;fecha&quot;             &quot;region&quot;            &quot;ugel&quot;             
+## [4] &quot;nivel_educativo&quot;   &quot;tipo_reporte&quot;      &quot;tipo_violencia&quot;   
+## [7] &quot;subtipo_violencia&quot; &quot;estado_reporte&quot;</code></pre>
+</div>
+<div id="seleccionar-casos" class="section level2">
+<h2>SELECCIONAR CASOS</h2>
+<p>Esta base de datos incluye casos desde el 2013 hasta el 2024, pero
+solo me interesan aquellos casos del 2023. Para esto, filtramos los
+casos que corresponden al 2023.  <em>Ojo: No siempre el numero de casos
+coincide con el numero de filas</em></p>
+<pre class="r"><code>siseve23 &lt;- siseve24 %&gt;% 
+  filter(year(fecha) == 2023) #estoy creando una nueva base</code></pre>
+<pre class="r"><code>nrow(siseve24) #en este caso cada fila corresponde a un caso </code></pre>
+<pre><code>## [1] 81714</code></pre>
+<pre class="r"><code>nrow(siseve23) #en este caso cada fila corresponde a un caso </code></pre>
+<pre><code>## [1] 19788</code></pre>
+</div>
+<div id="seleccionar-variables" class="section level2">
+<h2>SELECCIONAR VARIABLES</h2>
+<p>Ahora que todos los casos pertenecen son del 2023, la variable
+<code>fecha</code> deja de ser relevante para mi analisis. Para eliminar
+la variable:</p>
+<pre class="r"><code>siseve23.1 &lt;- siseve23 %&gt;%
+  select(-fecha)
+names(siseve23.1) </code></pre>
+<pre><code>## [1] &quot;region&quot;            &quot;ugel&quot;              &quot;nivel_educativo&quot;  
+## [4] &quot;tipo_reporte&quot;      &quot;tipo_violencia&quot;    &quot;subtipo_violencia&quot;
+## [7] &quot;estado_reporte&quot;</code></pre>
+<p>Solo me interesa trabajar con las variables <code>region</code>,
+<code>nivel_educativo</code>, <code>tipo_violencia</code></p>
+<pre class="r"><code>siseve23.2 &lt;- siseve23.1 %&gt;%
+  select(region, nivel_educativo, tipo_violencia)
+names(siseve23.2)  </code></pre>
+<pre><code>## [1] &quot;region&quot;          &quot;nivel_educativo&quot; &quot;tipo_violencia&quot;</code></pre>
+<p><em>Este procedimiento hace mas sentido en bases de mas
+variables</em></p>
+</div>
+<div id="ejercicio-2" class="section level2">
+<h2>EJERCICIO</h2>
+<p><strong>Ejercicio 3:</strong> Crea una base de datos que solo incluya
+informacion del nivel secundaria del año 2023.<br />
+</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
