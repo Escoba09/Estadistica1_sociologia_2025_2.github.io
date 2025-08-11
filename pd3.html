@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 3</title>
 
-<script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -35,6 +35,13 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -322,9 +329,6 @@ div.tocify {
   <a href="index.html">Inicio</a>
 </li>
 <li>
-  <a href="pd1.html">Práctica dirigida 1</a>
-</li>
-<li>
   <a href="pd2.html">Práctica dirigida 2</a>
 </li>
 <li>
@@ -364,234 +368,433 @@ div.tocify {
 
 <p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
 <p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
-<p>Semestre 2024 - 2</p>
-<div id="intervalos-de-confianza" class="section level1">
-<h1><strong>1.Intervalos de confianza</strong></h1>
-<p>Con este tema, comenzaremos a enfocarnos en la estadística
-inferencial. El objetivo de esta es determinar una aproximación del
-parámetro poblacional a partir de la data de una muestra
-representativa.</p>
-<p>Revisemos algunos conceptos:</p>
-<ul>
-<li><p><strong>Estimador puntual:</strong> un número que es nuestra
-predicción del parámetro</p></li>
-<li><p><strong>Intervalo de confianza:</strong> un intervalo de números
-basado en la distribución de la data observada de la muestra dentro de
-la cual se cree que estaría el parámetro poblacional.</p>
-<p><em>IC = estimador puntual +-/margen de error</em></p></li>
-<li><p><strong>Nivel de confianza:</strong> es la probabilidad de que el
-parámetro se encuentre en ese intervalo.</p></li>
-<li><p><strong>Margen de error:</strong> mide qué tan precisa es la
-estimación del parámetro.</p></li>
-<li><p><strong>Error de muestreo:</strong> diferencia entre el valor
-calculado de un estadístico y valor real de un parámetro de la
-población.</p></li>
-</ul>
-<p><img src="IC.png" width="50%" style="display: block; margin: auto;" /></p>
-<div id="conceptualización-e-importancia" class="section level3">
-<h3>Conceptualización e Importancia</h3>
-<ul>
-<li>Los intervalos de confianza ofrecen una manera de estimar, con alta
-probabilidad, un rango de valores en el que se encuentra el valor
-poblacional (o parámetro) de una determinada variable.</li>
-<li>El intervalo de confianza describe la variabilidad entre la medida
-obtenida en un estudio y la medida real de la población (el valor
-real).</li>
-<li>Un intervalo de confianza de 90%/95%/99% nos indica que dentro del
-rango dado se encuentra el valor real de un parámetro con 90%/95%/99% de
-certeza.</li>
-<li>Existe una relación inversa entre la amplitud del IC y el tamaño
-muestral: mientras más pequeño es el n, más amplio es el IC. A mayor n,
-el IC es más estrecho.</li>
-<li>Gracias al IC podemos determinar si la estimación es representativa
-de la población.</li>
-</ul>
+<p>Semestre 2025 - 2</p>
+<p>Antes de iniciar, abrimos las librerias que usaremos en el
+laboratorio <code>rio</code>, <code>dplyr</code>, <code>psych</code></p>
+<div id="fusionar-bases-de-datos-merge" class="section level1">
+<h1>1. FUSIONAR BASES DE DATOS (MERGE)</h1>
+<p>Para fusionar bases de datos, es necesario identificar la(s)
+variable(s) llave/clave y definir qué bases y casos se quiere priorizar
+para el análisis.<br />
+En este caso, <code>hogar</code> es la variable clave.</p>
+<pre class="r"><code>hogar1 &lt;- data.frame(hogar=c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;), hijos=c(2,3,4,1), ingreso = c(1000, 2000, 1500, 1000))
+hogar2 &lt;- data.frame(hogar=c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;E&quot;), zona=c(&quot;urb&quot;, &quot;urb&quot;, &quot;rur&quot;, &quot;rur&quot;), region = c(&quot;Lima&quot;, &quot;Lima&quot;, &quot;Lima&quot;, &quot;Lima&quot;))
+hogar1</code></pre>
+<pre><code>##   hogar hijos ingreso
+## 1     A     2    1000
+## 2     B     3    2000
+## 3     C     4    1500
+## 4     D     1    1000</code></pre>
+<pre class="r"><code>hogar2</code></pre>
+<pre><code>##   hogar zona region
+## 1     A  urb   Lima
+## 2     B  urb   Lima
+## 3     C  rur   Lima
+## 4     E  rur   Lima</code></pre>
+<p>Se pueden fusionar bases con <code>merge</code> o <code>dplyr</code>
+es la variable clave.</p>
+<pre class="r"><code>hogaresA = merge(hogar1, hogar2, all=FALSE)
+hogaresB = merge(hogar2, hogar1, all= FALSE)
+hogaresC = merge(hogar1, hogar2, all=TRUE)
+hogaresD = merge(hogar2, hogar1, all=TRUE)
+
+left_hogar = dplyr::left_join(hogar1, hogar2, by = &quot;hogar&quot;)
+right_hogar = dplyr::right_join(hogar1, hogar2, by = &quot;hogar&quot;)
+inner_hogar = dplyr::inner_join(hogar1, hogar2, by =&quot;hogar&quot;)
+full_hogar = dplyr::full_join(hogar1, hogar2, by = &quot;hogar&quot;)</code></pre>
+<p>¿Hay diferencia entre <code>hogarC</code> o <code>full_hogar</code>?
+Observa detalladamente cada una de las bases, para entender la
+lógica.</p>
+<pre class="r"><code>hogaresC</code></pre>
+<pre><code>##   hogar hijos ingreso zona region
+## 1     A     2    1000  urb   Lima
+## 2     B     3    2000  urb   Lima
+## 3     C     4    1500  rur   Lima
+## 4     D     1    1000 &lt;NA&gt;   &lt;NA&gt;
+## 5     E    NA      NA  rur   Lima</code></pre>
+<pre class="r"><code>full_hogar </code></pre>
+<pre><code>##   hogar hijos ingreso zona region
+## 1     A     2    1000  urb   Lima
+## 2     B     3    2000  urb   Lima
+## 3     C     4    1500  rur   Lima
+## 4     D     1    1000 &lt;NA&gt;   &lt;NA&gt;
+## 5     E    NA      NA  rur   Lima</code></pre>
+<div id="ejercicios" class="section level2">
+<h2>Ejercicios</h2>
+<p><strong>Ejercicio 1:</strong> Descarga la base de datos
+<code>P2. Universidades Peru</code>. Importa cada hoja de excel como una
+base de datos diferente.  <strong>Ejercicio 2:</strong> Identifica la
+variable <code>clave</code> y fusiona ambas bases de datos en una nueva
+bases de datos llamada <code>universidades</code>. Esta nueva base de
+datos debe contener información de todas las universidades, incluyendo
+las fechas en las que salieron la resolución de las denegatorias<br />
+<strong>Ejercicio 3:</strong> Crea tres nuevas variables: i) una
+variable (<code>licensed</code>) que identifique con un <code>0</code>
+las universidades con licencia denegada y con un <code>1</code> con
+licencia aprobada, ii) una variable (<code>gestion_tipo</code>), que
+tenga las categorias <code>privada asociativa</code>,
+<code>privada societaria</code> y <code>publica</code>, iii) una
+variable (<code>years_operation</code>) que identifique el total de años
+que la universidad se encuentra o estuvo operativa.
+<strong>Nota</strong> Para crear nuevas variables, recuerda que R
+también cuenta con <code>operadores matemáticos</code>,
+<code>operadores relacionales</code>, <code>operadores lógicos</code>.
+Puedes encontrar más detalle <a
+href="https://rpubs.com/sebas_Alf/727818">aquí</a></p>
 </div>
-<div id="sobre-el-nivel-de-confianza" class="section level3">
-<h3>Sobre el nivel de confianza…</h3>
-<p>Si tenemos un nivel de confianza de 95%, quiere decir que si
-realizamos 100 veces el mismo procedimiento de muestreo y calculamos los
-estadísticos de interés, 95 veces obtendremos los resultados en el
-intervalo calculado. Los mismo ocurriría si realizamos el cálculo con un
-99% de confianza. Al momento de decidir el nivel de confianza debemos
-tener presente una regla: a mayor nivel de confianza, menor será la
-precisión ya que el intervalo es más amplio.</p>
-<p><strong>Aplicación</strong></p>
-<p>“Es una investigación estadística que permite suministrar información
-estadística que refleje la situación migratoria de la población
-venezolana refugiada y migrante en el Perú, con énfasis en el contexto
-de la pandemia por la COVID-19, para así apoyar a tomar las decisiones
-de política pública basadas en datos sólidos y confiables”.</p>
-<p>Explicación de la data:</p>
-<p><img src="pd3-diccionario.png" width="50%" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>library(rio) #Convocamos el paquete   
-data=import(&quot;Pd3_enpove2022.dta&quot;)</code></pre>
-<p>En esta sesión responderemos a la pregunta:</p>
 </div>
+<div id="datos-atípicos" class="section level1">
+<h1>2. DATOS ATÍPICOS</h1>
+<p>Recordemos iniciar estableciendo nuestro directorio de trabajo.
+Previamente ya hemos instalado, los paquetes.</p>
+<pre class="r"><code>getwd() # muestra el directorio de trabajo actual</code></pre>
+<pre><code>## [1] &quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;</code></pre>
+<pre class="r"><code>setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;) #indica el directorio de trabajo donde quiero trabajar.</code></pre>
+<p>En esta sección veremos algunos ejemplos de tratamiento de datos
+atipicos.<br />
+Los datos atipicos pueden influir en los resulados afectando la validez
+e interpretacion de los resultados de un modelo.<br />
+Muchos modelos estadisticos asumen una distribucion normal de datos, la
+presencia de datos atipicos pueden ir en contra de estos
+supuestos.<br />
+De otro lado, si se trabaja con datos desbalanceados, el modelo puede
+sesgarse hacia la clase mayoritaria.<br />
+</p>
+<p>Para esto trabajaremos con la base de datos obtenida de <a
+href="https://expresateperu.datosabiertos.gob.pe/dataset/estad%C3%ADsticas-de-proyectos-de-investigaci%C3%B3n-cient%C3%ADfica-por-fuentes-de-financiamiento-de-0#">Datos
+Abiertos Peru</a> sobre estadísticas de proyectos de investigacion
+cientifica por fuentes de financiamiento prociencia [Estadísticas
+ProCiencia CONCYTEC 2015-2021]</p>
+<div id="identificar-los-datos-atípicos" class="section level2">
+<h2>Identificar los datos atípicos</h2>
+<p>Para identificar los valores atípicos, empezamos explorando la base
+de datos. Generalmente en indicadores monetarios, suelen encontrarse
+datos atípicos.</p>
+<pre class="r"><code>names(prociencia)</code></pre>
+<pre><code>##  [1] &quot;FECHA_CORTE&quot;                     &quot;CODIGO_ORDEN&quot;                   
+##  [3] &quot;ANIO&quot;                            &quot;CONVENIO&quot;                       
+##  [5] &quot;TIPO_SUBVENCION&quot;                 &quot;TIPO_CONVOCATORIA&quot;              
+##  [7] &quot;CONVOCATORIA&quot;                    &quot;ESQUEMA_FINANCIERO&quot;             
+##  [9] &quot;ENTIDAD_EJECUTORA_SUBVENCIONADO&quot; &quot;TIPO_ENTIDAD&quot;                   
+## [11] &quot;SEXO&quot;                            &quot;DESCRIPCION&quot;                    
+## [13] &quot;MONEDA&quot;                          &quot;MONTO&quot;                          
+## [15] &quot;IMPORTE_FONDECYT&quot;                &quot;DEPARTAMENTO&quot;                   
+## [17] &quot;PROVINCIA&quot;                       &quot;DISTRITO&quot;                       
+## [19] &quot;UBIGEO&quot;</code></pre>
+<pre class="r"><code>head(prociencia)</code></pre>
+<pre><code>##   FECHA_CORTE CODIGO_ORDEN ANIO   CONVENIO         TIPO_SUBVENCION
+## 1    20240530   01031-2015 2015 ERANet-LAC PROYECTOS INVESTIGACIÓN
+## 2    20240530   01034-2015 2015 ERANet-LAC PROYECTOS INVESTIGACIÓN
+## 3    20240530   01037-2015 2015 ERANet-LAC PROYECTOS INVESTIGACIÓN
+## 4    20240530   01040-2015 2015 ERANet-LAC PROYECTOS INVESTIGACIÓN
+## 5    20240530   01043-2015 2015 ERANet-LAC PROYECTOS INVESTIGACIÓN
+## 6    20240530   01067-2015 2015 PROCIENCIA PROYECTOS INVESTIGACIÓN
+##          TIPO_CONVOCATORIA
+## 1 INVESTIGACIÓN CIENTÍFICA
+## 2 INVESTIGACIÓN CIENTÍFICA
+## 3 INVESTIGACIÓN CIENTÍFICA
+## 4 INVESTIGACIÓN CIENTÍFICA
+## 5 INVESTIGACIÓN CIENTÍFICA
+## 6 INVESTIGACIÓN CIENTÍFICA
+##                                                     CONVOCATORIA
+## 1                     ERANet-LAC - EF-035 - EraNet-Lac - 2014-01
+## 2                     ERANet-LAC - EF-035 - EraNet-Lac - 2014-01
+## 3                     ERANet-LAC - EF-035 - EraNet-Lac - 2014-01
+## 4                     ERANet-LAC - EF-035 - EraNet-Lac - 2014-01
+## 5                     ERANet-LAC - EF-035 - EraNet-Lac - 2014-01
+## 6 EF-042 - Proyectos con Areas Prioritarias Regionales - 2015-01
+##                                            ESQUEMA_FINANCIERO
+## 1 E035 - ERANet LAC - Proyectos de Investigación Colaborativa
+## 2 E035 - ERANet LAC - Proyectos de Investigación Colaborativa
+## 3 E035 - ERANet LAC - Proyectos de Investigación Colaborativa
+## 4 E035 - ERANet LAC - Proyectos de Investigación Colaborativa
+## 5 E035 - ERANet LAC - Proyectos de Investigación Colaborativa
+## 6           E042 - Proyectos en Areas Prioritarias Regionales
+##             ENTIDAD_EJECUTORA_SUBVENCIONADO TIPO_ENTIDAD      SEXO
+## 1                      WAIRA ENERGIA S.A.C.      EMPRESA MASCULINO
+## 2      UNIVERSIDAD PERUANA CAYETANO HEREDIA  UNIVERSIDAD  FEMENINO
+## 3 UNIVERSIDAD PERUANA DE CIENCIAS APLICADAS  UNIVERSIDAD MASCULINO
+## 4      UNIVERSIDAD PERUANA CAYETANO HEREDIA  UNIVERSIDAD  FEMENINO
+## 5      UNIVERSIDAD PERUANA CAYETANO HEREDIA  UNIVERSIDAD MASCULINO
+## 6  PONTIFICIA UNIVERSIDAD CATOLICA DEL PERU  UNIVERSIDAD  FEMENINO
+##                                                                                                                             DESCRIPCION
+## 1                                              Efficient energy management industrial microgrids with high penetration of PV technology
+## 2                                     Recognition of the primary infection by Pheumocystis in infants: a silent threat to public health
+## 3                                         Detecting drug resistant Mycobacterium Tuberculosis with low cost next generation technology 
+## 4 Screening marine microalgae and terrestrial bacteria; in search of novel compounds of potential medicinal and other industrial values
+## 5                                         Detecting drug resistant Mycobacterium Tuberculosis with low cost next generation technology 
+## 6                                                         Diseño científico, legal y financiero del Instituto científico del Agua - ICA
+##   MONEDA   MONTO IMPORTE_FONDECYT DEPARTAMENTO PROVINCIA  DISTRITO UBIGEO
+## 1   EURO   52140         182490.0         LIMA      LIMA SAN BORJA 150130
+## 2   EURO  100000         350000.0         LIMA      LIMA SAN BORJA 150130
+## 3   EURO   49943         174800.5         LIMA      LIMA SAN BORJA 150130
+## 4   EURO  100000         350000.0         LIMA      LIMA SAN BORJA 150130
+## 5   EURO   70000         245000.0         LIMA      LIMA SAN BORJA 150130
+## 6    S/. 1000000        1000000.0         LIMA      LIMA SAN BORJA 150130</code></pre>
+<p>Visualmente, podemos identificarlo con algunos gráficos</p>
+<pre class="r"><code>hist(prociencia$MONTO)</code></pre>
+<p><img src="pd3_files/figure-html/h-1.png" width="672" /></p>
+<pre class="r"><code>boxplot(prociencia$MONTO)</code></pre>
+<p><img src="pd3_files/figure-html/h-2.png" width="672" /></p>
+<p>Es posible observar varios valores atípicos.  El 13% de los datos
+puede cambiar significativamente la interpretacion de nuestra
+informacion.</p>
+<pre class="r"><code>outliers &lt;- boxplot.stats(prociencia$MONTO)$out #126 outliers
+outliers_data &lt;- prociencia[prociencia$MONTO %in% outliers, ] #elaboro una base que incluya solo a los outliers
+nrow(outliers_data) # </code></pre>
+<pre><code>## [1] 126</code></pre>
+<pre class="r"><code>nrow(outliers_data)/nrow(prociencia)*100 #el porcentaje de &quot;datos atípicos&quot;</code></pre>
+<pre><code>## [1] 13.86139</code></pre>
+<p>Comparemos un gráfico con outliers y sin outliers.</p>
+<pre class="r"><code>prociencia_sinout &lt;- prociencia[!prociencia$MONTO %in% outliers, ]#783
+nrow(prociencia_sinout) #909-126</code></pre>
+<pre><code>## [1] 783</code></pre>
+<pre class="r"><code>summary(prociencia$MONTO)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   14099  149970  350000  456386  400000 3399200</code></pre>
+<pre class="r"><code>summary(prociencia_sinout$MONTO)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   14099  100000  331387  276541  395959  750000</code></pre>
+<pre class="r"><code>par(mfrow = c(1,2)) # para comparar
+plot((prociencia$MONTO), main = &quot;Con outliers&quot;) #grafico con data completa
+abline(lm(MONTO ~ 1, data = prociencia), col = &quot;blue&quot;, lwd = 3, lty = 1)
+plot((prociencia_sinout$MONTO), main = &quot;Sin outliers&quot;) #grafico sin outliers
+abline(lm(MONTO ~ 1, data = prociencia_sinout), col = &quot;blue&quot;, lwd = 3, lty = 1)</code></pre>
+<p><img src="pd3_files/figure-html/k-1.png" width="672" /> La
+información es muuy diferente. Si observamos la base de datos, podemos
+ver que en una misma columna se han considerado monedas diferentes.
+<strong>Cuando observamos tantos datos atípicos, es importante explorar
+las causas del porqué</strong>. En este caso, es un error de
+interpretación, proveniente de una base no tan limpia.</p>
 </div>
-<div
-id="de-qué-manera-experimentan-los-migrantes-venezolanos-la-discriminación-en-el-perú"
-class="section level1">
-<h1>¿De qué manera experimentan los migrantes venezolanos la
-discriminación en el Perú?</h1>
-<div id="intervalos-de-confianza-para-una-proporción"
+<div id="exploraciones-visuales-de-datos-atípicos"
 class="section level2">
-<h2><strong>1.Intervalos de confianza para una proporción</strong></h2>
-<p>Tengamos en consideración que para poder hallar el intervalo de
-confianza para una proporción debemos determinar nuestro caso de éxito.
-Asimismo, para hallar el intervalo de confianza para una proporción
-nuestra variable debe ser categórica y debe representar una variable
-dicotómica; es decir, una variable con solo dos categorías posibles:
-votó/no votó; sí/no, etc.</p>
-<p>Recordemos la fórmula para hallar el intervalo de confianza para una
-proporción</p>
-<p><img src="ICprop.png" width="50%" style="display: block; margin: auto;" /></p>
+<h2>Exploraciones visuales de datos atípicos</h2>
+<p>Conocer con qué entidad se ha realizado convenio o la entidad que
+financia las investigaciones, puede ayudar a explicar porqué tanta
+diversidad</p>
+<p>Exploramos el datos resumen, desviacion estandar y otros datos</p>
+<pre class="r"><code>mean(prociencia$IMPORTE_FONDECYT, na.rm = TRUE) #estamos calculando suprimiendo los datos vacios.</code></pre>
+<pre><code>## [1] 464633.5</code></pre>
+<pre class="r"><code>median(prociencia$IMPORTE_FONDECYT, na.rm = TRUE) #estamos calculando suprimiendo los datos vacios.</code></pre>
+<pre><code>## [1] 350000</code></pre>
+<pre class="r"><code>mean_value &lt;- mean(prociencia$IMPORTE_FONDECYT, na.rm = TRUE)
+sd_value &lt;- sd(prociencia$IMPORTE_FONDECYT, na.rm = TRUE)</code></pre>
+<p>Histogramas con 3 desviaciones estándar.</p>
+<pre class="r"><code>fig1 &lt;- plot_ly(data = prociencia, x = ~IMPORTE_FONDECYT, type = &#39;histogram&#39;)
+fig1</code></pre>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-03f8fd1b3cc5aecbe89f" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-03f8fd1b3cc5aecbe89f">{"x":{"visdat":{"47fc3e934b6f":["function () ","plotlyVisDat"]},"cur_data":"47fc3e934b6f","attrs":{"47fc3e934b6f":{"x":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"histogram"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"IMPORTE_FONDECYT"},"yaxis":{"domain":[0,1],"automargin":true},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[182490,350000,174800.5,350000,245000,1000000,400000,400000,400000,379810,156000,398245,399956,400000,280745,400000,375400,351743.8,395836,400000,400000,400000,400000,400000,381195,400000,330160,400000,400000,399848,360800,392409,399137.6,435795,400000,398680,105600,400000,399986.1,400000,398800,398600,1500000,1500000,1499880,399997,350000,400000,400000,400000,400000,323778.8,369000,399980,319369.8,394546,398606.64,381878,750000,399999.7,370540,307280,339379.4,401667.49,399412,400000,400000,369440,400000,400000,394600,398300,400000,400000,399996,384050.3,400000,396700,399500,326340,248673.4,400000,1494364.4,1144604,412324.8,440000,400000,400000,399612,399940,400000,432124,399686,400000,399982.5,389079.4,395018,385437.1,417864,290796.2,287000,1499893.2,440000,1500000,363096,398094,394334.2,399950,400000,399997.8,399999,324531.5,399980,400000,399474,400000,399800,437000,399310,394684,399760,400000,363500,439680,890000,606750,1248960,1249275,437048.29,399180,400000,400000,399992,399990,389569,399850,400000,363003.3,267732,295999.63,400000,337700,1344348.42,1500000,1500000,1467880,1500000,1089306.24,65000,15000,15000,249398.5,250682.4,219965,333000,443630,443552.3,382607.41,399980,397700,365983.13,394740,400000,400000,1493555.9,1500000,1477000,1939475.4,1006200,657000,656000,369931.14,369563.4,369988.9,444000,64770,65000,64955,65000,15000,14099,300000,299920,299510,300000,297387.4,284000,399741.67,400000,393063,399999.96,398296.5,400000,377200,380000,399535.45,384000,399950,400000,423230,400000,400000,379525,400000,399200,359775,400000,396081,360900,398421,400000,397787.5,339550,379990,399980,400000,399547.76,380000,400000,388457.47,398350,400000,400000,287480,1272940,499970,1400000,349390,1382966,500000,1370558.6,97651,1238598,500000,871462.52,365180,1397371,500000,1227338.86,99648,1400000,345340,1351028,99997.6,1400000,199616,1009099,87109.92,1349959.21,350000,1304250.57,246100,1363205,199907,1400000,476999.2,1399700,349997.87,500000,350000,500000,346080,349900,350000,350000,350000,251160,279909,350000,280000,349300,350000,350000,100000,350000,350000,550934.29,348150,349993.56,349806.66,199910,283770,350000,499430,500000,350000,499876,350000,200000,349996,199648,350000,350000,350000,350000,349952,500000,267716,200000,330550,350000,347538,350000,363960,350000,350000,349484.08,350000,350000,384690,323800,349430.81,323200,329670,400666.22,349861.56,317652,349918,356950,350000,350000,199082,297950,349999.91,349440,100000,350000,349702,499388,362000,280000,350000,349991.2,350000,399706,349848,348705,199160,480000,189505,500000,349564,190180,349094.4,349732,350000,350000,345300,383723.81,350000,350000,350000,349994,350000,364932.9,350000,499999,160000,350000,350000,100000,350000,99916,349995,294740,197200,331590,350000,500000,300000,100000,140000,99960,140000,100000,300000,95527.4,262010,440595,300000,329550,300000,100000,299912,350000,288416,342568.2,350000,120161,300000,200000,292290.69,499975,350000,349406,300000,99890,201722,100000,249801.47,70406,200000,199590,300000,325740,294088,346086,380000,349999.99,380000,429065.97,379810,199800,277200,351880,275150,380000,215803.7,339600,349940,263600,98950,348850,455000,100000,149970,336298,350000,99940,285665,347882.33,525506.58,272880,349750,195340,200000,100000,350000,163986,85520,350000,100000,349200,350000,200000,412300,501262,214080,100000,100000,99198,347274,325940,63000,498784,200000,199830,349995,350000,83028,200000,349888.5,350000,92500,95425.25,203800,200000,100000,350000,206830,214939.8,215000,214988.52,214729.1,169794.83,214987.7,210381.8,193500,152404.9,214028.11,641610,1956419.8,204315.49,1968380,400000,1556800,400000,3151473,1500000,2724320,1610524,2079126.06,1496015,2564290,1499546,1500000,1500000,399200,400000,399200.3,399992,370563.1,390508.34,400000,400000,400000,400000,400000,400000,400000,400000,215000,391500,400000,1794832.56,1798281,1764881.5,1800000,1500000,914600,3219400,2403198,1577000,2465998.95,1099984,2492700,1456200,3277800,1501180,1720600,2518490.99,3399200,2231360,2604530,839940,1828363,2243483.68,1546700,2826000,1871000,2203900,3302400,3173178,847100,2953150,2697100,2693020,1740744.6,1874892,1421325.77,1137593,1482820,872400,1120899,1337015,856400,1716069,666500,1509744.5,2483000,1410291.5,1570800,1483200,99970,199200,349997.5,349855,100000,99972,100000,99952,98188,100000,100000,81515,57189,100000,100000,100000,350000,60000,350000,91660,349260,100000,319160,78376.5,96930,149100,199248,86724.18,100000,100000,350000,100000,100000,100000,100000,100000,86800,100000,350000,100000,99960,100000,100000,100000,349849,55755,44041.58,350000,349904.78,349875.1,100000,99998,98536.26,100000,97466,331387,99996,100000,350000,100000,100000,349550.12,99999.92,100000,70940,100000,100000,100000,100000,336412,100000,99622.5,349955,100000,100000,100000,100000,100000,100000,100000,99500,100000,150000,300000,150000,148000,199998.2,160000,200000,200000,216190,330000,350000,300000,156000,200000,350000,147500,244000,199500,150000,176330,200000,300000,450000,150000,150000,159990,149858,200000,180000,299089,114176,350000,100000,132700,236000,350000,299928.98,292100,140000,298882,163695,98990,150000,299980,300000,98910,342750,200000,299568,300000,96636,93940,99899.6,78960,98000,200000,199996.07,200000,200000,200000,332000,125000,500000,98422.54,272988.3,1193466.16,349985,350000,200000,200000,350000,200000,99956,200000,100000,200000,338525,200000,100000,100000,199999,100000,199940,99991,350000,100000,200000,100000,200000,350000,350000,199990,200000,100000,100000,200000,100000,100000,200000,180000,200000,199000,350000,100000,350000,200000,200000,200000,349990,350000,100000,200000,349600,279180,350000,350000,349625.5,200000,280000,200000,279363,100000,350000,1000000,999580,1000000,100000,95560,100000,199647,203342.2,350000,100000,100000,350000,73522.85,200000,312000,349811,79989.72,94700,200000,1000000,100000,199839.75,1200000,1200000,1200000,1101585.73,1200000,1143650,1176000,1146999.6,1200000,1199828.99,1200000,1200000,1198407,1200000,1200000,704701.02,1191628,700000,800000,700000,799385,283840,516775,136500,136500,100000,331210,54230,497921,99848,500000,477808,100000,100000,99925,99984,99181,497532,100000,100000,100000,497550,500000,500000,496186,498900,443910,500000,100000,99678,495530,500000,100000,100000,100000,490070,99943,498540,350000,350000,377330,100000,500000,499916,350000,185759,350000,349992,495435,500000,429176,488500,460500,500000,500000,371200,100000,100000,500000,500000,500000,499997,500000,321200,193040.26,349999.99,350000,350000,323833,800000,799980,800000,391233.3,78210,81650,81698,69980,81572.6,87850,88000,88000,88000,88000,85840.16,88000,88000,86360,87960,350000,350000,194405,125000,108000,125000,125000,124990,108000,125000,125000],"type":"histogram","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>También podemos identificar a todos aquellos datos que estan por
+encima de las 3 desviaciones estandar</p>
+<pre class="r"><code>fig2 &lt;- fig1 %&gt;%
+  add_segments(x = mean_value - 3 * sd_value, xend = mean_value - 3 * sd_value,
+               y = 0, yend = max(table(prociencia$IMPORTE_FONDECYT)),
+               line = list(color = &quot;red&quot;, dash = &quot;dash&quot;),
+               name = &quot;-3 SD&quot;) %&gt;%
+  add_segments(x = mean_value + 3 * sd_value, xend = mean_value + 3 * sd_value,
+               y = 0, yend = max(table(prociencia$IMPORTE_FONDECYT)),
+               line = list(color = &quot;red&quot;, dash = &quot;dash&quot;),
+               name = &quot;+3 SD&quot;) %&gt;%
+  layout(title = &quot;Distribucion de IMPORTE_FONDECYT con 3 Desviaciones Estandar&quot;,
+         xaxis = list(title = &quot;IMPORTE_FONDECYT&quot;),
+         yaxis = list(title = &quot;Frecuencia&quot;))
+fig2</code></pre>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-5e52b9d782780bf3c712" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-5e52b9d782780bf3c712">{"x":{"visdat":{"47fc3e934b6f":["function () ","plotlyVisDat"]},"cur_data":"47fc3e934b6f","attrs":{"47fc3e934b6f":{"x":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"histogram"},"47fc3e934b6f.1":{"x":-1081602.60843919,"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","y":0,"xend":-1081602.60843919,"yend":84,"mode":"lines","line":{"color":"red","dash":"dash"},"name":"-3 SD","inherit":true},"47fc3e934b6f.2":{"x":2010869.56639299,"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","y":0,"xend":2010869.56639299,"yend":84,"mode":"lines","line":{"color":"red","dash":"dash"},"name":"+3 SD","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Distribucion de IMPORTE_FONDECYT con 3 Desviaciones Estandar","xaxis":{"domain":[0,1],"automargin":true,"title":"IMPORTE_FONDECYT"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Frecuencia"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[182490,350000,174800.5,350000,245000,1000000,400000,400000,400000,379810,156000,398245,399956,400000,280745,400000,375400,351743.8,395836,400000,400000,400000,400000,400000,381195,400000,330160,400000,400000,399848,360800,392409,399137.6,435795,400000,398680,105600,400000,399986.1,400000,398800,398600,1500000,1500000,1499880,399997,350000,400000,400000,400000,400000,323778.8,369000,399980,319369.8,394546,398606.64,381878,750000,399999.7,370540,307280,339379.4,401667.49,399412,400000,400000,369440,400000,400000,394600,398300,400000,400000,399996,384050.3,400000,396700,399500,326340,248673.4,400000,1494364.4,1144604,412324.8,440000,400000,400000,399612,399940,400000,432124,399686,400000,399982.5,389079.4,395018,385437.1,417864,290796.2,287000,1499893.2,440000,1500000,363096,398094,394334.2,399950,400000,399997.8,399999,324531.5,399980,400000,399474,400000,399800,437000,399310,394684,399760,400000,363500,439680,890000,606750,1248960,1249275,437048.29,399180,400000,400000,399992,399990,389569,399850,400000,363003.3,267732,295999.63,400000,337700,1344348.42,1500000,1500000,1467880,1500000,1089306.24,65000,15000,15000,249398.5,250682.4,219965,333000,443630,443552.3,382607.41,399980,397700,365983.13,394740,400000,400000,1493555.9,1500000,1477000,1939475.4,1006200,657000,656000,369931.14,369563.4,369988.9,444000,64770,65000,64955,65000,15000,14099,300000,299920,299510,300000,297387.4,284000,399741.67,400000,393063,399999.96,398296.5,400000,377200,380000,399535.45,384000,399950,400000,423230,400000,400000,379525,400000,399200,359775,400000,396081,360900,398421,400000,397787.5,339550,379990,399980,400000,399547.76,380000,400000,388457.47,398350,400000,400000,287480,1272940,499970,1400000,349390,1382966,500000,1370558.6,97651,1238598,500000,871462.52,365180,1397371,500000,1227338.86,99648,1400000,345340,1351028,99997.6,1400000,199616,1009099,87109.92,1349959.21,350000,1304250.57,246100,1363205,199907,1400000,476999.2,1399700,349997.87,500000,350000,500000,346080,349900,350000,350000,350000,251160,279909,350000,280000,349300,350000,350000,100000,350000,350000,550934.29,348150,349993.56,349806.66,199910,283770,350000,499430,500000,350000,499876,350000,200000,349996,199648,350000,350000,350000,350000,349952,500000,267716,200000,330550,350000,347538,350000,363960,350000,350000,349484.08,350000,350000,384690,323800,349430.81,323200,329670,400666.22,349861.56,317652,349918,356950,350000,350000,199082,297950,349999.91,349440,100000,350000,349702,499388,362000,280000,350000,349991.2,350000,399706,349848,348705,199160,480000,189505,500000,349564,190180,349094.4,349732,350000,350000,345300,383723.81,350000,350000,350000,349994,350000,364932.9,350000,499999,160000,350000,350000,100000,350000,99916,349995,294740,197200,331590,350000,500000,300000,100000,140000,99960,140000,100000,300000,95527.4,262010,440595,300000,329550,300000,100000,299912,350000,288416,342568.2,350000,120161,300000,200000,292290.69,499975,350000,349406,300000,99890,201722,100000,249801.47,70406,200000,199590,300000,325740,294088,346086,380000,349999.99,380000,429065.97,379810,199800,277200,351880,275150,380000,215803.7,339600,349940,263600,98950,348850,455000,100000,149970,336298,350000,99940,285665,347882.33,525506.58,272880,349750,195340,200000,100000,350000,163986,85520,350000,100000,349200,350000,200000,412300,501262,214080,100000,100000,99198,347274,325940,63000,498784,200000,199830,349995,350000,83028,200000,349888.5,350000,92500,95425.25,203800,200000,100000,350000,206830,214939.8,215000,214988.52,214729.1,169794.83,214987.7,210381.8,193500,152404.9,214028.11,641610,1956419.8,204315.49,1968380,400000,1556800,400000,3151473,1500000,2724320,1610524,2079126.06,1496015,2564290,1499546,1500000,1500000,399200,400000,399200.3,399992,370563.1,390508.34,400000,400000,400000,400000,400000,400000,400000,400000,215000,391500,400000,1794832.56,1798281,1764881.5,1800000,1500000,914600,3219400,2403198,1577000,2465998.95,1099984,2492700,1456200,3277800,1501180,1720600,2518490.99,3399200,2231360,2604530,839940,1828363,2243483.68,1546700,2826000,1871000,2203900,3302400,3173178,847100,2953150,2697100,2693020,1740744.6,1874892,1421325.77,1137593,1482820,872400,1120899,1337015,856400,1716069,666500,1509744.5,2483000,1410291.5,1570800,1483200,99970,199200,349997.5,349855,100000,99972,100000,99952,98188,100000,100000,81515,57189,100000,100000,100000,350000,60000,350000,91660,349260,100000,319160,78376.5,96930,149100,199248,86724.18,100000,100000,350000,100000,100000,100000,100000,100000,86800,100000,350000,100000,99960,100000,100000,100000,349849,55755,44041.58,350000,349904.78,349875.1,100000,99998,98536.26,100000,97466,331387,99996,100000,350000,100000,100000,349550.12,99999.92,100000,70940,100000,100000,100000,100000,336412,100000,99622.5,349955,100000,100000,100000,100000,100000,100000,100000,99500,100000,150000,300000,150000,148000,199998.2,160000,200000,200000,216190,330000,350000,300000,156000,200000,350000,147500,244000,199500,150000,176330,200000,300000,450000,150000,150000,159990,149858,200000,180000,299089,114176,350000,100000,132700,236000,350000,299928.98,292100,140000,298882,163695,98990,150000,299980,300000,98910,342750,200000,299568,300000,96636,93940,99899.6,78960,98000,200000,199996.07,200000,200000,200000,332000,125000,500000,98422.54,272988.3,1193466.16,349985,350000,200000,200000,350000,200000,99956,200000,100000,200000,338525,200000,100000,100000,199999,100000,199940,99991,350000,100000,200000,100000,200000,350000,350000,199990,200000,100000,100000,200000,100000,100000,200000,180000,200000,199000,350000,100000,350000,200000,200000,200000,349990,350000,100000,200000,349600,279180,350000,350000,349625.5,200000,280000,200000,279363,100000,350000,1000000,999580,1000000,100000,95560,100000,199647,203342.2,350000,100000,100000,350000,73522.85,200000,312000,349811,79989.72,94700,200000,1000000,100000,199839.75,1200000,1200000,1200000,1101585.73,1200000,1143650,1176000,1146999.6,1200000,1199828.99,1200000,1200000,1198407,1200000,1200000,704701.02,1191628,700000,800000,700000,799385,283840,516775,136500,136500,100000,331210,54230,497921,99848,500000,477808,100000,100000,99925,99984,99181,497532,100000,100000,100000,497550,500000,500000,496186,498900,443910,500000,100000,99678,495530,500000,100000,100000,100000,490070,99943,498540,350000,350000,377330,100000,500000,499916,350000,185759,350000,349992,495435,500000,429176,488500,460500,500000,500000,371200,100000,100000,500000,500000,500000,499997,500000,321200,193040.26,349999.99,350000,350000,323833,800000,799980,800000,391233.3,78210,81650,81698,69980,81572.6,87850,88000,88000,88000,88000,85840.16,88000,88000,86360,87960,350000,350000,194405,125000,108000,125000,125000,124990,108000,125000,125000],"type":"histogram","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-1081602.60843919,-1081602.60843919],"type":"scatter","y":[0,84],"mode":"lines","line":{"color":"red","dash":"dash"},"name":"-3 SD","marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[2010869.56639299,2010869.56639299],"type":"scatter","y":[0,84],"mode":"lines","line":{"color":"red","dash":"dash"},"name":"+3 SD","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
-<div id="qué-proporción-de-venezolanos-en-perú-se-siente-discriminada"
+<div id="tratar-datos-atípicos" class="section level2">
+<h2>Tratar datos atípicos</h2>
+<p>Cuando se encuentran datos atípicos, hay dos cosas que NO deben
+hacerse: 1. Ignorarlos 2. Eliminarlos automáticamente, sin mayor
+consideración.</p>
+<p>Lo que puede hacerse es: 1. Tratar valores atípicos con la imputación
+de media y mediana 2. Trimming (elimina el 0.5, 0.95 en adelante, a 3
+desviaciones estándar) 3. Recorte (capping), se define el rango
+intercuartilico 4. No hacer nada 5. Correr los datos con y sin
+outliers</p>
+<p>En las ciencias sociales, lo mejor suele ser la opción 4 y la 5.</p>
+</div>
+<div id="ejercicio" class="section level2">
+<h2>EJERCICIO</h2>
+<p><strong>Ejercicio 4:</strong> Haz el mismo ejercicio con la variable
+<code>IMPORTE_FONDECYT</code>.  El 14% de los datos puede cambiar
+significativamente la interpretacion de nuestra informacion.</p>
+</div>
+</div>
+<div id="explorando-el-latinbarometro-2020" class="section level1">
+<h1>3. EXPLORANDO EL LATINBAROMETRO 2020</h1>
+<p>Profundizaremos en la exploración, limpieza y edición de bases de
+datos<br />
+Repasaremos conceptos de medidas de tendencia central, desviación,
+estandar y normalidad.<br />
+Para este laboratorio usaremos una versión reducida del <a
+href="https://www.latinobarometro.org/latContents.jsp%3E">Latinobarometro2020</a><br />
+Siempre es necesario revisar la encuesta y el diccionario.</p>
+<pre class="r"><code>names(latinbar_spss) </code></pre>
+<pre><code>##  [1] &quot;IDENPA&quot;   &quot;NUMENTRE&quot; &quot;REG&quot;      &quot;CIUDAD&quot;   &quot;EDAD&quot;     &quot;SEXO&quot;    
+##  [7] &quot;P1ST&quot;     &quot;P2ST&quot;     &quot;P3STGBS&quot;  &quot;P9STGBS&quot;  &quot;P24ST.A&quot;  &quot;P24ST.B&quot; 
+## [13] &quot;P24ST.C&quot;  &quot;P37N.A&quot;   &quot;P37N.B&quot;   &quot;P37N.C&quot;   &quot;P37N.D&quot;   &quot;P38N&quot;    
+## [19] &quot;P39N.A&quot;   &quot;P39ST.B&quot;  &quot;P39N.C&quot;   &quot;P39N.D&quot;   &quot;P39N.E&quot;   &quot;P39N.F&quot;  
+## [25] &quot;P39N.G&quot;   &quot;P39N.H&quot;   &quot;S1&quot;       &quot;S13&quot;      &quot;S15&quot;      &quot;S16&quot;     
+## [31] &quot;S17&quot;      &quot;S20.A&quot;    &quot;S20.B&quot;    &quot;S21&quot;      &quot;S22&quot;      &quot;S22.A&quot;   
+## [37] &quot;S22.B&quot;    &quot;S22.C&quot;    &quot;REEDUC.1&quot; &quot;REEDUC.2&quot; &quot;REEDAD&quot;</code></pre>
+<p>Queremos explorar la opinión a favor/en contra de la inmigración,
+según edad y sexo. Por tanto, me interesan las siguientes variables:
+SEXO, EDAD, P37N.A, P37N.B, P37N.C. y P37N.D<br />
+Podemos hacerlo de dos maneras:</p>
+<pre class="r"><code>milatinbarometro1 &lt;- latinbar_spss[,c(&quot;SEXO&quot;, &quot;EDAD&quot;, &quot;P37N.A&quot;, &quot;P37N.B&quot;, &quot;P37N.C&quot;, &quot;P37N.D&quot;)]
+milatinbarometro2 &lt;- subset(latinbar_spss, select = c(SEXO, EDAD, P37N.A, P37N.B, P37N.C, P37N.D))</code></pre>
+<div id="adecuando-la-base-a-las-necesidades-de-nuestra-pregunta"
 class="section level2">
-<h2><em>¿Qué proporción de venezolanos en Perú se siente
-discriminada?</em></h2>
-<p>Para ello trabajaremos con la variable P701, que tiene dos valores
-posibles: Si y No.</p>
-<p>Para poder encontrar el intervalo de confianza para la <em>proporción
-de venezolanos en Perú se siente discriminada</em>, necesitamos tener
-muy claro la frecuencia de nuestro caso de éxito y del total de
-casos.</p>
-<pre class="r"><code>table(data$P701)</code></pre>
+<h2>Adecuando la base a las necesidades de nuestra pregunta</h2>
+<p>Cambiemos de nombre a las variables: <code>outLA</code> refiere a
+<code>inmigrantes no latinoamericanos</code> y <code>deAL</code> refiere
+a <code>inmigrantes latinoamericanos</code>.</p>
+<pre class="r"><code>colnames(milatinbarometro1) &lt;- c(&quot;sexo&quot;, &quot;edad&quot;, &quot;outAL&quot;, &quot;deAL&quot;, &quot;haiti&quot;, &quot;venezuela&quot;)</code></pre>
+<p>La función “cut” se utiliza para dividir o recodificar un vector
+numérico o continue en grupos o intervalos basados en límites
+específicos.<br />
+Primero generaremos una nueva variable denominada “edad_quinquenal”.</p>
+<pre class="r"><code>milatinbarometro1$edad_quinquenal &lt;- cut(milatinbarometro1$edad, breaks = seq(15, 100, by = 5))</code></pre>
+<p>Crear dos categorías (mayor y menor de 64 años)</p>
+<pre class="r"><code>milatinbarometro1$edad65 &lt;- cut(milatinbarometro1$edad, breaks = c(-Inf, 64, Inf), labels = c(&quot;Menos de 65&quot;, &quot;Mayor o igual a 65&quot;))</code></pre>
+<p>Crer categoría de adulto</p>
+<pre class="r"><code>milatinbarometro1$edadadulto &lt;- cut(milatinbarometro1$edad, breaks = c(15, 18, 64, 110), labels = c(&quot;16-18&quot;, &quot;18-64&quot;, &quot;65+&quot;))
+cortes &lt;- c(15, 18, 64, 110)
+milatinbarometro1$edadadulto &lt;- cut(milatinbarometro1$edad, breaks = cortes, labels = c(&quot;16-18&quot;, &quot;18-64&quot;, &quot;65+&quot;))</code></pre>
+</div>
+<div id="identificar-a-favor-y-en-contra-de-la-migración"
+class="section level2">
+<h2>Identificar “a favor” y “en contra” de la migración</h2>
+<p>En el cuestionario y en la base, aquellos que han marcado 3 y 4 están
+en contra de la migración. Cambiaré la codificación de las variables
+para poder identificar más facilmente a aquellos en contra de la
+inmigración. No hay una única manera de hacer esto, lo importante es
+poder identificar a aquellos que están en contra.  En este caso,
+recategorizaré las variables a 0 y 1, donde 1 es que está en contra y 0
+a favor de la migración. Si en todas las preguntas contestó 0, podríamos
+decir que está a favor de la inmigración en general.</p>
+<pre class="r"><code>milatinbarometro1$sioutAL&lt;- ifelse(milatinbarometro1$outAL%in% c(&quot;1&quot;, &quot;2&quot;), 1, ifelse(milatinbarometro1$outAL%in% c(&quot;3&quot;, &quot;4&quot;), 0, NA))
+milatinbarometro1$sideAL&lt;- ifelse(milatinbarometro1$deAL%in% c(&quot;1&quot;, &quot;2&quot;), 1, ifelse(milatinbarometro1$deAL%in% c(&quot;3&quot;, &quot;4&quot;), 0, NA))
+milatinbarometro1$sihaiti&lt;- ifelse(milatinbarometro1$haiti%in% c(&quot;1&quot;, &quot;2&quot;), 1, ifelse(milatinbarometro1$haiti%in% c(&quot;3&quot;, &quot;4&quot;), 0, NA))
+milatinbarometro1$sivenezuela&lt;- ifelse(milatinbarometro1$venezuela%in% c(&quot;1&quot;, &quot;2&quot;), 1, ifelse(milatinbarometro1$venezuela%in% c(&quot;3&quot;, &quot;4&quot;), 0, NA))</code></pre>
+<p>Sumo todas las opiniones (0,1) sobre la inmigración, para crear la
+variable sobre la aceptacion de la inmigración
+<code>siinmigracion</code></p>
+<pre class="r"><code>milatinbarometro1$siinmigracion = milatinbarometro1$sioutAL + milatinbarometro1$sideAL + milatinbarometro1$sihaiti + milatinbarometro1$sivenezuela 
+table(milatinbarometro1$siinmigracion)</code></pre>
 <pre><code>## 
-##    1    2 
-## 3104 7123</code></pre>
-<pre class="r"><code>x = 3104 #almacenamos en &quot;x&quot; la frecuencia de nuestro caso de éxito (Sí se sintieron discriminados)
-n = 3104 + 7123 #almacenamos en &quot;n&quot; el total de casos</code></pre>
-<p>Hallamos el invervalo de confianza para una proporción con el comando
-<strong>prop.test</strong></p>
-<pre class="r"><code>ic_prop = prop.test(x,n)
-ic_prop #llamamos a ic_prop para visualizar los resultados</code></pre>
-<pre><code>## 
-##  1-sample proportions test with continuity correction
+##    0    1    2    3    4 
+## 6243 2020 1987 1832 4576</code></pre>
+<p>Ahora creo la variable general que defina claramente si acepta o no
+la inmigración <code>inmigracion</code></p>
+<pre class="r"><code>milatinbarometro1$inmigracion &lt;- cut(milatinbarometro1$siinmigracion, breaks = c(-Inf, 0, Inf), labels = c(&quot;No inmigración&quot;, &quot;Si inimigración&quot;))
+
+summary(milatinbarometro1$inmigracion)</code></pre>
+<pre><code>##  No inmigración Si inimigración            NA&#39;s 
+##            6243           10415            3546</code></pre>
+<p><strong>Valores perdidos (NA)</strong> si se suma una NA con otro
+valor, el resultado será NA. Los encuestados no contestaron en varias
+respuestas. No podemos asumir por ellos si estaban a favor o en contra.
+vemos que no hay valores perdidos en las variables de edad. En este
+caso, procederemos a eliminar aquellos casos perdidos.</p>
+</div>
+<div id="medidas-de-tendencia-central-dispersión-y-posición"
+class="section level2">
+<h2>Medidas de Tendencia Central, Dispersión y Posición</h2>
+<p><strong>Tendencias de medidas central</strong></p>
+<pre class="r"><code>summary(milatinbarometro1$edad)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      16      26      39      41      54     100</code></pre>
+<pre class="r"><code>mean &lt;- mean(milatinbarometro1$edad)
+median &lt;- median(milatinbarometro1$edad)
+mode &lt;- mode(milatinbarometro1$edad)</code></pre>
+<p><strong>Medidas de dispersión</strong></p>
+<pre class="r"><code>min(milatinbarometro1$edad) </code></pre>
+<pre><code>## &lt;labelled&lt;double&gt;[1]&gt;: EDAD Edad
+## [1] 16
 ## 
-## data:  x out of n, null probability 0.5
-## X-squared = 1578.6, df = 1, p-value &lt; 2.2e-16
-## alternative hypothesis: true p is not equal to 0.5
-## 95 percent confidence interval:
-##  0.2946262 0.3125428
-## sample estimates:
-##         p 
-## 0.3035103</code></pre>
-<p>Esto quiere decir que tenemos un 95% de certeza de que el porcentaje
-de venezolanos que residen en el Perú y se han sentido discriminados
-oscila entre el 29% y 31%.</p>
+## Labels:
+##  value                 label
+##     -5 No sabe / No contesta
+##     -4         No preguntada
+##     -3          No aplicable
+##     -2           No contesta
+##     -1               No sabe</code></pre>
+<pre class="r"><code>max(milatinbarometro1$edad) </code></pre>
+<pre><code>## &lt;labelled&lt;double&gt;[1]&gt;: EDAD Edad
+## [1] 100
+## 
+## Labels:
+##  value                 label
+##     -5 No sabe / No contesta
+##     -4         No preguntada
+##     -3          No aplicable
+##     -2           No contesta
+##     -1               No sabe</code></pre>
+<pre class="r"><code>range(milatinbarometro1$edad) </code></pre>
+<pre><code>## &lt;labelled&lt;double&gt;[2]&gt;: EDAD Edad
+## [1]  16 100
+## 
+## Labels:
+##  value                 label
+##     -5 No sabe / No contesta
+##     -4         No preguntada
+##     -3          No aplicable
+##     -2           No contesta
+##     -1               No sabe</code></pre>
+<pre class="r"><code>IQR(milatinbarometro1$edad) </code></pre>
+<pre><code>## [1] 28</code></pre>
+<pre class="r"><code>var &lt;- var(milatinbarometro1$edad) #varianza
+var2 &lt;- sum((milatinbarometro1$edad - mean(milatinbarometro1$edad))^2)/(16658-1) #otra forma de medir (considerndo la fórmula)
+sd &lt;- sd(milatinbarometro1$edad) #desviacion estandar
+sqrt(var2) #considerando la fórmula</code></pre>
+<pre><code>## [1] 18.21384</code></pre>
+<pre class="r"><code>coef_variacion &lt;- (sd/mean(milatinbarometro1$edad))*100</code></pre>
+<p>Segun esto la varianza es de 273.52 y la desviación estándar es de
+16.54.<br />
+Notase que la desviación estandar esta en años, mientras que la varianza
+no puede interpretarse tan directamente.<br />
+De otro lado, el coeficiente de variacion del 40.3% nos indica que la
+variabilidad relativa de las edades es moderada en relacion al valor
+promedio. En promedio, los valores de edades se desvian en un 40% de su
+valor promedio.</p>
+<p><strong>Medidas de posición</strong></p>
+<pre class="r"><code>quantile(milatinbarometro1$edad)</code></pre>
+<pre><code>##   0%  25%  50%  75% 100% 
+##   16   26   39   54  100</code></pre>
+<pre class="r"><code>p99 &lt;- quantile(milatinbarometro1$edad, 0.99)
+k1 &lt;- quantile(milatinbarometro1$edad, 0.20) 
+d90 &lt;- quantile(milatinbarometro1$edad, 0.90)</code></pre>
+<p><strong>Medidas de forma (o distribucion)</strong> Para calcular la
+simetria o la curtosis, trabajamos con los paquetes <code>e1071</code> y
+<code>moments</code></p>
+<p>Coeficiente de simetria de fisher (0)</p>
+<pre class="r"><code>skewness(milatinbarometro1$edad)</code></pre>
+<pre><code>## [1] 0.4863732</code></pre>
+<p>si el coeficiente de fisher es mayor que cero, es probable que sea
+asimétrica hacia la derecha. Esto indica una cola larga de valores
+mayores en el lado derecho de la distribucion, mientras que la mayoría
+de edades se concentran en el lado izquierdo (la media podría ser mayor
+que la mediana)</p>
+<p>Coeficiente de curtosis de fisher (3)</p>
+<pre class="r"><code>kurtosis(milatinbarometro1$edad)</code></pre>
+<pre><code>## [1] 2.292188</code></pre>
+<p>Si la curtosis de Fisher es menor que tres es probable que la
+distribucion sea platicurtica. Esto significa que tiene colas ligeras y
+es m?s aplanada que una distribuci?n normal.</p>
 </div>
+<div id="ejercicio-1" class="section level2">
+<h2>Ejercicio</h2>
+<p><strong>Ejercicio 5:</strong> Crea una base de datos que se llame
+<code>latinbarfinal</code> donde solo esten aquellos casos válidos (no
+NAs) en la variable <code>inmigracion</code>. </p>
+<p><strong>Ejercicio 6:</strong> En esa nueva base de datos, calcula las
+medidas de tendencia central, dispersión y posición en la variable edad.
+Y, evalúa qué tanto distan de los datos obtenidos en la data
+original.</p>
 </div>
-<div id="intervalos-de-confianza-para-una-media" class="section level1">
-<h1><strong>2.Intervalos de confianza para una media</strong></h1>
-<p>Recordemos la fórmula para hallar el intervalo de confianza para una
-media es</p>
-<p><img src="ICmedia.png" width="50%" style="display: block; margin: auto;" /></p>
-<p>Es importante mencionar que nuestra variable debe ser numérica, sino
-no podremos calcular su promedio.</p>
-<div id="qué-nivel-de-discriminación-sufren-los-venezolanos-en-el-perú"
-class="section level3">
-<h3>¿Qué nivel de discriminación sufren los venezolanos en el Perú?</h3>
-<p><em>Hallemos el intervalo de confianza para la media de la variable
-“nivel_discriminación”. Esta variable será un indice aditivo del 0 al
-100 creado a partir de las variables P702_1 a la P702_7</em></p>
-<p>Guardo mis variables de interes en un vector para luego realizar la
-misma modificación en todas. Para poder indicar que se omitan los
-perdidos para la suma, primero crearemos un vector que almacene los
-nombres de las variables que conformaran el indicador.</p>
-<pre class="r"><code>library(dplyr)
-library(scales)
-
-indicador = c(&quot;P702_1&quot;,&quot;P702_2&quot;,&quot;P702_3&quot;,&quot;P702_4&quot;,&quot;P702_5&quot;,&quot;P702_6&quot;, &quot;P702_7&quot;)
-
-data = data %&gt;% 
-  mutate(suma =  rowSums(across(all_of(indicador)), na.rm = TRUE),
-         nivel_discriminación = rescale(suma, to = c(0,10)),
-         nivel_discriminación = ifelse(P701 == &quot;2&quot;,NA, nivel_discriminación), 
-)</code></pre>
-<p>Ahora que hemos creado el indicador de nivel de discriminación,
-realicemos un análisis descriptivo.</p>
-<pre class="r"><code>data %&gt;% 
-  summarise(media = mean(nivel_discriminación, na.rm = T),
-            mediana = median(nivel_discriminación,na.rm = T),
-            sd = sd(nivel_discriminación, na.rm = T),
-            min = min(nivel_discriminación, na.rm = T),
-            max = max(nivel_discriminación, na.rm = T))</code></pre>
-<pre><code>##    media  mediana        sd      min max
-## 1 2.0436 1.666667 0.8521802 1.666667  10</code></pre>
-<p><strong>ciMean</strong>, del paquete <strong>lsr</strong>, es la
-función que calcula el intervalo de confianza de una media.</p>
-<pre class="r"><code>library(lsr)
-ic_media = ciMean(data$nivel_discriminación, na.rm = TRUE) #con el último argumento indicamos no tomar en consideracion los valores perdidos (NA)
-
-ic_media</code></pre>
-<pre><code>##          2.5%   97.5%
-## [1,] 2.013609 2.07359</code></pre>
-</div>
-</div>
-<div id="intervalo-de-confianza-de-una-media-según-grupo"
-class="section level1">
-<h1><strong>3.Intervalo de confianza de una media según
-grupo</strong></h1>
-<div
-id="de-qué-manera-la-zona-de-lima-en-la-que-vive-la-persona-se-relaciona-con-su-gasto-en-transporte"
-class="section level3">
-<h3>¿De qué manera la zona de Lima en la que vive la persona se
-relaciona con su gasto en transporte?</h3>
-<p>Hallemos el intervalo de confianza para el nivel de discriminación
-(nivel_discriminación) según estrato (ESTRATO).</p>
-<p>Agreguemos etiquetas a la categórica</p>
-<pre class="r"><code>table(data$ESTRATO)</code></pre>
-<pre><code>## 
-##    1    2    3    4    5 
-## 1205 3132 3644 1979  282</code></pre>
-<pre class="r"><code>library(dplyr)
-data = data %&gt;% 
-  mutate(ESTRATO=factor(ESTRATO, levels = (1:5), labels = c(&quot;Bajo&quot;,&quot;Medio bajo&quot;,&quot;Medio&quot;, &quot;Medio alto&quot;, &quot;Alto&quot;)))</code></pre>
-<p>1. Crearemos una tabla con la media, máximo y mínimo de la variable
-nivel_discriminación, en base al grupo de ESTRATO.</p>
-<pre class="r"><code>ic_grupo = data %&gt;% 
-  group_by(ESTRATO) %&gt;% 
-  summarise(Media = mean(nivel_discriminación, na.rm=T),
-            min = ciMean(nivel_discriminación, na.rm=T)[1],
-            max = ciMean(nivel_discriminación, na.rm=T)[2])
-ic_grupo</code></pre>
-<pre><code>## # A tibble: 5 × 4
-##   ESTRATO    Media   min   max
-##   &lt;fct&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Bajo        2.06  1.97  2.14
-## 2 Medio bajo  2.03  1.98  2.09
-## 3 Medio       2.02  1.97  2.07
-## 4 Medio alto  2.08  2.01  2.15
-## 5 Alto        2.15  1.92  2.38</code></pre>
-<p>Según nuestra tabla, podemos afirmar que hay un 95% de probabilidad
-de que la media del grupo de Estrato Alto percibe, ligeramente, un mayor
-nivel de discriminación a comparación del resto. Igualmente, podemos
-observar que, dentro de todos los grupos, el nivel promedio de
-discriminación es bastante similar.</p>
-<p>Grafiquemos nuestros resultados.</p>
-<pre class="r"><code>library(ggplot2)
-ggplot(ic_grupo, aes(x= ESTRATO, y =Media)) +
-  geom_errorbar(aes(ymin=min, ymax=max), width = 0.2)+
-   geom_text(aes(label=paste(round(Media, 2))), size=4)+
-  xlab(&quot;Estrato&quot;) + ylab(&quot;Promedio del nivel de discriminación&quot;)+
-  ylim(1, 3) #indicamos los límites del eje y</code></pre>
-<p><img src="pd3_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-<p>Con lo que muestra el gráfico, ¿cómo podemos complementar nuestra
-interpretación anterior?</p>
-</div>
-</div>
-<div id="ejercicio" class="section level1">
-<h1><strong>Ejercicio</strong></h1>
-<ol style="list-style-type: decimal">
-<li><p>Calcula el intervalo de confianza de la media del nivel
-discriminación según Departamento. Grafíquelo e interprete</p></li>
-<li><p>La pregunta P708_1 refiere a si la población venezolana
-encuestada se identifica con la sociedad y cultura peruana (Sí o no).
-Calcula el intervalo de confianza para la proporción de la variable
-“P708_1” e interpreta.</p></li>
-</ol>
 </div>
 
 

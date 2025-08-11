@@ -23,250 +23,318 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 Curso: SOC294 - Estadística para el análisis sociológico 1
 
-Semestre 2024 - 2
+Semestre 2025 - 2
 
-# **1.Intervalos de confianza**
-
-Con este tema, comenzaremos a enfocarnos en la estadística inferencial.
-El objetivo de esta es determinar una aproximación del parámetro
-poblacional a partir de la data de una muestra representativa.
-
-Revisemos algunos conceptos:
-
--   **Estimador puntual:** un número que es nuestra predicción del
-    parámetro
-
--   **Intervalo de confianza:** un intervalo de números basado en la
-    distribución de la data observada de la muestra dentro de la cual se
-    cree que estaría el parámetro poblacional.
-
-    *IC = estimador puntual +-/margen de error*
-
--   **Nivel de confianza:** es la probabilidad de que el parámetro se
-    encuentre en ese intervalo.
-
--   **Margen de error:** mide qué tan precisa es la estimación del
-    parámetro.
-
--   **Error de muestreo:** diferencia entre el valor calculado de un
-    estadístico y valor real de un parámetro de la población.
-
-```{r,echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("IC.png") 
+Antes de iniciar, abrimos las librerias que usaremos en el laboratorio  `rio`, `dplyr`, `psych`
+```{r a, include=FALSE, warning = FALSE}
+library(rio) #abre archivos en diferentes formatos
+library(openxlsx) #abre archivos en excel
+library(haven) #abrir spss
+library(dplyr) #permite manipular datos (filtrar, pipelines)
+library(psych) # permite usar la función describe
+library(lubridate)  # Para crear fechas de muestra
+library(psych) # permite usar la función describe
+library(plotly) # para crear gráficos interactivos
+library(ggplot2) #para gráficos 
+library(e1071) # conocer simetria
+library(moments) #conocer curtosis
 ```
 
-### Conceptualización e Importancia
 
--   Los intervalos de confianza ofrecen una manera de estimar, con alta
-    probabilidad, un rango de valores en el que se encuentra el valor
-    poblacional (o parámetro) de una determinada variable.
--   El intervalo de confianza describe la variabilidad entre la medida
-    obtenida en un estudio y la medida real de la población (el valor
-    real).
--   Un intervalo de confianza de 90%/95%/99% nos indica que dentro del
-    rango dado se encuentra el valor real de un parámetro con
-    90%/95%/99% de certeza.
--   Existe una relación inversa entre la amplitud del IC y el tamaño
-    muestral: mientras más pequeño es el n, más amplio es el IC. A mayor
-    n, el IC es más estrecho.
--   Gracias al IC podemos determinar si la estimación es representativa
-    de la población.
+# 1. FUSIONAR BASES DE DATOS (MERGE) 
 
-### Sobre el nivel de confianza...
+Para fusionar bases de datos, es necesario identificar la(s) variable(s) llave/clave y definir qué bases y casos se quiere priorizar para el análisis.\
+En este caso, `hogar` es la variable clave.
 
-Si tenemos un nivel de confianza de 95%, quiere decir que si realizamos
-100 veces el mismo procedimiento de muestreo y calculamos los
-estadísticos de interés, 95 veces obtendremos los resultados en el
-intervalo calculado. Los mismo ocurriría si realizamos el cálculo con un
-99% de confianza. Al momento de decidir el nivel de confianza debemos
-tener presente una regla: a mayor nivel de confianza, menor será la
-precisión ya que el intervalo es más amplio.
-
-**Aplicación**
-
-"Es una investigación estadística que permite suministrar información
-estadística que refleje la situación migratoria de la población
-venezolana refugiada y migrante en el Perú, con énfasis en el contexto
-de la pandemia por la COVID-19, para así apoyar a tomar las decisiones
-de política pública basadas en datos sólidos y confiables".
-
-Explicación de la data:
-
-```{r, echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("pd3-diccionario.png") 
+```{r b}
+hogar1 <- data.frame(hogar=c("A", "B", "C", "D"), hijos=c(2,3,4,1), ingreso = c(1000, 2000, 1500, 1000))
+hogar2 <- data.frame(hogar=c("A", "B", "C", "E"), zona=c("urb", "urb", "rur", "rur"), region = c("Lima", "Lima", "Lima", "Lima"))
+hogar1
+hogar2
 ```
 
-```{r}
-library(rio) #Convocamos el paquete   
-data=import("Pd3_enpove2022.dta")
+Se pueden fusionar bases con `merge` o `dplyr` es la variable clave.
+```{r c}
+hogaresA = merge(hogar1, hogar2, all=FALSE)
+hogaresB = merge(hogar2, hogar1, all= FALSE)
+hogaresC = merge(hogar1, hogar2, all=TRUE)
+hogaresD = merge(hogar2, hogar1, all=TRUE)
+
+left_hogar = dplyr::left_join(hogar1, hogar2, by = "hogar")
+right_hogar = dplyr::right_join(hogar1, hogar2, by = "hogar")
+inner_hogar = dplyr::inner_join(hogar1, hogar2, by ="hogar")
+full_hogar = dplyr::full_join(hogar1, hogar2, by = "hogar")
 ```
 
-En esta sesión responderemos a la pregunta:
-
-# ¿De qué manera experimentan los migrantes venezolanos la discriminación en el Perú?
-
-## **1.Intervalos de confianza para una proporción**
-
-Tengamos en consideración que para poder hallar el intervalo de
-confianza para una proporción debemos determinar nuestro caso de éxito.
-Asimismo, para hallar el intervalo de confianza para una proporción
-nuestra variable debe ser categórica y debe representar una variable
-dicotómica; es decir, una variable con solo dos categorías posibles:
-votó/no votó; sí/no, etc.
-
-Recordemos la fórmula para hallar el intervalo de confianza para una
-proporción
-
-```{r,echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("ICprop.png") 
+¿Hay diferencia entre `hogarC` o `full_hogar`? Observa detalladamente cada una de las bases, para entender la lógica.
+```{r d}
+hogaresC
+full_hogar 
 ```
 
-## *¿Qué proporción de venezolanos en Perú se siente discriminada?*
+## Ejercicios
 
-Para ello trabajaremos con la variable P701, que tiene dos valores
-posibles: Si y No.
+**Ejercicio 1:** Descarga la base de datos `P2. Universidades Peru`. Importa cada hoja de excel como una base de datos diferente.\ 
+**Ejercicio 2:** Identifica la variable  `clave` y fusiona ambas bases de datos en una nueva bases de datos llamada  `universidades`. Esta nueva base de datos debe contener información de todas las universidades, incluyendo las fechas en las que salieron la resolución de las denegatorias\
+**Ejercicio 3:** Crea tres nuevas variables: i) una variable (`licensed`) que identifique con un `0` las universidades con licencia denegada y con un `1` con licencia aprobada, ii) una variable (`gestion_tipo`), que tenga las categorias `privada asociativa`, `privada societaria` y `publica`, iii) una variable (`years_operation`) que identifique el total de años que la universidad se encuentra o estuvo operativa. 
+**Nota** Para crear nuevas variables, recuerda que R también cuenta con `operadores matemáticos`, `operadores relacionales`, `operadores lógicos`. Puedes encontrar más detalle [aquí](https://rpubs.com/sebas_Alf/727818)
 
-Para poder encontrar el intervalo de confianza para la *proporción de
-venezolanos en Perú se siente discriminada*, necesitamos tener muy claro
-la frecuencia de nuestro caso de éxito y del total de casos.
 
-```{r}
-table(data$P701)
+# 2. DATOS ATÍPICOS
+
+Recordemos iniciar estableciendo nuestro directorio de trabajo. Previamente ya hemos instalado, los paquetes.
+
+```{r e, include=TRUE}
+getwd() # muestra el directorio de trabajo actual
+setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io") #indica el directorio de trabajo donde quiero trabajar.
 ```
 
-```{r}
-x = 3104 #almacenamos en "x" la frecuencia de nuestro caso de éxito (Sí se sintieron discriminados)
-n = 3104 + 7123 #almacenamos en "n" el total de casos
+En esta sección veremos algunos ejemplos de tratamiento de datos atipicos.\
+Los datos atipicos pueden influir en los resulados afectando la validez e interpretacion de los resultados de un modelo.\
+Muchos modelos estadisticos asumen una distribucion normal de datos, la presencia de datos atipicos pueden ir en contra de estos supuestos.\
+De otro lado, si se trabaja con datos desbalanceados, el modelo puede sesgarse hacia la clase mayoritaria.\
+
+Para esto trabajaremos con la base de datos obtenida de [Datos Abiertos Peru](https://expresateperu.datosabiertos.gob.pe/dataset/estad%C3%ADsticas-de-proyectos-de-investigaci%C3%B3n-cient%C3%ADfica-por-fuentes-de-financiamiento-de-0#) sobre estadísticas de proyectos de investigacion cientifica por fuentes de financiamiento prociencia [Estadísticas ProCiencia CONCYTEC 2015-2021]
+
+
+```{r f, include=FALSE}
+prociencia <- read.xlsx("base_lab3.xlsx")
 ```
 
-Hallamos el invervalo de confianza para una proporción con el comando
-**prop.test**
 
-```{r}
-ic_prop = prop.test(x,n)
-ic_prop #llamamos a ic_prop para visualizar los resultados
+## Identificar los datos atípicos 
+
+Para identificar los valores atípicos, empezamos explorando la base de datos. Generalmente en indicadores monetarios, suelen encontrarse datos atípicos. 
+```{r g, include=TRUE}
+names(prociencia)
+head(prociencia)
 ```
 
-Esto quiere decir que tenemos un 95% de certeza de que el porcentaje de
-venezolanos que residen en el Perú y se han sentido discriminados oscila
-entre el 29% y 31%.
-
-# **2.Intervalos de confianza para una media**
-
-Recordemos la fórmula para hallar el intervalo de confianza para una
-media es
-
-```{r,echo=FALSE, out.width="50%",fig.align="center"}
-knitr::include_graphics("ICmedia.png") 
+Visualmente, podemos identificarlo con algunos gráficos
+```{r h, include=TRUE}
+hist(prociencia$MONTO)
+boxplot(prociencia$MONTO)
 ```
 
-Es importante mencionar que nuestra variable debe ser numérica, sino no
-podremos calcular su promedio.
+Es posible observar varios valores atípicos.\ 
+El 13% de los datos puede cambiar significativamente la interpretacion de nuestra informacion. 
+```{r i, include=TRUE}
+outliers <- boxplot.stats(prociencia$MONTO)$out #126 outliers
+outliers_data <- prociencia[prociencia$MONTO %in% outliers, ] #elaboro una base que incluya solo a los outliers
+nrow(outliers_data) # 
+nrow(outliers_data)/nrow(prociencia)*100 #el porcentaje de "datos atípicos"
+```
+Comparemos un gráfico con outliers y sin outliers. 
+```{r j, include=TRUE}
+prociencia_sinout <- prociencia[!prociencia$MONTO %in% outliers, ]#783
+nrow(prociencia_sinout) #909-126
+summary(prociencia$MONTO)
+summary(prociencia_sinout$MONTO)
+```
 
-### ¿Qué nivel de discriminación sufren los venezolanos en el Perú?
+```{r k, include=TRUE}
+par(mfrow = c(1,2)) # para comparar
+plot((prociencia$MONTO), main = "Con outliers") #grafico con data completa
+abline(lm(MONTO ~ 1, data = prociencia), col = "blue", lwd = 3, lty = 1)
+plot((prociencia_sinout$MONTO), main = "Sin outliers") #grafico sin outliers
+abline(lm(MONTO ~ 1, data = prociencia_sinout), col = "blue", lwd = 3, lty = 1)
+```
+La información es muuy diferente. Si observamos la base de datos, podemos ver que en una misma columna se han considerado monedas diferentes. 
+**Cuando observamos tantos datos atípicos, es importante explorar las causas del porqué**. En este caso, es un error de interpretación, proveniente de una base no tan limpia.
 
-*Hallemos el intervalo de confianza para la media de la variable
-"nivel_discriminación". Esta variable será un indice aditivo del 0 al
-100 creado a partir de las variables P702_1 a la P702_7*
 
-Guardo mis variables de interes en un vector para luego realizar la
-misma modificación en todas. Para poder indicar que se omitan los
-perdidos para la suma, primero crearemos un vector que almacene los
-nombres de las variables que conformaran el indicador.
+## Exploraciones visuales de datos atípicos
+Conocer con qué entidad se ha realizado convenio o la entidad que financia las investigaciones, puede ayudar a explicar porqué tanta diversidad 
 
-```{r}
-library(dplyr)
-library(scales)
+Exploramos el datos resumen, desviacion estandar y otros datos
+```{r l, include=TRUE}
+mean(prociencia$IMPORTE_FONDECYT, na.rm = TRUE) #estamos calculando suprimiendo los datos vacios.
+median(prociencia$IMPORTE_FONDECYT, na.rm = TRUE) #estamos calculando suprimiendo los datos vacios.
+mean_value <- mean(prociencia$IMPORTE_FONDECYT, na.rm = TRUE)
+sd_value <- sd(prociencia$IMPORTE_FONDECYT, na.rm = TRUE)
+```
 
-indicador = c("P702_1","P702_2","P702_3","P702_4","P702_5","P702_6", "P702_7")
+Histogramas con 3 desviaciones estándar. 
 
-data = data %>% 
-  mutate(suma =  rowSums(across(all_of(indicador)), na.rm = TRUE),
-         nivel_discriminación = rescale(suma, to = c(0,10)),
-         nivel_discriminación = ifelse(P701 == "2",NA, nivel_discriminación), 
-)
+```{r m, include=TRUE}
+fig1 <- plot_ly(data = prociencia, x = ~IMPORTE_FONDECYT, type = 'histogram')
+fig1
+```
+
+También podemos identificar a todos aquellos datos que estan por encima de las 3 desviaciones estandar 
+
+```{r n, include=TRUE}
+fig2 <- fig1 %>%
+  add_segments(x = mean_value - 3 * sd_value, xend = mean_value - 3 * sd_value,
+               y = 0, yend = max(table(prociencia$IMPORTE_FONDECYT)),
+               line = list(color = "red", dash = "dash"),
+               name = "-3 SD") %>%
+  add_segments(x = mean_value + 3 * sd_value, xend = mean_value + 3 * sd_value,
+               y = 0, yend = max(table(prociencia$IMPORTE_FONDECYT)),
+               line = list(color = "red", dash = "dash"),
+               name = "+3 SD") %>%
+  layout(title = "Distribucion de IMPORTE_FONDECYT con 3 Desviaciones Estandar",
+         xaxis = list(title = "IMPORTE_FONDECYT"),
+         yaxis = list(title = "Frecuencia"))
+fig2
+```
+
+## Tratar datos atípicos
+Cuando se encuentran datos atípicos, hay dos cosas que NO deben hacerse: 
+1. Ignorarlos
+2. Eliminarlos automáticamente, sin mayor consideración. 
+
+Lo que puede hacerse es: 
+1. Tratar valores atípicos con la imputación de media y mediana 
+2. Trimming (elimina el 0.5, 0.95 en adelante, a 3 desviaciones estándar)
+3. Recorte (capping), se define el rango intercuartilico
+4. No hacer nada
+5. Correr los datos con y sin outliers
+
+En las ciencias sociales, lo mejor suele ser la opción 4 y la 5. 
+
+## EJERCICIO
+**Ejercicio 4:** Haz el mismo ejercicio con la variable `IMPORTE_FONDECYT`.\ 
+El 14% de los datos puede cambiar significativamente la interpretacion de nuestra informacion.
+
+# 3. EXPLORANDO EL LATINBAROMETRO 2020
+
+Profundizaremos en la exploración, limpieza y edición de bases de datos\
+Repasaremos conceptos de medidas de tendencia central, desviación, estandar y normalidad.\
+Para este laboratorio usaremos una versión reducida del [Latinobarometro2020](https://www.latinobarometro.org/latContents.jsp>)\
+Siempre es necesario revisar la encuesta y el diccionario.
+
+
+```{r o, include = FALSE}
+latinbar_spss <- read_spss("Latinobarometro_2020.sav")
+```
+
+```{r p}
+names(latinbar_spss) 
+```
+
+Queremos explorar la opinión a favor/en contra de la inmigración, según edad y sexo. Por tanto, me interesan las siguientes variables: SEXO, EDAD, P37N.A, P37N.B, P37N.C. y P37N.D\
+Podemos hacerlo de dos maneras:
+
+```{r q}
+milatinbarometro1 <- latinbar_spss[,c("SEXO", "EDAD", "P37N.A", "P37N.B", "P37N.C", "P37N.D")]
+milatinbarometro2 <- subset(latinbar_spss, select = c(SEXO, EDAD, P37N.A, P37N.B, P37N.C, P37N.D))
 
 ```
 
-Ahora que hemos creado el indicador de nivel de discriminación,
-realicemos un análisis descriptivo.
-
-```{r}
-data %>% 
-  summarise(media = mean(nivel_discriminación, na.rm = T),
-            mediana = median(nivel_discriminación,na.rm = T),
-            sd = sd(nivel_discriminación, na.rm = T),
-            min = min(nivel_discriminación, na.rm = T),
-            max = max(nivel_discriminación, na.rm = T))
+## Adecuando la base a las necesidades de nuestra pregunta
+Cambiemos de nombre a las variables: `outLA` refiere a `inmigrantes no latinoamericanos` y `deAL` refiere a `inmigrantes latinoamericanos`.
+```{r r}
+colnames(milatinbarometro1) <- c("sexo", "edad", "outAL", "deAL", "haiti", "venezuela")
 ```
 
-**ciMean**, del paquete **lsr**, es la función que calcula el intervalo
-de confianza de una media.
+La función "cut" se utiliza para dividir o recodificar un vector numérico o continue en grupos o intervalos basados en límites específicos.\
+Primero generaremos una nueva variable denominada "edad_quinquenal".
 
-```{r}
-library(lsr)
-ic_media = ciMean(data$nivel_discriminación, na.rm = TRUE) #con el último argumento indicamos no tomar en consideracion los valores perdidos (NA)
-
-ic_media
+```{r s}
+milatinbarometro1$edad_quinquenal <- cut(milatinbarometro1$edad, breaks = seq(15, 100, by = 5))
 ```
 
-# **3.Intervalo de confianza de una media según grupo**
-
-### ¿De qué manera la zona de Lima en la que vive la persona se relaciona con su gasto en transporte?
-
-Hallemos el intervalo de confianza para el nivel de discriminación
-(nivel_discriminación) según estrato (ESTRATO).
-
-Agreguemos etiquetas a la categórica
-
-```{r}
-table(data$ESTRATO)
+Crear dos categorías (mayor y menor de 64 años)
+```{r t}
+milatinbarometro1$edad65 <- cut(milatinbarometro1$edad, breaks = c(-Inf, 64, Inf), labels = c("Menos de 65", "Mayor o igual a 65"))
 ```
 
-```{r}
-library(dplyr)
-data = data %>% 
-  mutate(ESTRATO=factor(ESTRATO, levels = (1:5), labels = c("Bajo","Medio bajo","Medio", "Medio alto", "Alto")))
+Crer categoría de adulto
+```{r u}
+milatinbarometro1$edadadulto <- cut(milatinbarometro1$edad, breaks = c(15, 18, 64, 110), labels = c("16-18", "18-64", "65+"))
+cortes <- c(15, 18, 64, 110)
+milatinbarometro1$edadadulto <- cut(milatinbarometro1$edad, breaks = cortes, labels = c("16-18", "18-64", "65+"))
 ```
 
-1\. Crearemos una tabla con la media, máximo y mínimo de la variable
-nivel_discriminación, en base al grupo de ESTRATO.
+## Identificar "a favor" y "en contra" de la migración
+En el cuestionario y en la base, aquellos que han marcado 3 y 4 están en contra de la migración. 
+Cambiaré la codificación de las variables para poder identificar más facilmente a aquellos en contra de la inmigración. 
+No hay una única manera de hacer esto, lo importante es poder identificar a aquellos que están en contra.\ 
+En este caso, recategorizaré las variables a 0 y 1, donde 1 es que está en contra y 0 a favor de la migración. 
+Si en todas las preguntas contestó 0, podríamos decir que está a favor de la inmigración en general. 
 
-```{r}
-ic_grupo = data %>% 
-  group_by(ESTRATO) %>% 
-  summarise(Media = mean(nivel_discriminación, na.rm=T),
-            min = ciMean(nivel_discriminación, na.rm=T)[1],
-            max = ciMean(nivel_discriminación, na.rm=T)[2])
-ic_grupo
+```{r v}
+milatinbarometro1$sioutAL<- ifelse(milatinbarometro1$outAL%in% c("1", "2"), 1, ifelse(milatinbarometro1$outAL%in% c("3", "4"), 0, NA))
+milatinbarometro1$sideAL<- ifelse(milatinbarometro1$deAL%in% c("1", "2"), 1, ifelse(milatinbarometro1$deAL%in% c("3", "4"), 0, NA))
+milatinbarometro1$sihaiti<- ifelse(milatinbarometro1$haiti%in% c("1", "2"), 1, ifelse(milatinbarometro1$haiti%in% c("3", "4"), 0, NA))
+milatinbarometro1$sivenezuela<- ifelse(milatinbarometro1$venezuela%in% c("1", "2"), 1, ifelse(milatinbarometro1$venezuela%in% c("3", "4"), 0, NA))
 ```
 
-Según nuestra tabla, podemos afirmar que hay un 95% de probabilidad de
-que la media del grupo de Estrato Alto percibe, ligeramente, un mayor
-nivel de discriminación a comparación del resto. Igualmente, podemos
-observar que, dentro de todos los grupos, el nivel promedio de
-discriminación es bastante similar.
+Sumo todas las opiniones (0,1) sobre la inmigración, para crear la variable sobre la aceptacion de la inmigración `siinmigracion` 
+```{r w}
+milatinbarometro1$siinmigracion = milatinbarometro1$sioutAL + milatinbarometro1$sideAL + milatinbarometro1$sihaiti + milatinbarometro1$sivenezuela 
+table(milatinbarometro1$siinmigracion)
+```
+Ahora creo la variable general que defina claramente si acepta o no la inmigración `inmigracion` 
+```{r x}
+milatinbarometro1$inmigracion <- cut(milatinbarometro1$siinmigracion, breaks = c(-Inf, 0, Inf), labels = c("No inmigración", "Si inimigración"))
 
-Grafiquemos nuestros resultados.
+summary(milatinbarometro1$inmigracion)
+```
+**Valores perdidos (NA)**
+si se suma una NA con otro valor, el resultado será NA.
+Los encuestados no contestaron en varias respuestas. No podemos asumir por ellos si estaban a favor o en contra. 
+vemos que no hay valores perdidos en las variables de edad. 
+En este caso, procederemos a eliminar aquellos casos perdidos. 
 
-```{r}
-library(ggplot2)
-ggplot(ic_grupo, aes(x= ESTRATO, y =Media)) +
-  geom_errorbar(aes(ymin=min, ymax=max), width = 0.2)+
-   geom_text(aes(label=paste(round(Media, 2))), size=4)+
-  xlab("Estrato") + ylab("Promedio del nivel de discriminación")+
-  ylim(1, 3) #indicamos los límites del eje y
+
+## Medidas de Tendencia Central, Dispersión y Posición
+
+**Tendencias de medidas central**
+
+```{r y}
+summary(milatinbarometro1$edad)
+mean <- mean(milatinbarometro1$edad)
+median <- median(milatinbarometro1$edad)
+mode <- mode(milatinbarometro1$edad)
 ```
 
-Con lo que muestra el gráfico, ¿cómo podemos complementar nuestra
-interpretación anterior?
+**Medidas de dispersión**
 
-# **Ejercicio**
+```{r aa}
+min(milatinbarometro1$edad) 
+max(milatinbarometro1$edad) 
+range(milatinbarometro1$edad) 
+IQR(milatinbarometro1$edad) 
+var <- var(milatinbarometro1$edad) #varianza
+var2 <- sum((milatinbarometro1$edad - mean(milatinbarometro1$edad))^2)/(16658-1) #otra forma de medir (considerndo la fórmula)
+sd <- sd(milatinbarometro1$edad) #desviacion estandar
+sqrt(var2) #considerando la fórmula
+coef_variacion <- (sd/mean(milatinbarometro1$edad))*100
+```
 
-1.  Calcula el intervalo de confianza de la media del nivel
-    discriminación según Departamento. Grafíquelo e interprete
+Segun esto la varianza es de 273.52 y la desviación estándar es de 16.54.\
+Notase que la desviación estandar esta en años, mientras que la varianza no puede interpretarse tan directamente.\
+De otro lado, el coeficiente de variacion del 40.3% nos indica que la variabilidad relativa de las edades es moderada en relacion al valor promedio. En promedio, los valores de edades se desvian en un 40% de su valor promedio.
 
-2.  La pregunta P708_1 refiere a si la población venezolana encuestada
-    se identifica con la sociedad y cultura peruana (Sí o no). Calcula
-    el intervalo de confianza para la proporción de la variable "P708_1"
-    e interpreta.
+**Medidas de posición**
+
+```{r ab}
+quantile(milatinbarometro1$edad)
+p99 <- quantile(milatinbarometro1$edad, 0.99)
+k1 <- quantile(milatinbarometro1$edad, 0.20) 
+d90 <- quantile(milatinbarometro1$edad, 0.90)
+```
+
+**Medidas de forma (o distribucion)**
+Para calcular la simetria o la curtosis, trabajamos con los paquetes  `e1071` y  `moments`
+
+Coeficiente de simetria de fisher (0)
+```{r ac}
+skewness(milatinbarometro1$edad)
+```
+
+si el coeficiente de fisher es mayor que cero, es probable que sea asimétrica hacia la derecha. Esto indica una cola larga de valores mayores en el lado derecho de la distribucion, mientras que la mayoría de edades se concentran en el lado izquierdo (la media podría ser mayor que la mediana)
+
+Coeficiente de curtosis de fisher (3)
+
+```{r ad}
+kurtosis(milatinbarometro1$edad)
+```
+Si la curtosis de Fisher es menor que tres es probable que la distribucion sea platicurtica. Esto significa que tiene colas ligeras y es m?s aplanada que una distribuci?n normal.
+
+## Ejercicio
+**Ejercicio 5:** Crea una base de datos que se llame `latinbarfinal` donde solo esten aquellos casos válidos (no NAs) en la variable `inmigracion`.\ 
+
+**Ejercicio 6:** En esa nueva base de datos, calcula las medidas de tendencia central, dispersión y posición en la variable edad. Y, evalúa qué tanto distan de los datos obtenidos en la data original. 
