@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 2</title>
 
-<script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -364,349 +364,332 @@ div.tocify {
 
 <p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
 <p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
-<p>Semestre 2024 - 2</p>
-<div id="qué-es-el-análisis-descriptivo" class="section level1">
-<h1><strong>1.¿Qué es el análisis descriptivo?</strong></h1>
-<p><img src="pd2_QSAnalisisDesc.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>Semestre 2025 - 2</p>
+<p>En R, tenemos vectores, matrices, data.frames y listas.<br />
+Entender la lógica de estos objetos es importante antes de iniciar el
+trabajo con data secundaria.</p>
+<div id="crear-sets-de-datos" class="section level1">
+<h1>1. CREAR SETS DE DATOS</h1>
+<div id="crear-vectores" class="section level2">
+<h2>CREAR VECTORES</h2>
+<p>Un vector es una coleccion de uno o mas datos del mismo tipo. Un
+vector puede incluir datos numericos, datos en texto o datos logicos
+(verdadero/falso).</p>
+<p><strong>Vector de cadena de texto</strong></p>
+<pre class="r"><code>pais=c(&quot;Bolivia&quot;, &quot;Colombia&quot;, &quot;Ecuador&quot;, &quot;Peru&quot;, &quot;Argentina&quot;, &quot;Brasil&quot;, &quot;Chile&quot;, &quot;Paraguay&quot;, &quot;Uruguay&quot;)
+pais</code></pre>
+<pre><code>## [1] &quot;Bolivia&quot;   &quot;Colombia&quot;  &quot;Ecuador&quot;   &quot;Peru&quot;      &quot;Argentina&quot; &quot;Brasil&quot;   
+## [7] &quot;Chile&quot;     &quot;Paraguay&quot;  &quot;Uruguay&quot;</code></pre>
+<p><strong>Vector numerico</strong></p>
+<pre class="r"><code>hab2022_millones=c(12.22, 51.87, 18, 34.05, 46.23, 215.3, 19.6, 6.8, 3.4)
+hab2022_millones</code></pre>
+<pre><code>## [1]  12.22  51.87  18.00  34.05  46.23 215.30  19.60   6.80   3.40</code></pre>
+<p><strong>Vector logico</strong></p>
+<pre class="r"><code>miembro_CAN=c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)</code></pre>
+<p><strong>Para visualizar los vectores que hemos creado</strong>
+podemos colocar el nombre de los vectores creados (<code>pais</code>,
+<code>hab2022_millones</code>, <code>miembro_CAN</code>) o utilizar la
+funcion <code>print</code>.</p>
 </div>
-<div id="nivel-de-medida-de-una-variable" class="section level1">
-<h1><strong>2.Nivel de medida de una variable</strong></h1>
-<p><img src="pd2_medVar.png" width="50%" style="display: block; margin: auto;" /></p>
+<div id="unir-vectores-en-una-matriz" class="section level2">
+<h2>UNIR VECTORES EN UNA MATRIZ</h2>
+<p>Los vectores pueden unirse en una matriz. Una matri es una estructura
+de datos bidimensional (files y columnas) que coniene elementos del
+mismo tipo (solo datos numéricos o solo caracteres).</p>
+<pre class="r"><code>datosA &lt;-cbind(pais, hab2022_millones, miembro_CAN) # cbind() une vectores, interpretando cada uno como una columna 
+datosA</code></pre>
+<pre><code>##       pais        hab2022_millones miembro_CAN
+##  [1,] &quot;Bolivia&quot;   &quot;12.22&quot;          &quot;TRUE&quot;     
+##  [2,] &quot;Colombia&quot;  &quot;51.87&quot;          &quot;TRUE&quot;     
+##  [3,] &quot;Ecuador&quot;   &quot;18&quot;             &quot;TRUE&quot;     
+##  [4,] &quot;Peru&quot;      &quot;34.05&quot;          &quot;TRUE&quot;     
+##  [5,] &quot;Argentina&quot; &quot;46.23&quot;          &quot;FALSE&quot;    
+##  [6,] &quot;Brasil&quot;    &quot;215.3&quot;          &quot;FALSE&quot;    
+##  [7,] &quot;Chile&quot;     &quot;19.6&quot;           &quot;FALSE&quot;    
+##  [8,] &quot;Paraguay&quot;  &quot;6.8&quot;            &quot;FALSE&quot;    
+##  [9,] &quot;Uruguay&quot;   &quot;3.4&quot;            &quot;FALSE&quot;</code></pre>
+<pre class="r"><code>datosB &lt;-rbind(pais, hab2022_millones, miembro_CAN) # rbind() une vectores, interpretando cada uno como una fila
+datosB </code></pre>
+<pre><code>##                  [,1]      [,2]       [,3]      [,4]    [,5]        [,6]    
+## pais             &quot;Bolivia&quot; &quot;Colombia&quot; &quot;Ecuador&quot; &quot;Peru&quot;  &quot;Argentina&quot; &quot;Brasil&quot;
+## hab2022_millones &quot;12.22&quot;   &quot;51.87&quot;    &quot;18&quot;      &quot;34.05&quot; &quot;46.23&quot;     &quot;215.3&quot; 
+## miembro_CAN      &quot;TRUE&quot;    &quot;TRUE&quot;     &quot;TRUE&quot;    &quot;TRUE&quot;  &quot;FALSE&quot;     &quot;FALSE&quot; 
+##                  [,7]    [,8]       [,9]     
+## pais             &quot;Chile&quot; &quot;Paraguay&quot; &quot;Uruguay&quot;
+## hab2022_millones &quot;19.6&quot;  &quot;6.8&quot;      &quot;3.4&quot;    
+## miembro_CAN      &quot;FALSE&quot; &quot;FALSE&quot;    &quot;FALSE&quot;</code></pre>
+<p>Como es posible observar, a pesar de que los vectores iniciales eran
+numéricos, de texto y lógicos, al unirse en una matriz, todos son
+interpretados como <code>cadenas de texto (chr)</code>.</p>
+<pre class="r"><code>str(datosA)</code></pre>
+<pre><code>##  chr [1:9, 1:3] &quot;Bolivia&quot; &quot;Colombia&quot; &quot;Ecuador&quot; &quot;Peru&quot; &quot;Argentina&quot; &quot;Brasil&quot; ...
+##  - attr(*, &quot;dimnames&quot;)=List of 2
+##   ..$ : NULL
+##   ..$ : chr [1:3] &quot;pais&quot; &quot;hab2022_millones&quot; &quot;miembro_CAN&quot;</code></pre>
 </div>
-<div id="importancia-de-visualización-de-datos" class="section level1">
-<h1><strong>3.Importancia de visualización de datos</strong></h1>
-<p>Debido al crecimiento de la big data en los últimos años surgieron
-nuevas necesidades para comprender los análisis masivos de datos de una
-forma simple y escalable. Es entonces cuando se dirige la atención a
-desarrollar nuevas técnicas gráficas en distintas plataformas (ejemplos
-a continuación), tanto softwares como librerías de código abierto<a
-href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, tal es el
-caso de ggplot2 en R.</p>
-<p><img src="pd2_herramientas.png" width="90%" style="display: block; margin: auto;" /></p>
-<p>Este interés por desarrollar técnicas de análisis masivo de datos y
-la comunicación de resultados cada vez más amigables y apta para todos
-los públicos dio pie a nuevas especialidades dentro de la ciencia de
-datos, como por ejemplo el data story telling</p>
-<p><img src="pd2_datavis.png" width="90%" style="display: block; margin: auto;" /></p>
-<div id="gráficos-por-tipo-de-variables" class="section level3">
-<h3><strong>Gráficos por tipo de variables:</strong></h3>
-<p><img src="pd2_GrafTipoVar.png" width="60%" style="display: block; margin: auto;" /></p>
-</div>
-</div>
-<div id="análisis-descriptivo" class="section level1">
-<h1><strong>4.Análisis descriptivo</strong></h1>
-<style>
-.custom-text {
-  color: #00688B;
-  font-family: Helvetica, sans-serif;
-  text-align: center;
-  font-weight: bold;
-  font-size: 22px;
-}
-</style>
-<div class="custom-text">
-<div class="custom-text">
-<p>¿Cuál es la distribución y dinámica de las manifestaciones sociales
-en el Perú? 🤔</p>
-</div>
-</div>
-<p>Para la sesión de hoy se usará la <strong>“Base de eventos de
-protesta (1980 - 2023)”,</strong> agregada a nivel regional. Esta fue
-inicialmente creada por Moisés Arce, profesor de la Universidad de
-Tulane, y recientemente actualizada por la Escuela de Gobierno y
-Políticas Públicas de la PUCP. Esta base es un aporte para estudiar y
-comprender mejor la dinámica de la conflictividad popular en el Perú
-desde 1980 hasta la actualidad. Encuentra más información y la base de
-datos original en el siguiente <a
-href="https://democracia-gobernabilidad.pucp.edu.pe/participaci%C3%B3n/protestas-sociales">link</a>.</p>
-<pre class="r"><code>library(rio)
-data = import(&quot;pd2_Protestas.xlsx&quot;)</code></pre>
-<p>Agregar diccionario</p>
-<p><img src="pd2_diccionario.png" width="100%" style="display: block; margin: auto;" /></p>
-<div id="cómo-se-distribuye-las-protestas-en-el-perú-a-nivel-regional"
+<div id="unir-vectores-en-un-set-de-datos-dataframe"
 class="section level2">
-<h2>4.1 ¿Cómo se distribuye (%) las protestas en el Perú a nivel
-regional?</h2>
-<p>Abrimos la librería dplyr</p>
-<pre class="r"><code>library(dplyr)</code></pre>
-<p>Comprobamos el tipo de variable que queremos utilizar</p>
-<pre class="r"><code>class(data$Región)</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<p>Creamos un summarise donde se encuentre la región y su frecuencia</p>
-<pre class="r"><code>data %&gt;% 
-  group_by(Región) %&gt;% 
-  summarise(Total = sum(Total))</code></pre>
-<pre><code>## # A tibble: 25 × 2
-##    Región       Total
-##    &lt;chr&gt;        &lt;dbl&gt;
-##  1 Amazonas       116
-##  2 Apurímac       200
-##  3 Arequipa       975
-##  4 Ayacucho       227
-##  5 Cajamarca      291
-##  6 Callao         404
-##  7 Cusco          922
-##  8 Huancavelica   157
-##  9 Huánuco        128
-## 10 Ica            314
-## # ℹ 15 more rows</code></pre>
-<p>Es posible crear una table que incluya tanto frecuencias como
-porcentajes añadiendo una línea al comando anterior. Además, para poder
-representar los resultados en un gráfico, necesitamos guardar esta tabla
-en un objeto. Usemos esta tabla resumida y asignémosle el nombre
-“gráfico1”, de manera que podamos referirnos a ella cuando creemos el
-gráfico</p>
-<pre class="r"><code>gráfico1 &lt;- data %&gt;% 
-  group_by(Región) %&gt;% 
-  summarise(Total = sum(Total)) %&gt;% 
-  mutate(Porcentaje = (Total / sum(Total))*100)
-
-gráfico1</code></pre>
-<pre><code>## # A tibble: 25 × 3
-##    Región       Total Porcentaje
-##    &lt;chr&gt;        &lt;dbl&gt;      &lt;dbl&gt;
-##  1 Amazonas       116      0.593
-##  2 Apurímac       200      1.02 
-##  3 Arequipa       975      4.98 
-##  4 Ayacucho       227      1.16 
-##  5 Cajamarca      291      1.49 
-##  6 Callao         404      2.06 
-##  7 Cusco          922      4.71 
-##  8 Huancavelica   157      0.802
-##  9 Huánuco        128      0.654
-## 10 Ica            314      1.60 
-## # ℹ 15 more rows</code></pre>
-<p>Un breve ejemplo. Podemos realizar la misma situación, inclusive,
-filtrando. En este caso, nos quedamos solamente con aquellas regiones
-que tienen por sector común a la ciudadanía. Podemos filtrar de
-distintas maneras.</p>
-<pre class="r"><code>data %&gt;% filter(Sector_comun==&quot;Ciudadanía&quot;) %&gt;% 
-  group_by(Región) %&gt;% 
-  summarise(Total = sum(Total)) %&gt;% 
-  mutate(Porcentaje = (Total / sum(Total))*100)</code></pre>
-<pre><code>## # A tibble: 23 × 3
-##    Región       Total Porcentaje
-##    &lt;chr&gt;        &lt;dbl&gt;      &lt;dbl&gt;
-##  1 Amazonas        13     0.203 
-##  2 Apurímac        36     0.562 
-##  3 Arequipa       368     5.74  
-##  4 Ayacucho        68     1.06  
-##  5 Cajamarca      191     2.98  
-##  6 Callao          71     1.11  
-##  7 Cusco          453     7.07  
-##  8 Huancavelica    44     0.687 
-##  9 Huánuco          3     0.0468
-## 10 Ica             72     1.12  
-## # ℹ 13 more rows</code></pre>
-<p>Graficamos “gráfico1” con todas las regiones del Perú</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.3</code></pre>
-<pre class="r"><code>ggplot(gráfico1, aes(x=Región, y=Porcentaje, fill=Región)) + 
-  geom_bar(stat = &quot;identity&quot;) + 
-  theme_bw()</code></pre>
-<p><img src="pd2_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<p>El gráfico anterior, sin embargo, posee demasiada información, por lo
-cual es difícil de observar con claridad. Por lo cual, nos quedaremos
-solamente con las 5 regiones con mayores porcentajes de protestas
-sociales, llamándolo “gráfico2”</p>
-<pre class="r"><code>gráfico2 &lt;- data %&gt;%
-  group_by(Región) %&gt;% 
-  summarise(Total = sum(Total)) %&gt;% 
-  mutate(Porcentaje = (Total / sum(Total))*100) %&gt;%
-  arrange(desc(Porcentaje)) %&gt;%   
-  top_n(5, Porcentaje)
-
-gráfico2</code></pre>
-<pre><code>## # A tibble: 5 × 3
-##   Región   Total Porcentaje
-##   &lt;chr&gt;    &lt;dbl&gt;      &lt;dbl&gt;
-## 1 Lima     11624      59.4 
-## 2 Arequipa   975       4.98
-## 3 Cusco      922       4.71
-## 4 Puno       839       4.29
-## 5 Áncash     577       2.95</code></pre>
-<p>Graficamos con las nuevas modificaciones añadidas</p>
-<pre class="r"><code>ggplot(gráfico2, aes(x=Región, y=Porcentaje, fill=Región)) + 
-  geom_bar(stat = &quot;identity&quot;)+
-  theme_classic()</code></pre>
-<p><img src="pd2_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-<p>Podemos personalizar nuestros gráficos de la manera que deseemos.</p>
-<pre class="r"><code>library(tayloRswift)
-
-ggplot(gráfico2, aes(x=Región, y=Porcentaje, fill=Región)) + 
-  geom_bar(stat = &quot;identity&quot;)  +
-  ggtitle(&quot;Las 5 provincias del Perú con mayor porcentaje de protestas&quot;) +
-  xlab(&quot;Región&quot;) + ylab(&quot;Porcentaje&quot;)+
-  geom_text(aes(label=round(Porcentaje,1)), vjust=1.3, color=&quot;black&quot;, size=3)+
-  theme(panel.background=element_rect(fill = &quot;white&quot;, colour = &quot;white&quot;)) +
-  scale_fill_taylor(palette = &quot;taylor1989&quot;) #fearless, speakNow, Red</code></pre>
-<p><img src="pd2_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<h2>UNIR VECTORES EN UN SET DE DATOS (DATAFRAME)</h2>
+<p>Finalmente, podemos crear datasets uniendo vectores.<br />
+Los dataframes, a diferencia de las matrices, permiten crear bases con
+datos de diferentes tipos (numericos, caracteres, factores, etc.)</p>
+<pre class="r"><code>datosC&lt;- data.frame(pais, hab2022_millones, miembro_CAN)
+datosC</code></pre>
+<pre><code>##        pais hab2022_millones miembro_CAN
+## 1   Bolivia            12.22        TRUE
+## 2  Colombia            51.87        TRUE
+## 3   Ecuador            18.00        TRUE
+## 4      Peru            34.05        TRUE
+## 5 Argentina            46.23       FALSE
+## 6    Brasil           215.30       FALSE
+## 7     Chile            19.60       FALSE
+## 8  Paraguay             6.80       FALSE
+## 9   Uruguay             3.40       FALSE</code></pre>
+<p>Tambien podemos crear un dataset desde cero</p>
+<pre class="r"><code>datosD &lt;-data.frame(pais=c(&quot;Bolivia&quot;, &quot;Colombia&quot;, &quot;Ecuador&quot;, &quot;Peru&quot;, &quot;Argentina&quot;, &quot;Brasil&quot;, &quot;Chile&quot;, &quot;Paraguay&quot;, &quot;Uruguay&quot;), hab2022_millones=c(12.22, 51.87, 18, 34.05, 46.23, 215.3, 19.6, 6.8, 3.4), miembro_CAN=c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE))
+datosD</code></pre>
+<pre><code>##        pais hab2022_millones miembro_CAN
+## 1   Bolivia            12.22        TRUE
+## 2  Colombia            51.87        TRUE
+## 3   Ecuador            18.00        TRUE
+## 4      Peru            34.05        TRUE
+## 5 Argentina            46.23       FALSE
+## 6    Brasil           215.30       FALSE
+## 7     Chile            19.60       FALSE
+## 8  Paraguay             6.80       FALSE
+## 9   Uruguay             3.40       FALSE</code></pre>
+<p>Para entender las diferencias entre <code>data.frame</code> y
+<code>cbind</code>, podemos usar el comando <code>class</code> (que nos
+permite ver el “tipo” de datos)</p>
+<pre class="r"><code>class(datosA) # matriz</code></pre>
+<pre><code>## [1] &quot;matrix&quot; &quot;array&quot;</code></pre>
+<pre class="r"><code>class(datosC) # data.frame</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>class(datosC$miembro_CAN) #data.frame</code></pre>
+<pre><code>## [1] &quot;logical&quot;</code></pre>
+<pre class="r"><code>str(datosC) #cada vector mantiene su estructura original.</code></pre>
+<pre><code>## &#39;data.frame&#39;:    9 obs. of  3 variables:
+##  $ pais            : chr  &quot;Bolivia&quot; &quot;Colombia&quot; &quot;Ecuador&quot; &quot;Peru&quot; ...
+##  $ hab2022_millones: num  12.2 51.9 18 34 46.2 ...
+##  $ miembro_CAN     : logi  TRUE TRUE TRUE TRUE FALSE FALSE ...</code></pre>
 </div>
-<div id="cuánta-diversidad-de-acciones-violentas-hay-a-nivel-regional"
-class="section level2">
-<h2>4.2 ¿Cuánta diversidad de acciones violentas hay a nivel
-regional?</h2>
-<div id="indicador-proxy" class="section level3">
-<h3><strong>Indicador Proxy</strong></h3>
-<p>También llamado indicador indirecto, se usa ante la imposibilidad de
-medir lo que efectivamente es de importancia. El indicador mide una
-variable distinta a la que nos interesa de manera específica, pero
-presenta una relación lo más directa posible con el fenómeno en
-estudio.</p>
-<p>Un indicador proxy es una medición o señal indirecto que aproxima o
-representa un fenómeno en la ausencia de una medición o señal
-directo.</p>
-</div>
-<div id="indicador-aditivo" class="section level3">
-<h3><strong>Indicador Aditivo</strong></h3>
-<p>Es una variable latente que se genera a través de la suma de un
-conjunto de variables manifiestas u observables. Luego de la suma se
-procede a aplicar una formula que genera que el valor máximo de la
-variable sea 1 y el mínimo sea 0. A partir de eso se puede multiplicar
-por cualquier número para que el máximo cambie. Es así que si se
-multiplica por 10, el indicador irá de 0 a 10; si se desea que el
-indicador sea de 0 a 50, se debe multiplicar por 50; etc.</p>
-<p><img src="pd2_ejemplo.png" width="60%" style="display: block; margin: auto;" /></p>
-<p>Sin embargo, el paquete scales nos facilita el uso del comando
-<strong>rescale.</strong> Al usarlo solo necesitamos señalar los límites
-del indicador.</p>
-<div id="pasos-para-construir-un-indicador-aditivo"
-class="section level4">
-<h4>Pasos para construir un indicador aditivo:</h4>
-<ol style="list-style-type: decimal">
-<li>Verificar que las variables que construyan el indicador correspondan
-al concepto que se desea medir. <em>Ejemplo: Si deseo mejor Satisfacción
-del Usuario, las preguntas deben ser sobre ello.</em></li>
-<li>Revisar el cuestionario e identificar el sentido de las categorías.
-<em>Ejemplo: El valor 5 es “Muy instafisfecho” y 1 “Muy
-satisfecho”.</em></li>
-<li>Si las categorías de las variables están en el correcto sentido
-proceder a sumarlas, si no lo están, proceder a recodificarlas para
-luego sumar.</li>
-<li>Aplicar la función <strong>rescale</strong> (paquete scales)
-indicando los límites del indicador, recuerda que sin la suma no podrás
-generar el indicador.</li>
-</ol>
+<div id="ejercicio" class="section level2">
+<h2>EJERCICIO</h2>
+<p><strong>Ejercicio 1:</strong> Crea una base de datos de 3 filas y 5
+columnas, que contenga un variable numerica, otra logica y otra de
+texto.</p>
 </div>
 </div>
+<div id="importar-y-exportar-bases-de-datos" class="section level1">
+<h1>2. IMPORTAR Y EXPORTAR BASES DE DATOS</h1>
+<div id="establecer-directorio-de-trabajo" class="section level2">
+<h2>ESTABLECER DIRECTORIO DE TRABAJO</h2>
+<p>Cuando trabajamos en R es importante definir cual es nuestro espacio
+de trabajo (la carpeta en la que trabajaremos y se almacenaran nuestras
+BD, imagenes, etc.) <code>getwd()</code> muestra el directorio de
+trabajo actual, mientras que <code>setwd()</code>establece el directorio
+de trabajo.</p>
+<pre class="r"><code>getwd() # muestra el directorio de trabajo actual</code></pre>
+<pre><code>## [1] &quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;</code></pre>
+<pre class="r"><code>setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;) #indica el directorio de trabajo donde quiero trabajar.</code></pre>
 </div>
-<div id="indicador-aditivo-de-diversidad-de-acciones-violentas."
-class="section level2">
-<h2>4.2.1 Indicador aditivo de diversidad de acciones violentas.</h2>
-<p>Construiremos un indicador aditivo de diversidad de acciones
-violentas en el Perú que vaya del 0 al 10. Para ello usaremos a las
-variables: Agre, Aped, Destruc, Dolor auto, Invasión, Lanzam, Motin,
-Quemas, Saqueo, Secues, Toma. En estas variables el valor 0 quiere decir
-que no hubo protestas que usen esa acción para protestar en la región y
-año indicados; en caso el valor sea 1, quiere decir que sí hubo
-protestas (por lo menos una) que use esa acción.</p>
-<ol style="list-style-type: decimal">
-<li>Luego de verificar los pasos anteriores, creamos la suma</li>
-</ol>
-<pre class="r"><code>data = data %&gt;% 
-  mutate(suma = Agre+ Aped+ Destruc+ Dolor_auto+ Invasión+ Lanzam+ Motin+ Quemas+ Saqueo+ Secues+ Toma)</code></pre>
-<ol start="2" style="list-style-type: decimal">
-<li>Ahora, con la suma generada usamos la función
-<strong>rescale</strong> para crear un indicador que vaya del 0 al 10.
-De tal manera que una región que tenga valor 0 es una región en la que
-nunca se usó alguna acción de fuerza; y una que obtuvo 10 es una región
-en la que se usaron todas las acciones posibles.</li>
-</ol>
-<pre class="r"><code>library(scales) #Para poder usar el paquete rescale
-data = data %&gt;%  
-  mutate(indicador= rescale(suma, to=c(0,10)))</code></pre>
-<p>Ya que tenemos el indicador podemos analizarlo. Recuerda que si bien
-en esencia las variables que generaron el indicador son nominales (1.
-Si/0. No), el indicador es en sí una variable numérica. Al ser una
-numérica podemos analizar todas las medidas de tendencia central, las
-medidas de posición y las de dispersión.</p>
-<pre class="r"><code>data %&gt;% 
-  summarise(
-    Media = mean(indicador), 
-    Mediana = median(indicador), 
-    Desviacion = sd(indicador), 
-    Minimo = min(indicador), 
-    Maximo = max(indicador),
-    Q1 = quantile(indicador, 0.25), #Primer cuartil
-    Q3 = quantile(indicador, 0.75) #Tercer cuartil
-  )</code></pre>
-<pre><code>##     Media Mediana Desviacion Minimo Maximo Q1 Q3
-## 1 0.96875       0   1.743997      0     10  0  2</code></pre>
-<p>¿Cómo podemos interpretar la tabla? Recuerda que cada observación es
-una región en un año determinado.</p>
-<p>Para facilitar la visualización podemos graficar la variable. Haremos
-un boxplot para ello. También podemos optar por un histograma.</p>
-<pre class="r"><code>ggplot(data, aes(x=indicador))+
-  geom_boxplot()+
-  theme_bw()</code></pre>
-<p><img src="pd2_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(data, aes(y=indicador))+
-  geom_boxplot()+
-  ggtitle(&quot;Indicador de diversidad de acciones violentas&quot;) +
-  theme_bw()</code></pre>
-<p><img src="pd2_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
-<p>El gráfico muestra que en el 50% de regiones por año no se usó
-acciones violentas. Además un 25% de regiones tuvo una diversidad de más
-de 2 puntos en el indicador de 0 a 10. Hubo regiones que en algún año
-llegaron a usar el máximo de acciones violentas pero son casos
-atípicos.</p>
-<p>Podemos analizar la agrupación de todos los periodos y lo vemos según
-región. Para ello debemos agrupar el resumen anterior.</p>
-<pre class="r"><code>data %&gt;% 
-  group_by(Región) %&gt;% 
-  summarise(
-    Media = mean(indicador), 
-    Mediana = median(indicador), 
-    Desviacion = sd(indicador), 
-    Minimo = min(indicador), 
-    Maximo = max(indicador),
-    Q1 = quantile(indicador, 0.25), #Primer cuartil
-    Q3 = quantile(indicador, 0.75) #Tercer cuartil
-  )</code></pre>
-<pre><code>## # A tibble: 25 × 8
-##    Región       Media Mediana Desviacion Minimo Maximo    Q1    Q3
-##    &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Amazonas     0.727       0      1.85       0      6     0   0  
-##  2 Apurímac     0.444       0      1.33       0      4     0   0  
-##  3 Arequipa     0.897       0      1.47       0      6     0   2  
-##  4 Ayacucho     0.105       0      0.459      0      2     0   0  
-##  5 Cajamarca    0.571       0      0.938      0      2     0   1.5
-##  6 Callao       1.05        0      1.81       0      6     0   2  
-##  7 Cusco        1.08        0      1.52       0      4     0   2  
-##  8 Huancavelica 0.5         0      1.10       0      4     0   0  
-##  9 Huánuco      0           0      0          0      0     0   0  
-## 10 Ica          0.286       0      0.717      0      2     0   0  
-## # ℹ 15 more rows</code></pre>
-<p>Podemos observar los resultados en un boxplot</p>
-<pre class="r"><code>ggplot(data, aes(x=Región, y=indicador, color = Región)) +
-  geom_boxplot() +
-  coord_flip() +
-  ggtitle(&quot;Indicador de diversidad de acciones violentas según región&quot;) +
-  theme_bw()</code></pre>
-<p><img src="pd2_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<div id="instalar-paquetes" class="section level2">
+<h2>INSTALAR PAQUETES</h2>
+<p>Para importar/exportar algunos formatos es necesario instalar y abrir
+algunos paquetes.<br />
+En caso no se encuentren disponibles podras instalarlos con
+<code>install.packages("")</code>. Podemos guardarlo en formatos
+diferentes al original<br />
+Los paquetes que te permitiran abrir archivos en diferentes formatos
+son: <code>openxlsx</code> (<em>para archivos en xlsx</em>),
+<code>readxl</code> (<em>para archivos en xlsx</em>), <code>haven</code>
+(<em>para archivos de stata y spss</em>), <code>rio</code> (<em>para
+archivos en diferentes formatos</em>) entre otros.<br />
+</p>
+<p>Instalamos las librerias que usaremos en este laboratorio
+<code>rio</code>, <code>dplyr</code>, <code>lubridate</code>,
+<code>psych</code></p>
+</div>
+<div id="importar-bases-de-datos" class="section level2">
+<h2>IMPORTAR BASES DE DATOS</h2>
+<p>Trabajaremos con la base de datos del <a
+href="http://www.siseve.pe/web/">Siseve</a>.<br />
+R puede trabajar con diversos tipos de archivos (csv, excel, spss,
+stata, google, dropbox, entre otros)</p>
+<p><strong>Importar archivos excel</strong>. En este caso, importaremos
+nuestra base de datos que esta en excel.</p>
+<pre class="r"><code>siseve &lt;- import(&quot;Siseve2024.xlsx&quot;) # debo colocar el nombre de la base de datos tal como se encuentra guardado. </code></pre>
+</div>
+<div id="exportar-o-guardar-bases-de-datos" class="section level2">
+<h2>EXPORTAR O GUARDAR BASES DE DATOS</h2>
+<p>Los comandos para guardar archivos en diferentes formatos son:
+<code>write.csv(nombredebaseenR, "nombredebase.csv")</code>,
+<code>write_save(nombredebaseenR, "nombredebase.sav")</code>,
+<code>write_dta(nombredebaseenR, "nombredebase.dta")</code><br />
+En este caso exportaremos el documento a un formato en excel
+(.xlsx).</p>
+<pre class="r"><code>write.xlsx(siseve, file=&quot;siseve.xlsx&quot;) </code></pre>
+</div>
+<div id="ejercicio-1" class="section level2">
+<h2>EJERCICIO</h2>
+<p><strong>Ejercicio 2:</strong> Descarga una base de datos de la <a
+href="https://www.datosabiertos.gob.pe/">Plataforma Nacional de Datos
+Abiertos - Peru</a>. Importa la base de datos a R y exportala en un
+formato diferente al original.</p>
 </div>
 </div>
-<div id="ejercicio" class="section level1">
-<h1>Ejercicio</h1>
-<ol style="list-style-type: decimal">
-<li>Analiza la variable N° de protestas políticas (R_pol_ord), genera el
-gráfico respectivo e interpreta.</li>
-<li>Analiza la variable Total de protestas con reclamo laboral
-(R_lab)</li>
-</ol>
-<p><strong>Para explorar otros comandos:</strong></p>
-<p>Genera la variable “Laboral” que se base en sector_común de tal
-manera que si es un reclamo laboral indica “Es laboral”, si no lo es que
-indique “No laboral”. Luego de crearla, analiza y genera el gráfico
-apropiado. Finalmente, interpreta.</p>
+<div id="exploraciones-preliminares" class="section level1">
+<h1>3. EXPLORACIONES PRELIMINARES</h1>
+<p>Realizamos algunas exploraciones</p>
+<pre class="r"><code>names(siseve) # brinda el nombre de las variables </code></pre>
+<pre><code>## [1] &quot;FECHA_REPORTE&quot;       &quot;DRE&quot;                 &quot;UGEL&quot;               
+## [4] &quot;NIVEL_EDUCATIVO&quot;     &quot;TIPO_REPORTE&quot;        &quot;TIPO_VIOLENCIA&quot;     
+## [7] &quot;SUBTIPO_VIOLENCIA&quot;   &quot;TIPO_ESTADO_REPORTE&quot;</code></pre>
+<pre class="r"><code>head(siseve) # brinda una idea de la estructura de la base (10 primeros casos)</code></pre>
+<pre><code>##   FECHA_REPORTE                    DRE                            UGEL
+## 1    2024-07-31              DRE Cusco                   UGEL Urubamba
+## 2    2024-07-31              DRE Cusco                   UGEL Urubamba
+## 3    2024-07-31              DRE Tacna                      UGEL Tacna
+## 4    2024-07-31 DRE Lima Metropolitana                 UGEL 03 Cercado
+## 5    2024-07-31             DRE Loreto UGEL Alto Amazonas - Yurimaguas
+## 6    2024-07-31 DRE Lima Metropolitana               UGEL 07 San Borja
+##   NIVEL_EDUCATIVO            TIPO_REPORTE TIPO_VIOLENCIA SUBTIPO_VIOLENCIA
+## 1        Primaria Personal IE a Escolares    Psicológica            Verbal
+## 2        Primaria Personal IE a Escolares    Psicológica            Verbal
+## 3        Primaria Personal IE a Escolares    Psicológica  Trato humillante
+## 4        Primaria Personal IE a Escolares    Psicológica            Verbal
+## 5      Secundaria Personal IE a Escolares    Psicológica            Verbal
+## 6      Secundaria         Entre Escolares         Física      Sin lesiones
+##               TIPO_ESTADO_REPORTE
+## 1 Pendiente de atención por la IE
+## 2 Pendiente de atención por la IE
+## 3 Pendiente de atención por la IE
+## 4             Atención en proceso
+## 5             Atención en proceso
+## 6             Atención en proceso</code></pre>
+<pre class="r"><code>str(siseve) # brinda una idea de la estructura de la base (tipos de variables, etc.)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    81714 obs. of  8 variables:
+##  $ FECHA_REPORTE      : POSIXct, format: &quot;2024-07-31&quot; &quot;2024-07-31&quot; ...
+##  $ DRE                : chr  &quot;DRE Cusco&quot; &quot;DRE Cusco&quot; &quot;DRE Tacna&quot; &quot;DRE Lima Metropolitana&quot; ...
+##  $ UGEL               : chr  &quot;UGEL Urubamba&quot; &quot;UGEL Urubamba&quot; &quot;UGEL Tacna&quot; &quot;UGEL 03 Cercado&quot; ...
+##  $ NIVEL_EDUCATIVO    : chr  &quot;Primaria&quot; &quot;Primaria&quot; &quot;Primaria&quot; &quot;Primaria&quot; ...
+##  $ TIPO_REPORTE       : chr  &quot;Personal IE a Escolares&quot; &quot;Personal IE a Escolares&quot; &quot;Personal IE a Escolares&quot; &quot;Personal IE a Escolares&quot; ...
+##  $ TIPO_VIOLENCIA     : chr  &quot;Psicológica&quot; &quot;Psicológica&quot; &quot;Psicológica&quot; &quot;Psicológica&quot; ...
+##  $ SUBTIPO_VIOLENCIA  : chr  &quot;Verbal&quot; &quot;Verbal&quot; &quot;Trato humillante&quot; &quot;Verbal&quot; ...
+##  $ TIPO_ESTADO_REPORTE: chr  &quot;Pendiente de atención por la IE&quot; &quot;Pendiente de atención por la IE&quot; &quot;Pendiente de atención por la IE&quot; &quot;Atención en proceso&quot; ...</code></pre>
+<pre class="r"><code>summary(siseve) #brinda un resumen de las variables de la base </code></pre>
+<pre><code>##  FECHA_REPORTE                        DRE                UGEL          
+##  Min.   :2013-09-16 00:00:00.00   Length:81714       Length:81714      
+##  1st Qu.:2018-08-24 00:00:00.00   Class :character   Class :character  
+##  Median :2022-03-31 00:00:00.00   Mode  :character   Mode  :character  
+##  Mean   :2020-11-05 21:35:29.75                                        
+##  3rd Qu.:2023-08-01 00:00:00.00                                        
+##  Max.   :2024-07-31 00:00:00.00                                        
+##  NIVEL_EDUCATIVO    TIPO_REPORTE       TIPO_VIOLENCIA     SUBTIPO_VIOLENCIA 
+##  Length:81714       Length:81714       Length:81714       Length:81714      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##  TIPO_ESTADO_REPORTE
+##  Length:81714       
+##  Class :character   
+##  Mode  :character   
+##                     
+##                     
+## </code></pre>
+<pre class="r"><code>describe(siseve) #brinda informacion general</code></pre>
+<pre><code>## Warning in FUN(newX[, i], ...): ningún argumento finito para min; retornando
+## Inf</code></pre>
+<pre><code>## Warning in FUN(newX[, i], ...): ningun argumento finito para max; retornando
+## -Inf</code></pre>
+<pre><code>##                      vars     n  mean    sd median trimmed   mad min  max range
+## FECHA_REPORTE           1 81714   NaN    NA     NA     NaN    NA Inf -Inf  -Inf
+## DRE*                    2 81714 13.43  5.94     15   13.50  4.45   1   26    25
+## UGEL*                   3 81714 72.74 72.50     40   64.68 51.89   1  223   222
+## NIVEL_EDUCATIVO*        4 81714 10.40  0.97     11   10.59  0.00   1   11    10
+## TIPO_REPORTE*           5 81714  1.43  0.49      1    1.41  0.00   1    2     1
+## TIPO_VIOLENCIA*         6 81714  1.72  0.74      2    1.65  1.48   1    3     2
+## SUBTIPO_VIOLENCIA*      7 81714 10.09  3.68     11   10.42  4.45   1   16    15
+## TIPO_ESTADO_REPORTE*    8 81714  1.99  0.49      2    2.00  0.00   1    5     4
+##                       skew kurtosis   se
+## FECHA_REPORTE           NA       NA   NA
+## DRE*                 -0.18    -0.35 0.02
+## UGEL*                 0.67    -1.03 0.25
+## NIVEL_EDUCATIVO*     -3.11    17.50 0.00
+## TIPO_REPORTE*         0.30    -1.91 0.00
+## TIPO_VIOLENCIA*       0.50    -1.05 0.00
+## SUBTIPO_VIOLENCIA*   -0.74    -0.38 0.01
+## TIPO_ESTADO_REPORTE*  2.84    18.18 0.00</code></pre>
+<p>Algunas bases de datos pueden incluir miles de variables o casos que
+no necesariamente son de nuestro interes. Por tanto, realizaremos
+algunas ediciones.  <em>Ojo: Es importante registrar siempre las
+ediciones y decisiones que realizamos para garantizar la
+replicabilidad</em></p>
+<div id="cambiar-nombres-de-la-base-de-datos" class="section level2">
+<h2>CAMBIAR NOMBRES DE LA BASE DE DATOS</h2>
+<p>Para duplicar la base de datos con otro nombre</p>
+<pre class="r"><code>siseve24 &lt;- siseve
+rm(siseve) #eliminamos siseve para no confundirnos</code></pre>
 </div>
-<div class="footnotes footnotes-end-of-document">
-<hr />
-<ol>
-<li id="fn1"><p><a href="https://www.data-to-viz.com/caveat/pie.html"
-class="uri">https://www.data-to-viz.com/caveat/pie.html</a><a
-href="#fnref1" class="footnote-back">↩︎</a></p></li>
-</ol>
+<div id="cambiar-nombres-a-variables" class="section level2">
+<h2>CAMBIAR NOMBRES A VARIABLES</h2>
+<p>Esta base de datos cuenta con variables que son autoexplicativas,
+pero no siempre es asi. Al nombrar variables, se sugiere trabajar
+siempre con minusculas y sin muchos “-”.</p>
+<pre class="r"><code>names(siseve24) &lt;- c(&quot;fecha&quot;, &quot;dre&quot;, &quot;ugel&quot;, &quot;nivel_educativo&quot;, &quot;tipo_reporte&quot;, &quot;tipo_violencia&quot;, &quot;subtipo_violencia&quot;, &quot;estado_reporte&quot;)
+names(siseve24) </code></pre>
+<pre><code>## [1] &quot;fecha&quot;             &quot;dre&quot;               &quot;ugel&quot;             
+## [4] &quot;nivel_educativo&quot;   &quot;tipo_reporte&quot;      &quot;tipo_violencia&quot;   
+## [7] &quot;subtipo_violencia&quot; &quot;estado_reporte&quot;</code></pre>
+<p>Tambien puedo cambiar solo el nombre de una variable. Por ejemplo,
+quiero cambiar el nombre de “dre” a “region”.</p>
+<pre class="r"><code>siseve24 &lt;- rename(siseve24, region = dre)
+names(siseve24) </code></pre>
+<pre><code>## [1] &quot;fecha&quot;             &quot;region&quot;            &quot;ugel&quot;             
+## [4] &quot;nivel_educativo&quot;   &quot;tipo_reporte&quot;      &quot;tipo_violencia&quot;   
+## [7] &quot;subtipo_violencia&quot; &quot;estado_reporte&quot;</code></pre>
+</div>
+<div id="seleccionar-casos" class="section level2">
+<h2>SELECCIONAR CASOS</h2>
+<p>Esta base de datos incluye casos desde el 2013 hasta el 2024, pero
+solo me interesan aquellos casos del 2023. Para esto, filtramos los
+casos que corresponden al 2023.  <em>Ojo: No siempre el numero de casos
+coincide con el numero de filas</em></p>
+<pre class="r"><code>siseve23 &lt;- siseve24 %&gt;% 
+  filter(year(fecha) == 2023) #estoy creando una nueva base</code></pre>
+<pre class="r"><code>nrow(siseve24) #en este caso cada fila corresponde a un caso </code></pre>
+<pre><code>## [1] 81714</code></pre>
+<pre class="r"><code>nrow(siseve23) #en este caso cada fila corresponde a un caso </code></pre>
+<pre><code>## [1] 19788</code></pre>
+</div>
+<div id="seleccionar-variables" class="section level2">
+<h2>SELECCIONAR VARIABLES</h2>
+<p>Ahora que todos los casos pertenecen son del 2023, la variable
+<code>fecha</code> deja de ser relevante para mi analisis. Para eliminar
+la variable:</p>
+<pre class="r"><code>siseve23.1 &lt;- siseve23 %&gt;%
+  select(-fecha)
+names(siseve23.1) </code></pre>
+<pre><code>## [1] &quot;region&quot;            &quot;ugel&quot;              &quot;nivel_educativo&quot;  
+## [4] &quot;tipo_reporte&quot;      &quot;tipo_violencia&quot;    &quot;subtipo_violencia&quot;
+## [7] &quot;estado_reporte&quot;</code></pre>
+<p>Solo me interesa trabajar con las variables <code>region</code>,
+<code>nivel_educativo</code>, <code>tipo_violencia</code></p>
+<pre class="r"><code>siseve23.2 &lt;- siseve23.1 %&gt;%
+  select(region, nivel_educativo, tipo_violencia)
+names(siseve23.2)  </code></pre>
+<pre><code>## [1] &quot;region&quot;          &quot;nivel_educativo&quot; &quot;tipo_violencia&quot;</code></pre>
+<p><em>Este procedimiento hace mas sentido en bases de mas
+variables</em></p>
+</div>
+<div id="ejercicio-2" class="section level2">
+<h2>EJERCICIO</h2>
+<p><strong>Ejercicio 3:</strong> Crea una base de datos que solo incluya
+informacion del nivel secundaria del año 2023.<br />
+</p>
+</div>
 </div>
 
 
