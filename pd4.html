@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 4</title>
 
-<script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -364,258 +364,247 @@ div.tocify {
 
 <p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
 <p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
-<p>Semestre 2024 - 2</p>
-<div id="recordando-lo-avanzado" class="section level2">
-<h2><strong>Recordando lo avanzado</strong></h2>
-<p>En la sesión anterior de teoría, nos adentramos al análisis
-inferencial bivariado, teniendo como base del tema el cálculo del
-Intervalo de Confianza (IC) para una media (variables numéricas) y para
-una proporción (variables categóricas). Recordemos que gracias al IC
-podemos determinar si la estimación es representativa de la población.
-La idea era calcular los intervalos de confianza para cada grupo y ver
-si los intervalos se interceptan o no. La regla era que si los
-intervalos de ambos grupos no se interceptaban, podíamos extrapolar que
-la diferencia muestral existe en la población al 95% de confianza. Para
-profundizar sobre estadística inferencial, evaluaremos las hipótesis
-mediante la introducción a la prueba t de diferencia de medias y
-desarrollaremos los cincos pasos de la inferencia estadística.
-Recordemos que el objetivo es corroborar que es posible extrapolar un
-resultado de la muestra a la población.</p>
+<p>Semestre 2025 - 2</p>
+<p>Antes de iniciar, abrimos las librerias que usaremos en el
+laboratorio <code>ggplot</code>, <code>ggplot2</code>, <code>rio</code>,
+<code>haven</code>, <code>dplyr</code></p>
+<p>Trabajaremos con la base de datos <code>latinarfinal.sav</code>. Esta
+base de datos es la misma que se usó en la P2, con la diferencia de que
+se han eliminado aquellos datos vacíos en la variable creada
+<code>inmigracion</code>.<br />
+La fuente original está en <a
+href="https://www.latinobarometro.org/latContents.jsp">Latinobarometro2020</a></p>
+<p>Establecemos el directorio de trabajo y abrimos la base de datos.</p>
+<pre class="r"><code>getwd() </code></pre>
+<pre><code>## [1] &quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;</code></pre>
+<pre class="r"><code>setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;)
+latinbarfinal &lt;- read_spss(&quot;latinbarfinal.sav&quot;)</code></pre>
+<p>Los nombres son los mismmos que fueron creados en la PC2.</p>
+<pre class="r"><code>names(latinbarfinal) </code></pre>
+<pre><code>##  [1] &quot;sexo&quot;            &quot;edad&quot;            &quot;outAL&quot;           &quot;deAL&quot;           
+##  [5] &quot;haiti&quot;           &quot;venezuela&quot;       &quot;edad_quinquenal&quot; &quot;edad65&quot;         
+##  [9] &quot;sioutAL&quot;         &quot;sideAL&quot;          &quot;sihaiti&quot;         &quot;sivenezuela&quot;    
+## [13] &quot;siinmigracion&quot;   &quot;inmigracion&quot;</code></pre>
+<div id="pie" class="section level1">
+<h1>PIE</h1>
+<pre class="r"><code>pie(table(latinbarfinal$sioutAL), main = &quot;Opinion inmigracion de Haiti&quot;)</code></pre>
+<p><img src="pd4_files/figure-html/d-1.png" width="672" /></p>
+<p>Recordemos que segun lo que hemos visto (0 = En contra de
+inmigración, 1 = A favor de inmigración)<br />
+Además, quiero hacer un gráfico para cada una de las variables
+<code>sioutLA</code>, <code>sideAL</code>, <code>sihaiti</code>,
+<code>sivenezuela</code>.  Podría repetir la siguiente linea 4 veces:
+<code>pie(table(latinbarfinal$sioutAL), labels = c("En contra", "A favor"), main = "Opinion inmigracion de fuera de AL")</code>
+o puedo hacer un <strong>bucle¨</strong> usando el comando
+<code>for</code>.</p>
+<pre class="r"><code>par(mfrow = c(2, 2)) #hace que cada uno de los gráficos que voy a hacer aparezcan al mismo tiempo. Si quito este código, irá apareciendo uno por uno. 
+
+vars &lt;- c(&quot;sioutAL&quot;, &quot;sideAL&quot;, &quot;sihaiti&quot;, &quot;sivenezuela&quot;)
+titulos &lt;- c(
+  &quot;Opinión inmigración de fuera de AL&quot;,
+  &quot;Opinión inmigración de AL&quot;,
+  &quot;Opinión inmigración de Haití&quot;,
+  &quot;Opinión inmigración de Venezuela&quot;
+)
+
+for (i in seq_along(vars)) { #Inicia un bucle for que va a recorrer las posiciones 1, 2, 3, 4… hasta la longitud de vars. Usa i para ir combiando de variable y título en cada interacción.
+  pie(
+    table(latinbarfinal[[vars[i]]]), #contabiliza la frecuencia de cada categoría.
+    labels = c(&quot;En contra&quot;, &quot;A favor&quot;), #asigna etiquetas fijas a las porciones.
+    main = titulos[i]
+  )
+}</code></pre>
+<p><img src="pd4_files/figure-html/e-1.png" width="672" /></p>
+<p>Si quisiera agregar más variables sobre percepción de la inmigración
+hacia otras nacionalidades, solo agregaría las variables y los
+subtítulos</p>
+<p>Agregar porcentajes al gráfico pie.</p>
+<pre class="r"><code>par(mfrow = c(2, 2))
+
+for (i in seq_along(vars)) {
+  datos &lt;- table(latinbarfinal[[vars[i]]]) # Tabla de frecuencias
+  porcentajes &lt;- round(100 * datos / sum(datos), 1) # Calcular porcentajes
+  etiquetas &lt;- paste(c(&quot;En contra&quot;, &quot;A favor&quot;), porcentajes, &quot;%&quot;)  # Etiquetas con texto + porcentajes
+  pie(datos, labels = etiquetas, main = titulos[i]) # pie
+}</code></pre>
+<p><img src="pd4_files/figure-html/f-1.png" width="672" /></p>
+<p>Observamos en ambos casos, que la creación de un gráfico pie, implica
+la tabulación de los datos e identificación de las frecuencias de cada
+categoría.</p>
 </div>
-<div id="prueba-t" class="section level1">
-<h1><strong>Prueba T</strong></h1>
-<div id="qué-es-la-prueba-t-de-diferencia-de-medias"
-class="section level2">
-<h2><strong>¿Qué es la prueba T de diferencia de medias?</strong></h2>
-<p>Generalmente, cuando queremos comparar dos grupos centramos nuestra
-atención en el promedio de cada uno. Sin embargo, el hecho de que los
-promedios sean distintos no supone, necesariamente, que existe una
-diferencia estadísticamente significativa.</p>
-<p>Para saber si la diferencia observada entre las medias de dos grupos
-es o no significativa se emplean métodos paramétricos como el de
-Z-scores o la distribución T-student. Estas técnicas calculan los
-intervalos de confianza de cada grupo y concluyen si existe una
-diferencia real entre las medias.</p>
-<p>La prueba T compara la media de una variable numérica para dos grupos
-o categorías de una variable nominal u ordinal. Los grupos que forman la
-variable nominal/ordinal tienen que ser independientes. Es decir, cada
-observación debe pertenecer a un grupo o al otro, pero no a ambos.</p>
+<div id="boxplot" class="section level1">
+<h1>BOXPLOT</h1>
+<p>Distribución de las edades</p>
+<pre class="r"><code>boxplot(latinbarfinal$edad, main = &quot;Boxplot de edades&quot;, ylab = &quot;Edad&quot;, col = &quot;lightblue&quot;)</code></pre>
+<p><img src="pd4_files/figure-html/g-1.png" width="672" /></p>
+<p>Comparación de opiniones según grupos de edad.</p>
+<pre class="r"><code>boxplot(latinbarfinal$edad ~ latinbarfinal$inmigracion, data = latinbarfinal, main = &quot;Boxplot de edad, segun opiniones&quot;, xlab = &quot;Opinión sobre inmigración&quot;, ylab = &quot;Edad&quot;, col = c(&quot;lightblue&quot;, &quot;lightgreen&quot;), names = c(&quot;siempre en contra&quot;,&quot;al menos una vez a favor&quot;)) </code></pre>
+<p><img src="pd4_files/figure-html/h-1.png" width="672" /> Recordemos
+que 1 es siempre en contra de la inmigración y 2 a favor por lo menos en
+algún tipo de inmigración. En este caso, la media de edad es más alta en
+aquellos que están siempre en contra de la inmigración.</p>
 </div>
-<div id="pruebas-t-para-muestras-independientes" class="section level2">
-<h2><strong>Pruebas T para muestras independientes</strong></h2>
-<p><em>Condiciones</em></p>
-<ol style="list-style-type: decimal">
-<li><p>Independencia: Las muestras deben ser independientes. El muestreo
-debe ser aleatorio.</p></li>
-<li><p>Igualdad de varianza: La varianza de ambas poblaciones comparadas
-debe ser igual.</p></li>
-<li><p>La variable numérica se distribuye de manera normal.</p></li>
-</ol>
-<p><strong><em>IMPORTANTE</em></strong></p>
-<p>La condición de normalidad también es considerada si es que la
-muestra fuera pequeña (Agresti y Finlay proponen que se aplica con un n
-pequeño menor a 30 observaciones). A medida que el n se hace más grande,
-el supuesto de normalidad es menos importante pues con grandes n
-confiamos en el teorema del límite central que nos indica que la
-distribución muestral será siempre normal.</p>
+<div id="gráficos-de-barras" class="section level1">
+<h1>GRÁFICOS DE BARRAS</h1>
+<pre class="r"><code>frecuencias &lt;- table(latinbarfinal$edad)
+barplot(frecuencias, col = &quot;turquoise4&quot;, main = &quot;Gráfico de barras por edad&quot;, xlab = &quot;Edad&quot;, ylab = &quot;Frecuencia&quot;)</code></pre>
+<p><img src="pd4_files/figure-html/i-1.png" width="672" /></p>
+<pre class="r"><code>frecuencias5 &lt;- table(latinbarfinal$edad_quinquenal)
+barplot(frecuencias5, col = &quot;turquoise4&quot;, main = &quot;Gráfico de barras por edad (quinquenal)&quot;, xlab = &quot;Edad&quot;, ylab = &quot;Frecuencia&quot;)</code></pre>
+<p><img src="pd4_files/figure-html/i-2.png" width="672" /></p>
+<pre class="r"><code>frecuencias65 &lt;- table(latinbarfinal$edad65)
+barplot(frecuencias65, col = &quot;turquoise4&quot;, main = &quot;Gráfico de barras por edad (65)&quot;, xlab = &quot;Edad&quot;, ylab = &quot;Frecuencia&quot;)</code></pre>
+<p><img src="pd4_files/figure-html/i-3.png" width="672" /></p>
+<div id="gráficos-de-barras-dos-variables" class="section level2">
+<h2>Gráficos de barras dos variables</h2>
+<pre class="r"><code>tablaedsex &lt;- table(latinbarfinal$sexo, latinbarfinal$edad65)
+barplot(tablaedsex, beside = TRUE, 
+       legend.text = rownames(tablaedsex),
+       col = c(&quot;lightblue&quot;, &quot;lightpink&quot;),
+       main = &quot;Gráfico de Barras, según edad y sexo&quot;,
+       xlab = &quot;Grupo de Edad&quot;, ylab = &quot;Frecuencia&quot;)</code></pre>
+<p><img src="pd4_files/figure-html/j-1.png" width="672" /></p>
 </div>
-<div id="pasos-para-realizar-la-prueba-t" class="section level2">
-<h2><strong>Pasos para realizar la Prueba T</strong></h2>
-<ol style="list-style-type: decimal">
-<li><p>Establecer hipótesis</p></li>
-<li><p>Calcular el estadístico (parámetro estimado) que se va a
-emplear</p></li>
-<li><p>Determinar el nivel de significancia α (alpha)</p></li>
-<li><p>Calcular el p-value y realizar la prueba prop.test</p></li>
-<li><p>Interpretar</p></li>
-</ol>
-<p><strong>Recuerda</strong></p>
-<p>El H0 de la prueba T es la siguiente:</p>
-<p><strong>H0:</strong> No existe diferencia estadísticamente
-significativa entre las medias de los dos grupos comparados.</p>
-<p><strong>H1:</strong> Sí existe diferencia estadísticamente
-significativa entre las medias de los dos grupos comparados.</p>
-<p><em>La H0 es generalmente la hipótesis de no efecto, de no
-diferencias.</em></p>
+<div id="gráficos-de-barras-apilado" class="section level2">
+<h2>Gráficos de barras apilado</h2>
+<pre class="r"><code>latinbarfinal &lt;- latinbarfinal %&gt;%
+  mutate(inmigracion = factor(inmigracion,
+                              levels = c(1, 2),
+                              labels = c(&quot;Siempre en contra&quot;, &quot;Alguna vez a favor&quot;)))
+
+ggplot(latinbarfinal, aes(x = edad_quinquenal, fill = inmigracion)) +
+  geom_bar(position = &quot;stack&quot;) +
+  labs(title = &quot;Gráfico de barras apilado por edad y opinión&quot;,
+       x = &quot;Grupo de Edad&quot;,
+       y = &quot;Frecuencia&quot;) +
+  scale_fill_manual(values = c(&quot;Alguna vez a favor&quot; = &quot;lightblue&quot;, &quot;Siempre en contra&quot; = &quot;lightpink&quot;)) +
+  theme_minimal()</code></pre>
+<p><img src="pd4_files/figure-html/l-1.png" width="672" /></p>
+</div>
+<div id="ejercicio" class="section level2">
+<h2>Ejercicio</h2>
+<p><strong>Ejercicio1</strong>: Con un boxplot, explora como se
+distribuyen las edades según sexo. ¿Observas alguna diferencia? 
+<strong>Ejercicio2</strong>: Elabora un gráfico de barras apilado, donde
+se vea como se distribuye la opinión general sobre la inmigración entre
+adultos mayores de 65 y menores de 65.</p>
 </div>
 </div>
-<div id="apliquemos" class="section level1">
-<h1><strong>Apliquemos</strong></h1>
-<div id="cómo-se-percibe-la-desigualdad-en-el-perú"
-class="section level3">
-<h3><strong>¿Cómo se percibe la desigualdad en el Perú? 🤔</strong></h3>
-<p>Para dar respuesta a la pregunta de investigación que guiara la
-práctica dirigida analizaremos algunas de las variables que forman parte
-de la Encuesta Nacional de Percepción de Desigualdades - ENADES 2024,
-que fue elaborada por Instituto de Estudios Peruanos (IEP) y Oxfam. La
-encuesta busca ahondar en la percepción de las diferentes formas de
-desigualdad en el Perú e incorpora indicadores que permiten medir la
-magnitud de brechas sociales y políticas como género, clase, entre
-otros.</p>
-<p>Se eligieron algunas variables de la base de datos original y se
-dejaron por fuera valores perdidos además de realizar otras
-modificaciones. Para realizar alguna investigación se debe usar la base
-de datos original que se encuentra en el siguiente <a
-href="https://peru.oxfam.org/ENADES-2024">link</a>.</p>
-<pre class="r"><code>library(rio)
-data = import(&quot;pd4_enades2024.sav&quot;)</code></pre>
-<p><img src="PruebaT-Diccionario.jpeg" width="50%" style="display: block; margin: auto;" /></p>
+<div id="histograma-y-curva-de-densidad" class="section level1">
+<h1>HISTOGRAMA Y CURVA DE DENSIDAD</h1>
+<p>Habiamos medido en la PC2, la asimetría y curtosis de la variable
+edad. Ahora visualizaremos dichos valores.</p>
+<p><strong>Histograma</strong></p>
+<pre class="r"><code>hist(latinbarfinal$edad, main = &quot;Histograma de edades&quot;, xlab = &quot;Edad&quot;, ylab = &quot;Frecuencia&quot;, col = &quot;lightblue&quot;, ylim = c(0, 2500))</code></pre>
+<p><img src="pd4_files/figure-html/m-1.png" width="672" />
+<strong>Gráfico de denisdad</strong></p>
+<pre class="r"><code>plot(density(latinbarfinal$edad), main = &quot;Distribuci?n de Edades&quot;, xlab = &quot;Edad&quot;, ylab = &quot;Densidad&quot;)</code></pre>
+<p><img src="pd4_files/figure-html/n-1.png" width="672" /></p>
+<p><strong>Gráfico de densidad e histograma</strong></p>
+<pre class="r"><code>hist(latinbarfinal$edad, main = &quot;Distribución de Edades&quot;, freq = FALSE, col = &quot;lightblue&quot;)
+densidad &lt;- density(latinbarfinal$edad)
+lines(densidad, col = &quot;red&quot;)</code></pre>
+<p><img src="pd4_files/figure-html/o-1.png" width="672" /></p>
 </div>
-<div
-id="existe-una-diferencia-estadísticamente-significativa-entre-la-estimación-del-monto-mínimo-mensual-del-hogar-según-nivel-educativo-alcanzado"
-class="section level2">
-<h2>1. ¿Existe una diferencia estadísticamente significativa entre la
-estimación del monto mínimo mensual del hogar según nivel educativo
-alcanzado?</h2>
-<p>Crearemos una tabla con la media, máximo y mínimo de la variable
-nivel_discriminación, en base al grupo de edu2</p>
-<p>Agreguemos etiquetas:</p>
-<pre class="r"><code>library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>data = data  %&gt;%  
-  mutate(edu2 = factor(edu2, levels = 1:2, labels = c(&quot;E. Básica&quot;,&quot;E. Superior&quot;)))</code></pre>
-<pre class="r"><code>library(lsr)
-NivelEdu = data %&gt;% 
-  group_by(edu2)  %&gt;% 
-  summarize(Media = mean(P15, na.rm = T),
-  min = ciMean(P15, na.rm=T)[1],
-  max = ciMean(P15, na.rm=T)[2])
-NivelEdu</code></pre>
-<pre><code>## # A tibble: 2 × 4
-##   edu2        Media   min   max
-##   &lt;fct&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 E. Básica   2053. 1908. 2198.
-## 2 E. Superior 3178. 3004. 3351.</code></pre>
-<pre class="r"><code>NivelEdu[2,2] - NivelEdu[1,2] </code></pre>
-<pre><code>##      Media
-## 1 1124.792</code></pre>
-<p>La diferencia es de aprox 1124 soles. ¿Puedo afirmar que existe esta
-diferencia en la población?</p>
-<p>Para poder evaluar si existen o no diferencias poblacionales usaremos
-t.test.</p>
-<p>Recuerda que primero se indica la variable numérica y luego la
-categoríca dicotómica.</p>
-<pre class="r"><code>t.test(P15 ~ edu2, data = data)</code></pre>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  P15 by edu2
-## t = -9.7598, df = 1343.2, p-value &lt; 2.2e-16
-## alternative hypothesis: true difference in means between group E. Básica and group E. Superior is not equal to 0
-## 95 percent confidence interval:
-##  -1350.8776  -898.7065
-## sample estimates:
-##   mean in group E. Básica mean in group E. Superior 
-##                  2052.847                  3177.639</code></pre>
-<p>El valor p- value es &lt; 2.2e-16, que es menor que el nivel típico
-de significancia (generalmente α = 0.05). Un valor p alto sugiere que no
-hay suficiente evidencia para rechazar la hipótesis nula. En otras
-palabras, podemos concluir que existe una diferencia significativa entre
-las medias de los dos grupos (Educación Básica y Educación Superior) con
-respecto a la variable P15</p>
-<p>Graficamos los resultados</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.3</code></pre>
-<pre class="r"><code>ggplot(NivelEdu, aes(x = edu2, y = Media)) +
-  geom_errorbar(aes(ymin = min, ymax = max), width = 0.2) +
-  ggtitle(&quot;Estimación del monto mínimo mensual del hogar \nsegún máximo nivel educativo&quot;) +
-  # Etiquetas de la media
-  geom_text(aes(label = paste(round(Media, 2))), vjust = 0.5, size = 3) +
-  # Etiquetas de los valores mínimos
-  geom_text(aes(y = min, label = paste(&quot;min:&quot;, round(min, 2))), 
-            vjust = 1.5, hjust = -0.6, size = 2, color = &quot;#00688B&quot;) +
-  # Etiquetas de los valores máximos
-  geom_text(aes(y = max, label = paste(&quot;max:&quot;, round(max, 2))), 
-            vjust = -0.5, hjust = -0.6, size = 2, color = &quot;#00688B&quot;) +
-    theme_light()+
-  xlab(&quot;Máximo nivel educativo alcanzado&quot;) + 
-  ylab(&quot;Promedio del gasto mínimo mensual&quot;) </code></pre>
-<p><img src="pd4_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div id="grágicos-con-ggplot2" class="section level1">
+<h1>GRÁGICOS CON GGPLOT2</h1>
+<p>Hemos observado que los gráficos se van trabajando en capas, con
+indicaciones de cálculo internas. Generar un gráfico más personalizado
+puede tomar varias línesa de código. El paquete de ggplot ofrece varias
+opciones de personalización.</p>
+<p><strong>Nivel de aceptación de la inmigración</strong></p>
+<p>Primero, colocamos etiquetas a los valores.</p>
+<pre class="r"><code>latinbarfinal &lt;- latinbarfinal %&gt;%
+  mutate(siinmigracion = factor(siinmigracion,
+    levels = c(0, 1, 2, 3, 4),
+    labels = c(
+      &quot;No acepta nunca&quot;,
+      &quot;Aceptación baja&quot;,
+      &quot;Aceptación media&quot;,
+      &quot;Aceptación alta&quot;,
+      &quot;Acepta siempre&quot;
+    )
+  ))</code></pre>
+<p>Segundo, creamos la tabla con la que trabajaremos</p>
+<pre class="r"><code>acepta_migra &lt;- table(latinbarfinal$siinmigracion)
+acepta_migra = as.data.frame(acepta_migra)
+colnames(acepta_migra) = c(&quot;Nivel&quot;, &quot;Freq&quot;)</code></pre>
+<pre class="r"><code>grafico = ggplot(acepta_migra, aes(x = reorder(Nivel, Freq), y = Freq, fill = Nivel)) + #aes(x=reorder, ordena las barras ascendentemente
+geom_bar(stat = &quot;identity&quot;) + 
+coord_flip() +
+labs(title = &quot;Nivel de aceptación de la inmigración&quot;, y = &quot;Frecuencias&quot;, x = &quot;Categorías&quot;, subtitle = &quot; &quot;, 
+caption = &quot;Fuente: Elaboración propia. Latinobarometro 2022&quot;) + 
+theme(plot.title = element_text(hjust = 0.5)) +
+theme(panel.background = element_rect(fill = &quot;white&quot;, colour = &quot;white&quot;)) +
+geom_text(aes(label = Freq), 
+vjust = 0.5, color = &quot;black&quot;, size = 4)
+
+grafico</code></pre>
+<p><img src="pd4_files/figure-html/r-1.png" width="672" /> ## Ejercicio
+<strong>Ejercicio3</strong>: Con ggplot, elabora gráfico donde podamos
+observar la dispersión de edades según el nivel de aceptación de la
+inmigración.</p>
 </div>
-<div
-id="existe-una-diferencia-en-el-nivel-de-acuerdo-con-la-frase-los-que-más-tienen-deberían-pagar-más-impuestos-según-si-la-persona-pertenece-a-una-clase-social-alta-o-media-alta-o-no"
-class="section level2">
-<h2>2. ¿Existe una diferencia en el nivel de acuerdo con la frase “los
-que más tienen deberían pagar más impuestos” según si la persona
-pertenece a una clase social alta o media alta o no?</h2>
-<p>Para responder a la pregunta identifiquemos la variable numérica y la
-categórica primero.</p>
-<p>La variable númerica es la P30, que es una likert y va del 1 al
-10.</p>
-<p>La categórica se basa en <strong>clase</strong>, todo lo que sea 1 o
-2 (Clase Alta/Media Alta) será “Alta/Media alta” y lo que no, será “No
-alta/media alta”.</p>
-<pre class="r"><code>table(data$clase)</code></pre>
-<pre><code>## 
-##   1   2   3   4 
-##  34 251 722 467</code></pre>
-<pre class="r"><code>data = data %&gt;% 
-  mutate(Clase2= ifelse(clase &lt;3, &quot;Alta/Media alta&quot;, &quot;No alta/Media alta&quot; ))</code></pre>
-<p>¿Hay diferencia entre ambos grupos en la muestra?</p>
-<pre class="r"><code>clase = data %&gt;% 
-  filter(!is.na(Clase2)) %&gt;% 
-  group_by(Clase2)  %&gt;% 
-  summarize(Media = mean(P30, na.rm = T),
-  min = ciMean(P30, na.rm=T)[1],
-  max = ciMean(P30, na.rm=T)[2])
-clase</code></pre>
-<pre><code>## # A tibble: 2 × 4
-##   Clase2             Media   min   max
-##   &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Alta/Media alta     6.62  6.23  7.02
-## 2 No alta/Media alta  7.29  7.10  7.48</code></pre>
-<p>El análisis descriptivo muestra que las medias de ambos grupos se
-encuentran a 0.6 puntos de distancia.</p>
-<p>Para poder evaluar si existen o no diferencias poblacionales usaremos
-t.test.</p>
-<pre class="r"><code>t.test(P30 ~ Clase2, data = data)</code></pre>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  P30 by Clase2
-## t = -3.0024, df = 417.09, p-value = 0.002839
-## alternative hypothesis: true difference in means between group Alta/Media alta and group No alta/Media alta is not equal to 0
-## 95 percent confidence interval:
-##  -1.1058934 -0.2307852
-## sample estimates:
-##    mean in group Alta/Media alta mean in group No alta/Media alta 
-##                         6.621429                         7.289768</code></pre>
-<pre class="r"><code>ggplot(clase, aes(x = Clase2, y = Media)) +
-  geom_errorbar(aes(ymin = min, ymax = max), width = 0.2) +
-  ggtitle(&quot;Estimación del nivel de acuerdo con &#39;Los que más \ntienen deberían pagar más impuestos&#39; según clase&quot;) +
-  # Etiquetas de la media
-  geom_text(aes(label = paste(round(Media, 2))), vjust = 0.5, size = 3) +
-  # Etiquetas de los valores mínimos
-  geom_text(aes(y = min, label = paste(&quot;min:&quot;, round(min, 2))), 
-            vjust = 1.5, hjust = -0.6, size = 2, color = &quot;#00688B&quot;) +
-  # Etiquetas de los valores máximos
-  geom_text(aes(y = max, label = paste(&quot;max:&quot;, round(max, 2))), 
-            vjust = -0.5, hjust = -0.6, size = 2, color = &quot;#00688B&quot;) +
-  theme_light()+
-  xlab(&quot;¿Es de clase alta o media alta?&quot;) + 
-  ylab(&quot;Promedio del nivel de acuerdo con \nLos que más tienen deberían pagar más impuestos&quot;) </code></pre>
-<p><img src="pd4_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>Ejercicios:</p>
-<ol style="list-style-type: decimal">
-<li>Analiza si existen diferencias en la población entre el promedio de
-monto estimado para vivir (P15) entre hombres y mujeres (sexo) con la
-prueba, el gráfico y la interpretación correspondiente.</li>
-<li>Analiza si existen diferencias en la población entre el nivel de
-acuerdo con la frase que indica que solo se gobierna para Lima(P29)
-entre si el encuestad@ vive en Lima o no (variable basada en macrozona)
-con la prueba, el gráfico y la interpretación correspondiente. Para ello
-debe de crear previamente una variable llamada Lima que se base en
-macrozona, si macrozona es Lima, entonces la nueva variable también será
-“Lima”, todo lo demás será “No Lima”.</li>
-</ol>
-</div>
+<div id="grágicos-de-dispersión" class="section level1">
+<h1>GRÁGICOS DE DISPERSIÓN</h1>
+<p>Realicemos un último ejercicio con bases de datos de <a
+href="ourworldindata.org">OurWorldInData</a>. Trabajemos con la base de
+GDP y el índice de corrupción, basado en estimados del índice de V-Dem
+(Varieties of Democracy). Disponinble en: <a
+href="https://ourworldindata.org/grapher/political-corruption-index?tab=table.\"
+class="uri">https://ourworldindata.org/grapher/political-corruption-index?tab=table.\</a></p>
+<pre class="r"><code>icorrupcion &lt;- read.csv(&quot;political-corruption-index.csv&quot;)
+gdp &lt;- read.csv(&quot;gdp-per-capita-wb.csv&quot;)</code></pre>
+<p>Exploramos las bases de datos</p>
+<pre class="r"><code>head(icorrupcion)</code></pre>
+<pre><code>##        Entity Code Year
+## 1 Afghanistan  AFG 1789
+## 2 Afghanistan  AFG 1790
+## 3 Afghanistan  AFG 1791
+## 4 Afghanistan  AFG 1792
+## 5 Afghanistan  AFG 1793
+## 6 Afghanistan  AFG 1794
+##   Political.corruption.index..best.estimate..aggregate..average.
+## 1                                                          0.438
+## 2                                                          0.438
+## 3                                                          0.438
+## 4                                                          0.438
+## 5                                                          0.438
+## 6                                                          0.438</code></pre>
+<pre class="r"><code>head(gdp)</code></pre>
+<pre><code>##        Entity Code Year GDP.per.capita..PPP..constant.2017.international...
+## 1 Afghanistan  AFG 2002                                            1280.463
+## 2 Afghanistan  AFG 2003                                            1292.333
+## 3 Afghanistan  AFG 2004                                            1260.061
+## 4 Afghanistan  AFG 2005                                            1352.321
+## 5 Afghanistan  AFG 2006                                            1366.993
+## 6 Afghanistan  AFG 2007                                            1528.345</code></pre>
+<p>Les cambiamos los nombres y fusionamos las bases de datos, con la
+variable clave “code”</p>
+<pre class="r"><code>names(icorrupcion) &lt;- c(&quot;entidad&quot;, &quot;code&quot;, &quot;year&quot;, &quot;pci&quot;)
+names(gdp) &lt;- c(&quot;entidad&quot;, &quot;code&quot;, &quot;year&quot;, &quot;gdp&quot;)</code></pre>
+<p>trabajaremos solo con aquellos casos del año 2022.</p>
+<pre class="r"><code>icorrupcion_22 &lt;- subset(icorrupcion, year == 2022)
+gdp_22 &lt;- subset(gdp, year == 2022)</code></pre>
+<p>Fusionamos la base de datos</p>
+<pre class="r"><code>corrupgdp_mfalse &lt;- merge(icorrupcion_22, gdp_22, by = &quot;code&quot;, all = FALSE)</code></pre>
+<p>Elimina los datos vacíos</p>
+<pre class="r"><code>corrupgdp &lt;- corrupgdp_mfalse[!(corrupgdp_mfalse$code == &quot;&quot; | corrupgdp_mfalse$code == &quot;OWID_WRL&quot;), ] #me quedo con 164 países</code></pre>
+<p>Selecciono solo las variables que me interesan y les cambio de
+nombre.</p>
+<pre class="r"><code>corrupgdp &lt;- select(corrupgdp, &quot;code&quot;, &quot;entidad.x&quot;, &quot;year.x&quot;, &quot;pci&quot;, &quot;gdp&quot;)
+names(corrupgdp) &lt;- c(&quot;code&quot;, &quot;entidad&quot;, &quot;year&quot;, &quot;pci&quot;, &quot;gdp&quot;)</code></pre>
+<p><strong>Ploteo el gráfico de dispersión</strong></p>
+<pre class="r"><code>plot(corrupgdp$gdp, corrupgdp$pci)</code></pre>
+<p><img src="pd4_files/figure-html/y-1.png" width="672" /></p>
+<p>Visualizar a qué país corresponde cada punto</p>
+<pre class="r"><code>plot(corrupgdp$gdp, corrupgdp$pci, type=&quot;n&quot;, xlab=&quot;PIB&quot;, ylab=&quot;Indice de corrupción política&quot;, main=&quot;PIB vs Ingreso per cápita&quot;)
+text(corrupgdp$gdp, corrupgdp$pci, labels = corrupgdp$code, cex = 0.7)</code></pre>
+<p><img src="pd4_files/figure-html/z-1.png" width="672" /></p>
+<pre class="r"><code>plot(corrupgdp$gdp, corrupgdp$pci, type=&quot;n&quot;, xlab=&quot;PIB&quot;, ylab=&quot;Indice de corrupción política&quot;, main=&quot;PIB vs Ingreso per cápita&quot;)
+text(corrupgdp$gdp, corrupgdp$pci, labels = corrupgdp$code, 
+     col = ifelse(corrupgdp$code == &quot;PER&quot;, &quot;red&quot;, &quot;black&quot;), cex = 0.6)</code></pre>
+<p><img src="pd4_files/figure-html/z-2.png" width="672" /></p>
 </div>
 
 
