@@ -11,9 +11,9 @@
 
 
 
-<title>Práctica Dirigida 6</title>
+<title>Práctica dirigida 6</title>
 
-<script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -357,430 +357,260 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Práctica Dirigida 6</h1>
+<h1 class="title toc-ignore">Práctica dirigida 6</h1>
 
 </div>
 
 
-<p>FACULTAD DE CIENCIAS SOCIALES - PUCP</p>
+<p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
 <p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
-<p>Semestre 2024 - 2</p>
-<div id="anova" class="section level2">
-<h2><strong>ANOVA</strong></h2>
-<p><strong>¿Qué es el Análisis de Varianza (ANOVA)?</strong></p>
-<p>Es una prueba estadística que permite comparar la media (promedio) de
-<strong>más de 2 grupos</strong>. Es decir, es como una prueba T, pero
-de más de dos grupos.</p>
-<p>Al igual que con la prueba T, en esta oportunidad debemos observar el
-<strong>p-value</strong> de la prueba. Para ello, se establecen 2
-hipótesis:</p>
-<p>H0 (p-value &gt; 0.05): no hay diferencia significativa entre las
-medias de ningún grupo. H1 (p-value =&lt; 0.05): al menos una media
-poblacional (de un grupo) es significativamente distinta a las otras</p>
-<p><strong>Estadístico F</strong></p>
-<p>Indica la variablidad entre grupos y dentro de un mismo grupo.</p>
-<p>Si F es grande, hay mucha variabilidad entre grupos y poca
-variabilidad dentro de un mismo grupo. Si F es pequeño, hay poca
-variabilidad entre grupos pero mucha variabilidad dentro de un mismo
-grupo.</p>
-<p><strong>Prueba Tukey</strong></p>
-<p>Prueba “post-hoc” (luego de), realizada para revisar entre qué grupos
-existe una diferencia significativa.</p>
-<p>OJO: como es una prueba complementaria a la ANOVA, <strong>solo
-resulta necesaria si se rechaza la H0</strong> en ANOVA. Si la H0 no se
-rechaza en ANOVA, no hay necesidad de hacer prueba Tukey.</p>
-<p>Al igual que las otras pruebas estadísticas, se debe ver el p-value
-en cada emparejamiento</p>
-<p><img src="Dicpd6.png" /></p>
-<pre class="r"><code>library(rio)
-data=import(&quot;dataWorld_q.rda&quot;)</code></pre>
-<div
-id="existe-diferencias-en-la-tasa-de-fecundidad-según-la-quinquenio-entre-el-2000-y-el-2019"
-class="section level3">
-<h3>¿Existe diferencias en la tasa de fecundidad según la quinquenio
-(entre el 2000 y el 2019)?</h3>
-<p>Observemos algunos estadísticos descriptivos.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.2.3</code></pre>
-<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.3     ✔ readr     2.1.4
-## ✔ forcats   1.0.0     ✔ stringr   1.5.0
-## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-## ✔ purrr     1.0.1     
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
-<pre class="r"><code>library(lsr)
-
-library(dplyr)
-
-data &lt;- data %&gt;%
-  filter(quinq %in% c(&quot;2000-2004&quot;, &quot;2005-2009&quot;, &quot;2010-2014&quot;, &quot;2015-2019&quot;))
-
-
-tabla1 = data %&gt;%
-  group_by(quinq) %&gt;%
-  summarise(Media = mean(tfr, na.rm = T),
-            Mediana = median(tfr, na.rm = T),
-            Desviacion = sd(tfr, na.rm = T),
-            Inferior = ciMean(tfr, na.rm = T)[1],
-            Superior = ciMean(tfr, na.rm = T)[2])
-
-tabla1</code></pre>
-<pre><code>## # A tibble: 4 × 6
-##   quinq     Media Mediana Desviacion Inferior Superior
-##   &lt;fct&gt;     &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1 2000-2004  3.25    2.72       1.74     3.00     3.51
-## 2 2005-2009  3.08    2.57       1.61     2.84     3.31
-## 3 2010-2014  2.93    2.41       1.46     2.72     3.14
-## 4 2015-2019  2.79    2.30       1.33     2.59     2.98</code></pre>
-<p>Veámoslo en gráficos</p>
-<pre class="r"><code>library(ggplot2)
-ggplot(tabla1, aes(x=quinq, y=Media, fill = quinq))+
-  geom_bar(stat=&quot;identity&quot;)+
-  geom_errorbar(aes(ymin=Inferior, ymax=Superior), width=0.2)+
-  geom_text(aes(label=paste(round(Media, 1))), vjust=-2, size=3)+
-  xlab(&quot;Quinquenio&quot;) + ylab(&quot;Tasa global de fecundidad&quot;)+
-  ylim(0, 5) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Realicemos un ANOVA</p>
-<pre class="r"><code>anova1 = aov(data$tfr ~ data$quinq)
-summary(anova1)</code></pre>
-<pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)  
-## data$quinq    3   22.2   7.402   3.121 0.0255 *
-## Residuals   732 1736.3   2.372                 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 40 observations deleted due to missingness</code></pre>
-<p>Observamos que el p-value es menor a 0.05, lo que significa que al
-menos un grupo tiene la media estadísticamente significativa respecto
-del resto.</p>
-<p>Para saber qué media es distinta, aplicamos la prueba Tukey.</p>
-<pre class="r"><code>comparacion = TukeyHSD(anova1)
-comparacion</code></pre>
-<pre><code>##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = data$tfr ~ data$quinq)
-## 
-## $`data$quinq`
-##                           diff        lwr         upr     p adj
-## 2005-2009-2000-2004 -0.1772826 -0.5907450  0.23617975 0.6871398
-## 2010-2014-2000-2004 -0.3226739 -0.7361363  0.09078845 0.1853354
-## 2015-2019-2000-2004 -0.4687799 -0.8822423 -0.05531753 0.0189101
-## 2010-2014-2005-2009 -0.1453913 -0.5588537  0.26807105 0.8019407
-## 2015-2019-2005-2009 -0.2914973 -0.7049596  0.12196508 0.2668386
-## 2015-2019-2010-2014 -0.1461060 -0.5595683  0.26735638 0.7995750</code></pre>
-<p>solo la comparación 2015-2019 vs. 2000-2004 tiene un valor p ajustado
-de 0.0189, que es menor que 0.05, lo cual indica que esta diferencia es
-estadísticamente significativa.</p>
-</div>
-</div>
-<div id="diagramas-de-dispersión-y-correlación" class="section level2">
-<h2><strong>Diagramas de dispersión y correlación</strong></h2>
-<div id="ideas-clave" class="section level3">
-<h3>Ideas clave</h3>
-<p>La correlación es en esencia una medida normalizada de asociación o
-covariación lineal entre dos variables.</p>
+<p>Semestre 2025 - 2</p>
+<div id="intervalos-de-confianza" class="section level1">
+<h1><strong>1.Intervalos de confianza</strong></h1>
+<p>Con este tema, comenzaremos a enfocarnos en la estadística
+inferencial. El objetivo de esta es determinar una aproximación del
+parámetro poblacional a partir de la data de una muestra
+representativa.</p>
+<p>Revisemos algunos conceptos:</p>
 <ul>
-<li><p>La <strong>correlación</strong> es una medida de la relación
-(covariación) entre <strong>dos variables
-cuantitativas.</strong></p></li>
-<li><p>La manera más sencilla de saber si dos variables están
-correlacionadas es determinar si co-varían (varían
-conjuntamente).</p></li>
-<li><p>Es importante hacer notar que <strong>esta covariación o relación
-no implica necesariamente causalidad</strong>: La correlación puede ser
-fortuita, como en el caso clásico de la correlación entre el número de
-venta de helados e incendios, debido al efecto de una tercera variable,
-la temperatura ambiental. A este tipo de relación se le llama
-“espuria”.</p></li>
+<li><p><strong>Estimador puntual:</strong> un número que es nuestra
+predicción del parámetro</p></li>
+<li><p><strong>Intervalo de confianza:</strong> un intervalo de números
+basado en la distribución de la data observada de la muestra dentro de
+la cual se cree que estaría el parámetro poblacional.</p>
+<p><em>IC = estimador puntual +-/margen de error</em></p></li>
+<li><p><strong>Nivel de confianza:</strong> es la probabilidad de que el
+parámetro se encuentre en ese intervalo.</p></li>
+<li><p><strong>Margen de error:</strong> mide qué tan precisa es la
+estimación del parámetro.</p></li>
+<li><p><strong>Error de muestreo:</strong> diferencia entre el valor
+calculado de un estadístico y valor real de un parámetro de la
+población.</p></li>
+</ul>
+<p><img src="IC.png" width="50%" style="display: block; margin: auto;" /></p>
+<div id="conceptualización-e-importancia" class="section level3">
+<h3>Conceptualización e Importancia</h3>
+<ul>
+<li>Los intervalos de confianza ofrecen una manera de estimar, con alta
+probabilidad, un rango de valores en el que se encuentra el valor
+poblacional (o parámetro) de una determinada variable.</li>
+<li>El intervalo de confianza describe la variabilidad entre la medida
+obtenida en un estudio y la medida real de la población (el valor
+real).</li>
+<li>Un intervalo de confianza de 90%/95%/99% nos indica que dentro del
+rango dado se encuentra el valor real de un parámetro con 90%/95%/99% de
+certeza.</li>
+<li>Existe una relación inversa entre la amplitud del IC y el tamaño
+muestral: mientras más pequeño es el n, más amplio es el IC. A mayor n,
+el IC es más estrecho.</li>
+<li>Gracias al IC podemos determinar si la estimación es representativa
+de la población.</li>
 </ul>
 </div>
-<div id="hipótesis-de-la-prueba-de-correlación" class="section level3">
-<h3>Hipótesis de la prueba de correlación</h3>
-<ul>
-<li>H0 : No existe correlación entre las variables</li>
-<li>H1 : Existe correlación entre las variables</li>
-</ul>
-</div>
-<div id="coeficiente-de-correlación-de-pearson" class="section level3">
-<h3>Coeficiente de Correlación de Pearson</h3>
-<ul>
-<li><p>“El Coeficiente de Correlación de Pearson es un estadístico
-paramétrico, pues se asume que ambas variables tienen una distribución
-aproximadamente normal, o sea, distribución normal bivariante”.</p></li>
-<li><p>Es una medida que <strong>puede variar entre -1 y +1</strong>,
-ambos extremos indicando correlaciones perfectas, negativa y positiva
-respectivamente.</p></li>
-<li><p>Un valor de r = 0 indica que no existe relación lineal entre las
-dos variables.</p></li>
-</ul>
-<p><img src="G1.png" /></p>
-</div>
-<div id="gráfico-de-dispersión" class="section level3">
-<h3>Gráfico de dispersión</h3>
-<p><img src="G2.png" /></p>
-<p>Otros ejemplos:</p>
-<p><img src="G3.png" /></p>
-</div>
-<div id="aplicación-práctica" class="section level3">
-<h3>Aplicación práctica</h3>
+<div id="sobre-el-nivel-de-confianza" class="section level3">
+<h3>Sobre el nivel de confianza…</h3>
+<p>Si tenemos un nivel de confianza de 95%, quiere decir que si
+realizamos 100 veces el mismo procedimiento de muestreo y calculamos los
+estadísticos de interés, 95 veces obtendremos los resultados en el
+intervalo calculado. Los mismo ocurriría si realizamos el cálculo con un
+99% de confianza. Al momento de decidir el nivel de confianza debemos
+tener presente una regla: a mayor nivel de confianza, menor será la
+precisión ya que el intervalo es más amplio.</p>
+<p><strong>Aplicación</strong></p>
+<p>“Es una investigación estadística que permite suministrar información
+estadística que refleje la situación migratoria de la población
+venezolana refugiada y migrante en el Perú, con énfasis en el contexto
+de la pandemia por la COVID-19, para así apoyar a tomar las decisiones
+de política pública basadas en datos sólidos y confiables”.</p>
+<p>Explicación de la data:</p>
+<p><img src="pd3-diccionario.png" width="50%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(rio) #Convocamos el paquete   
+data=import(&quot;Pd3_enpove2022.dta&quot;)</code></pre>
+<p>En esta sesión responderemos a la pregunta:</p>
 </div>
 </div>
 <div
-id="que-factores-se-relacionan-con-la-tasa-de-fecundidad-en-los-países-entre-los-años-2015-2019"
+id="de-qué-manera-experimentan-los-migrantes-venezolanos-la-discriminación-en-el-perú"
 class="section level1">
-<h1>¿Que factores se relacionan con la tasa de fecundidad en los países
-entre los años 2015-2019?</h1>
-<p>Como vimos anteriormente, nuestra data abarca distintos periodos.
-Analicemos los factores que se relacionan con la tasa de fecundidad en
-el periodo más reciente: 2015-2019</p>
-<p>Primero revisemos como está escrito y luego filtremos</p>
-<pre class="r"><code>table(data$quinq)</code></pre>
+<h1>¿De qué manera experimentan los migrantes venezolanos la
+discriminación en el Perú?</h1>
+<div id="intervalos-de-confianza-para-una-proporción"
+class="section level2">
+<h2><strong>1.Intervalos de confianza para una proporción</strong></h2>
+<p>Tengamos en consideración que para poder hallar el intervalo de
+confianza para una proporción debemos determinar nuestro caso de éxito.
+Asimismo, para hallar el intervalo de confianza para una proporción
+nuestra variable debe ser categórica y debe representar una variable
+dicotómica; es decir, una variable con solo dos categorías posibles:
+votó/no votó; sí/no, etc.</p>
+<p>Recordemos la fórmula para hallar el intervalo de confianza para una
+proporción</p>
+<p><img src="ICprop.png" width="50%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="qué-proporción-de-venezolanos-en-perú-se-siente-discriminada"
+class="section level2">
+<h2><em>¿Qué proporción de venezolanos en Perú se siente
+discriminada?</em></h2>
+<p>Para ello trabajaremos con la variable P701, que tiene dos valores
+posibles: Si y No.</p>
+<p>Para poder encontrar el intervalo de confianza para la <em>proporción
+de venezolanos en Perú se siente discriminada</em>, necesitamos tener
+muy claro la frecuencia de nuestro caso de éxito y del total de
+casos.</p>
+<pre class="r"><code>table(data$P701)</code></pre>
 <pre><code>## 
-## 1950-1954 1955-1959 1960-1964 1965-1969 1970-1974 1975-1979 1980-1984 1985-1989 
-##         0         0         0         0         0         0         0         0 
-## 1990-1994 1995-1999 2000-2004 2005-2009 2010-2014 2015-2019     2020+ 
-##         0         0       194       194       194       194         0</code></pre>
-<pre class="r"><code>data2 = data %&gt;% 
-  filter(quinq==&quot;2015-2019&quot;)</code></pre>
-<p>Ahora sí, analicemos!</p>
-<div
-id="existe-una-relación-entre-la-tasa-de-fecundidad-y-el-trabajo-femenino"
-class="section level3">
-<h3>¿Existe una relación entre la tasa de fecundidad y el trabajo
-femenino?</h3>
-<p><strong>Paso 1</strong>: Exploramos variables de interés</p>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(tfr, na.rm = TRUE),
-           Media = mean(tfr, na.rm = TRUE),
-           Mediana = median(tfr, na.rm = TRUE),
-           Max = max(tfr, na.rm = TRUE))</code></pre>
-<pre><code>##      Min    Media Mediana  Max
-## 1 1.2375 2.786209 2.29875 7.21</code></pre>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(femWork, na.rm = TRUE),
-           Media = mean(femWork, na.rm = TRUE),
-           Mediana = median(femWork, na.rm = TRUE),
-           Max = max(femWork, na.rm = TRUE))</code></pre>
-<pre><code>##    Min   Media Mediana   Max
-## 1 6.03 51.9302   52.95 86.05</code></pre>
-<p><strong>Paso 2</strong>: Realizamos el gráfico</p>
-<pre class="r"><code>ggplot(data2, aes(x=tfr, y=femWork)) +
-  geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Participación femenina en la fuerza laboral&quot;) +
-  ggtitle(&quot;Relación entre la tasa de fecundidad y el trabajo femenino&quot;) +
-  theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning: Removed 15 rows containing non-finite outside the scale range
-## (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 15 rows containing missing values or values outside the scale range
-## (`geom_point()`).</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p><strong>Paso 3</strong>: Realizamos el ANOVA</p>
-<pre class="r"><code>cor.test(data2$femWork, data2$tfr)</code></pre>
+##    1    2 
+## 3104 7123</code></pre>
+<pre class="r"><code>x = 3104 #almacenamos en &quot;x&quot; la frecuencia de nuestro caso de éxito (Sí se sintieron discriminados)
+n = 3104 + 7123 #almacenamos en &quot;n&quot; el total de casos</code></pre>
+<p>Hallamos el invervalo de confianza para una proporción con el comando
+<strong>prop.test</strong></p>
+<pre class="r"><code>ic_prop = prop.test(x,n)
+ic_prop #llamamos a ic_prop para visualizar los resultados</code></pre>
 <pre><code>## 
-##  Pearson&#39;s product-moment correlation
+##  1-sample proportions test with continuity correction
 ## 
-## data:  data2$femWork and data2$tfr
-## t = 1.9083, df = 177, p-value = 0.05798
-## alternative hypothesis: true correlation is not equal to 0
+## data:  x out of n, null probability 0.5
+## X-squared = 1578.6, df = 1, p-value &lt; 2.2e-16
+## alternative hypothesis: true p is not equal to 0.5
 ## 95 percent confidence interval:
-##  -0.004791544  0.282764344
+##  0.2946262 0.3125428
 ## sample estimates:
-##       cor 
-## 0.1419805</code></pre>
-<ul>
-<li><p>p &lt; 0.05 Rechazas la H0 (por lo tanto, sí hay
-correlación)</p></li>
-<li><p>P &gt; 0.05 No rechazas la H0</p></li>
-</ul>
-<p>¿Qué nos dice el resultado? Recuerda que en la interpretación no debe
-faltar: (i) intepretación del p-valor y (ii) interpretación del
-coeficiente de correlación (cor)</p>
-<p>Reporte: Dado que el p-valor es mayor a 0.05, no hay evidencia
-suficiente para rechazar la H0. Por lo tanto, podemos afirmar que no
-existe correlación entre el porcentaje de mujeres que trabajan y la tasa
-de fecundidad</p>
+##         p 
+## 0.3035103</code></pre>
+<p>Esto quiere decir que tenemos un 95% de certeza de que el porcentaje
+de venezolanos que residen en el Perú y se han sentido discriminados
+oscila entre el 29% y 31%.</p>
 </div>
-<div
-id="existe-una-relación-entre-la-tasa-de-fecundidad-y-el-trabajo-masculino"
+</div>
+<div id="intervalos-de-confianza-para-una-media" class="section level1">
+<h1><strong>2.Intervalos de confianza para una media</strong></h1>
+<p>Recordemos la fórmula para hallar el intervalo de confianza para una
+media es</p>
+<p><img src="ICmedia.png" width="50%" style="display: block; margin: auto;" /></p>
+<p>Es importante mencionar que nuestra variable debe ser numérica, sino
+no podremos calcular su promedio.</p>
+<div id="qué-nivel-de-discriminación-sufren-los-venezolanos-en-el-perú"
 class="section level3">
-<h3>¿Existe una relación entre la tasa de fecundidad y el trabajo
-masculino?</h3>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(maleWork, na.rm = TRUE),
-           Media = mean(maleWork, na.rm = TRUE),
-           Mediana = median(maleWork, na.rm = TRUE),
-           Max = max(maleWork, na.rm = TRUE))</code></pre>
-<pre><code>##     Min    Media Mediana   Max
-## 1 39.05 73.09888   73.95 94.75</code></pre>
-<pre class="r"><code>ggplot(data2, aes(x=tfr, y=maleWork)) +
-  geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Participación masculina en la fuerza laboral&quot;) +
-  ggtitle(&quot;Relación entre la tasa de fecundidad y el trabajo femenino&quot;) +
-  theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<pre class="r"><code>cor.test(data2$maleWork, data2$tfr)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  data2$maleWork and data2$tfr
-## t = 1.9935, df = 177, p-value = 0.04775
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  0.001544092 0.288582943
-## sample estimates:
-##       cor 
-## 0.1481828</code></pre>
-<p>Se puede apreciar que, al igual que con el trabajo femenino, el
-p-valor es menor a 0.05, por lo que se rechaza la H0. El coeficiente es
-de 0.21, lo que indica una correlación positiva pequeña.</p>
-<p>Entonces, a mayor número promedio de hijos, aumenta la participación
-de la fuerza laboral, tanto de hombres como mujeres. ¿Cuál podría ser
-una posible explicación? Se puede pensar en la necesidad de suplir las
-demandas que requieren los hijos en términos monetarios, lo que lleva a
-un mayor trabajo. Se puede pensar en las políticas públicas de apoyo y
-como estas permiten continuar trabajar a los padres de familia. ¿Alguna
-otra posible explicación?</p>
+<h3>¿Qué nivel de discriminación sufren los venezolanos en el Perú?</h3>
+<p><em>Hallemos el intervalo de confianza para la media de la variable
+“nivel_discriminación”. Esta variable será un indice aditivo del 0 al
+100 creado a partir de las variables P702_1 a la P702_7</em></p>
+<p>Guardo mis variables de interes en un vector para luego realizar la
+misma modificación en todas. Para poder indicar que se omitan los
+perdidos para la suma, primero crearemos un vector que almacene los
+nombres de las variables que conformaran el indicador.</p>
+<pre class="r"><code>library(dplyr)
+library(scales)
+
+indicador = c(&quot;P702_1&quot;,&quot;P702_2&quot;,&quot;P702_3&quot;,&quot;P702_4&quot;,&quot;P702_5&quot;,&quot;P702_6&quot;, &quot;P702_7&quot;)
+
+data = data %&gt;% 
+  mutate(suma =  rowSums(across(all_of(indicador)), na.rm = TRUE),
+         nivel_discriminación = rescale(suma, to = c(0,10)),
+         nivel_discriminación = ifelse(P701 == &quot;2&quot;,NA, nivel_discriminación), 
+)</code></pre>
+<p>Ahora que hemos creado el indicador de nivel de discriminación,
+realicemos un análisis descriptivo.</p>
+<pre class="r"><code>data %&gt;% 
+  summarise(media = mean(nivel_discriminación, na.rm = T),
+            mediana = median(nivel_discriminación,na.rm = T),
+            sd = sd(nivel_discriminación, na.rm = T),
+            min = min(nivel_discriminación, na.rm = T),
+            max = max(nivel_discriminación, na.rm = T))</code></pre>
+<pre><code>##    media  mediana        sd      min max
+## 1 2.0436 1.666667 0.8521802 1.666667  10</code></pre>
+<p><strong>ciMean</strong>, del paquete <strong>lsr</strong>, es la
+función que calcula el intervalo de confianza de una media.</p>
+<pre class="r"><code>library(lsr)
+ic_media = ciMean(data$nivel_discriminación, na.rm = TRUE) #con el último argumento indicamos no tomar en consideracion los valores perdidos (NA)
+
+ic_media</code></pre>
+<pre><code>##          2.5%   97.5%
+## [1,] 2.013609 2.07359</code></pre>
 </div>
+</div>
+<div id="intervalo-de-confianza-de-una-media-según-grupo"
+class="section level1">
+<h1><strong>3.Intervalo de confianza de una media según
+grupo</strong></h1>
 <div
-id="existe-una-relación-entre-la-tasa-de-fecundidad-y-la-esperanza-de-vida-de-las-mujeres"
+id="de-qué-manera-la-zona-de-lima-en-la-que-vive-la-persona-se-relaciona-con-su-gasto-en-transporte"
 class="section level3">
-<h3>¿Existe una relación entre la tasa de fecundidad y la esperanza de
-vida de las mujeres?</h3>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(lifExpFem, na.rm = TRUE),
-           Media = mean(lifExpFem, na.rm = TRUE),
-           Mediana = median(lifExpFem, na.rm = TRUE),
-           Max = max(lifExpFem, na.rm = TRUE))</code></pre>
-<pre><code>##    Min    Media Mediana Max
-## 1 52.6 74.16875    76.3  87</code></pre>
-<p>Podemos apreciar que la esperanza de vida de las mujeres entre países
-tiene un rango de 35 años entre el menor valor y el mayor. En la mayoría
-de los países, este valor supera a los 76 años.</p>
-<pre class="r"><code>ggplot(data2, aes(x=tfr, y=lifExpFem)) +
-  geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Esperanza de vida de las mujeres&quot;) +
-  ggtitle(&quot;Relación entre la tasa de fecundidad y la esperanza de vida de las mujeres&quot;) +
-  theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-15-1.png" width="672" />
-El gráfico nos permite observar que existe una relación inversa entre
-las variables, además se puede esperar que esta relación sea grande ya
-que la mayoría de puntos se están ajustando a la recta que se
-modela.</p>
-<pre class="r"><code>cor.test(data2$tfr, data2$lifExpFem)</code></pre>
+<h3>¿De qué manera la zona de Lima en la que vive la persona se
+relaciona con su gasto en transporte?</h3>
+<p>Hallemos el intervalo de confianza para el nivel de discriminación
+(nivel_discriminación) según estrato (ESTRATO).</p>
+<p>Agreguemos etiquetas a la categórica</p>
+<pre class="r"><code>table(data$ESTRATO)</code></pre>
 <pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  data2$tfr and data2$lifExpFem
-## t = -21.932, df = 182, p-value &lt; 2.2e-16
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.8871151 -0.8064711
-## sample estimates:
-##        cor 
-## -0.8517614</code></pre>
-<p>La prueba de correlación no permite comprobar lo que visualizamos en
-el gráfico. Es así que obtenemos tres conclusiones principales. 1. A un
-95% de confianza tenemos la evidencia suficiente para rechazar que no
-haya relación entre la tasa de fecundidad y la esperanza de vida de las
-mujeres en los países. 2. Esta relación es negativa, lo que implica que
-en los países que tienen una tasa de fecundidad más elevada, se espera
-que la esperanza de vida sea menor. 3. El coeficiente nos indica que es
-una relación grande, lo que se puede ver claramente en el gráfico. Esta
-relación podría explicarse por el nivel de desarrollo de algunos países
-donde el acceso a servicios de salud y de educación sexual es limitado.
-Esto implica que las mujeres enfrenten mayores obstáculos en cuanto a
-cuidados prenatales, nutrición y/o atención médica, lo cual afecta su
-salud, y así también la esperanza de vida de las mismas.</p>
-</div>
-<div
-id="existe-una-relación-entre-la-tasa-de-fecundidad-y-el-ingreso-per-cápita-en-los-países"
-class="section level3">
-<h3>¿Existe una relación entre la tasa de fecundidad y el ingreso per
-cápita en los países?</h3>
-<pre class="r"><code>data2 %&gt;%
- summarize(Min = min(incomePp, na.rm = TRUE),
-           Media = mean(incomePp, na.rm = TRUE),
-           Mediana = median(incomePp, na.rm = TRUE),
-           Max = max(incomePp, na.rm = TRUE))</code></pre>
-<pre><code>##   Min    Media Mediana    Max
-## 1 626 17798.48   11550 119750</code></pre>
-<p>Para esta variable vemos aún más dispersión de los datos, ya que el
-valor puede ir desde 626 dólares hasta más de 110 mil dólares.</p>
-<pre class="r"><code>ggplot(data2, aes(x=tfr, y=incomePp)) +
-  geom_point(colour=&quot;skyblue&quot;) +  xlab(&quot;Tasa global de fecundidad, número promedio de hijos por mujer&quot;) +  ylab(&quot;Ingreso per cápita&quot;) +
-  ggtitle(&quot;Relación entre la tasa de fecundidad y el ingreso per cápita&quot;) +
-  theme_light()+ geom_smooth(method=lm,se=F)</code></pre>
-<p><img src="pd6_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<p>Nuevamente, podemos esperar una relación negativa entre las
-variables. En esta ocasión es más sencillo notar la presencia de los
-datos atípicos.</p>
-<pre class="r"><code>cor.test(data2$tfr, data2$incomePp)</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  data2$tfr and data2$incomePp
-## t = -8.4911, df = 182, p-value = 7.085e-15
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.6288773 -0.4204107
-## sample estimates:
-##        cor 
-## -0.5326759</code></pre>
-<p>Finalmente la prueba evidencia que podemos rechazar la ausencia de
-relación entre ambas variables. Y así afirmar que la tasa de fecundidad
-y el ingreso per capita tienen una relación inversa, lo que quiere decir
-que se espera que a medida que aumente el ingreso per capita, disminuya
-la tasa de fecundidad, y viceversa. Además, esta relación es también
-grande.</p>
-<div id="conclusión" class="section level4">
-<h4>Conclusión</h4>
-<table>
-<caption>Correlación entre variables y tasa de fecundidad</caption>
-<thead>
-<tr class="header">
-<th align="left">Variables</th>
-<th align="left">Coeficiente</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Tasa de fec. y trabajo femenino</td>
-<td align="left">No hay correlación</td>
-</tr>
-<tr class="even">
-<td align="left">Tasa de fec. y trabajo masculino</td>
-<td align="left">0.148182813219316</td>
-</tr>
-<tr class="odd">
-<td align="left">Tasa de fec. y esperanza de vida de las mujeres</td>
-<td align="left">-0.851761415467274</td>
-</tr>
-<tr class="even">
-<td align="left">Tasa de fec. e ingreso per cápita</td>
-<td align="left">-0.532675904566006</td>
-</tr>
-</tbody>
-</table>
-<p>Finalmente, podemos concluir que todas las variables analizadas se
-relacionan con la tasa de fecundidad a nivel país, menos la fuerza
-laboral femenina. Además, la variable que se relaciona más sería la
-esperanza de vida de las mujeres, ya que su coeficiente es el más
-cercano a 1, aún cuando su relación sea negativa.</p>
+##    1    2    3    4    5 
+## 1205 3132 3644 1979  282</code></pre>
+<pre class="r"><code>library(dplyr)
+data = data %&gt;% 
+  mutate(ESTRATO=factor(ESTRATO, levels = (1:5), labels = c(&quot;Bajo&quot;,&quot;Medio bajo&quot;,&quot;Medio&quot;, &quot;Medio alto&quot;, &quot;Alto&quot;)))</code></pre>
+<p>1. Crearemos una tabla con la media, máximo y mínimo de la variable
+nivel_discriminación, en base al grupo de ESTRATO.</p>
+<pre class="r"><code>ic_grupo = data %&gt;% 
+  group_by(ESTRATO) %&gt;% 
+  summarise(Media = mean(nivel_discriminación, na.rm=T),
+            min = ciMean(nivel_discriminación, na.rm=T)[1],
+            max = ciMean(nivel_discriminación, na.rm=T)[2])
+ic_grupo</code></pre>
+<pre><code>## # A tibble: 5 × 4
+##   ESTRATO    Media   min   max
+##   &lt;fct&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Bajo        2.06  1.97  2.14
+## 2 Medio bajo  2.03  1.98  2.09
+## 3 Medio       2.02  1.97  2.07
+## 4 Medio alto  2.08  2.01  2.15
+## 5 Alto        2.15  1.92  2.38</code></pre>
+<p>Según nuestra tabla, podemos afirmar que hay un 95% de probabilidad
+de que la media del grupo de Estrato Alto percibe, ligeramente, un mayor
+nivel de discriminación a comparación del resto. Igualmente, podemos
+observar que, dentro de todos los grupos, el nivel promedio de
+discriminación es bastante similar.</p>
+<p>Grafiquemos nuestros resultados.</p>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(ic_grupo, aes(x = ESTRATO, y = Media)) +
+  # Barras sólidas
+  geom_col(fill = &quot;#00688B&quot;, color = &quot;black&quot;) +
+  
+  # Barras de error
+  geom_errorbar(aes(ymin = min, ymax = max), width = 0.2) +
+  
+  # Etiqueta de la media
+  geom_text(aes(label = round(Media, 2)),
+            vjust = -1, size = 4) +
+  
+  # Etiqueta del valor mínimo (ligeramente a la derecha)
+  geom_text(aes(y = min, label = paste(&quot;min:&quot;, round(min, 2))),
+            vjust = 1.5, hjust = 1.2, size = 3, color = &quot;white&quot;) +
+  
+  # Etiqueta del valor máximo (ligeramente a la derecha)
+  geom_text(aes(y = max, label = paste(&quot;max:&quot;, round(max, 2))),
+            vjust = -0.5, hjust = 1.3, size = 3, color = &quot;#00688B&quot;) +
+  
+  xlab(&quot;Estrato&quot;) +
+  ylab(&quot;Promedio del nivel de discriminación&quot;) +
+  ylim(0, max(ic_grupo$max) + 0.5) +
+  theme_minimal()</code></pre>
+<p><img src="pd6_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>Con lo que muestra el gráfico, ¿cómo podemos complementar nuestra
+interpretación anterior?</p>
 </div>
 </div>
-<div id="ejercicios-para-clase" class="section level2">
-<h2>Ejercicios para clase</h2>
+<div id="ejercicio" class="section level1">
+<h1><strong>Ejercicio</strong></h1>
 <ol style="list-style-type: decimal">
-<li><p>¿Cómo se relaciona la tasa de fecundidad (tfr) con la equidad de
-género en la educación en los países (schGenEq)?</p></li>
-<li><p>¿Cómo se relaciona la tasa de fecundidad (tfr) con el porcentaje
-de personas con acceso a agua en los países (water)?</p></li>
+<li><p>Calcula el intervalo de confianza de la media del nivel
+discriminación según Departamento. Grafíquelo e interprete</p></li>
+<li><p>La pregunta P708_1 refiere a si la población venezolana
+encuestada se identifica con la sociedad y cultura peruana (Sí o no).
+Calcula el intervalo de confianza para la proporción de la variable
+“P708_1” e interpreta.</p></li>
 </ol>
-</div>
 </div>
 
 
