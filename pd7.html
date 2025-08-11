@@ -11,7 +11,7 @@
 
 
 
-<title>Práctica dirigida 5</title>
+<title>Práctica dirigida 7</title>
 
 <script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -357,7 +357,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Práctica dirigida 5</h1>
+<h1 class="title toc-ignore">Práctica dirigida 7</h1>
 
 </div>
 
@@ -365,8 +365,82 @@ div.tocify {
 <p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
 <p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
 <p>Semestre 2025 - 2</p>
-<div id="chi-cuadrado-y-repaso" class="section level1">
-<h1>Chi cuadrado y repaso</h1>
+<div id="recordando-lo-avanzado" class="section level2">
+<h2><strong>Recordando lo avanzado</strong></h2>
+<p>En la sesión anterior de teoría, nos adentramos al análisis
+inferencial bivariado, teniendo como base del tema el cálculo del
+Intervalo de Confianza (IC) para una media (variables numéricas) y para
+una proporción (variables categóricas). Recordemos que gracias al IC
+podemos determinar si la estimación es representativa de la población.
+La idea era calcular los intervalos de confianza para cada grupo y ver
+si los intervalos se interceptan o no. La regla era que si los
+intervalos de ambos grupos no se interceptaban, podíamos extrapolar que
+la diferencia muestral existe en la población al 95% de confianza. Para
+profundizar sobre estadística inferencial, evaluaremos las hipótesis
+mediante la introducción a la prueba t de diferencia de medias y
+desarrollaremos los cincos pasos de la inferencia estadística.
+Recordemos que el objetivo es corroborar que es posible extrapolar un
+resultado de la muestra a la población.</p>
+</div>
+<div id="prueba-t" class="section level1">
+<h1><strong>Prueba T</strong></h1>
+<div id="qué-es-la-prueba-t-de-diferencia-de-medias"
+class="section level2">
+<h2><strong>¿Qué es la prueba T de diferencia de medias?</strong></h2>
+<p>Generalmente, cuando queremos comparar dos grupos centramos nuestra
+atención en el promedio de cada uno. Sin embargo, el hecho de que los
+promedios sean distintos no supone, necesariamente, que existe una
+diferencia estadísticamente significativa.</p>
+<p>Para saber si la diferencia observada entre las medias de dos grupos
+es o no significativa se emplean métodos paramétricos como el de
+Z-scores o la distribución T-student. Estas técnicas calculan los
+intervalos de confianza de cada grupo y concluyen si existe una
+diferencia real entre las medias.</p>
+<p>La prueba T compara la media de una variable numérica para dos grupos
+o categorías de una variable nominal u ordinal. Los grupos que forman la
+variable nominal/ordinal tienen que ser independientes. Es decir, cada
+observación debe pertenecer a un grupo o al otro, pero no a ambos.</p>
+</div>
+<div id="pruebas-t-para-muestras-independientes" class="section level2">
+<h2><strong>Pruebas T para muestras independientes</strong></h2>
+<p><em>Condiciones</em></p>
+<ol style="list-style-type: decimal">
+<li><p>Independencia: Las muestras deben ser independientes. El muestreo
+debe ser aleatorio.</p></li>
+<li><p>Igualdad de varianza: La varianza de ambas poblaciones comparadas
+debe ser igual.</p></li>
+<li><p>La variable numérica se distribuye de manera normal.</p></li>
+</ol>
+<p><strong><em>IMPORTANTE</em></strong></p>
+<p>La condición de normalidad también es considerada si es que la
+muestra fuera pequeña (Agresti y Finlay proponen que se aplica con un n
+pequeño menor a 30 observaciones). A medida que el n se hace más grande,
+el supuesto de normalidad es menos importante pues con grandes n
+confiamos en el teorema del límite central que nos indica que la
+distribución muestral será siempre normal.</p>
+</div>
+<div id="pasos-para-realizar-la-prueba-t" class="section level2">
+<h2><strong>Pasos para realizar la Prueba T</strong></h2>
+<ol style="list-style-type: decimal">
+<li><p>Establecer hipótesis</p></li>
+<li><p>Calcular el estadístico (parámetro estimado) que se va a
+emplear</p></li>
+<li><p>Determinar el nivel de significancia α (alpha)</p></li>
+<li><p>Calcular el p-value y realizar la prueba prop.test</p></li>
+<li><p>Interpretar</p></li>
+</ol>
+<p><strong>Recuerda</strong></p>
+<p>El H0 de la prueba T es la siguiente:</p>
+<p><strong>H0:</strong> No existe diferencia estadísticamente
+significativa entre las medias de los dos grupos comparados.</p>
+<p><strong>H1:</strong> Sí existe diferencia estadísticamente
+significativa entre las medias de los dos grupos comparados.</p>
+<p><em>La H0 es generalmente la hipótesis de no efecto, de no
+diferencias.</em></p>
+</div>
+</div>
+<div id="chi-cuadrado" class="section level1">
+<h1><strong>Chi cuadrado</strong></h1>
 <div id="tablas-de-contingencia" class="section level2">
 <h2><strong>Tablas de contingencia</strong></h2>
 <ul>
@@ -517,8 +591,8 @@ variables escogidas. Esto quiere decir que el estrato SÍ se vincula con
 el envío de remesas.</p>
 </div>
 </div>
-<div id="repaso" class="section level2">
-<h2><strong>Repaso</strong></h2>
+<div id="desarrollo-completo" class="section level2">
+<h2><strong>Desarrollo completo</strong></h2>
 <p>Ten en consideración que evitar borrar los datos perdidos pero no
 considerarlos en el análisis podemos agregar un filtro:
 <strong>filter(!is.na(variableatrabajar))</strong> recuerda que esto
@@ -629,7 +703,7 @@ data %&gt;%
 venezolan@ que trabaja en Perú gana aproximadamente entre 492.2 y 529.7
 soles. Hay que tener en consideración que este monto es en cada pago,
 que puede ser quincenal, mensual, etc.</p>
-<div id="prueba-t" class="section level3">
+<div id="prueba-t-1" class="section level3">
 <h3><strong>4. Prueba T</strong></h3>
 <div
 id="existe-diferencia-entre-el-monto-percibido-ingreso-entre-los-venezolanos-que-envían-remesas-remesas-y-los-que-no"
