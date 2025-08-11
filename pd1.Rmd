@@ -1,0 +1,62 @@
+---
+title: "Práctica dirigida 1"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    collapsed: no
+    number_sections: no
+    toc_depth: 3
+    theme: flatly
+    highlight: textmate
+    always_allow_html: yes
+---
+
+**FACULTAD DE CIENCIAS SOCIALES - PUCP**
+
+Curso: SOC294 - Estadística para el análisis sociológico 1
+
+Semestre 2025 - 2
+
+
+
+# **Bases de datos**
+
+|       |                                                                                    |                                                                                                                    |               |
+|:----------:|:------------------:|:----------------------------:|:----------:|
+| **n** |                                     **Nombre**                                     |                                                     **Enlace**                                                     |  **Alcance**  |
+|   1   |                                       IPUMS.                                       |       [https://www.ipums.org](https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/958881)        |    Global     |
+|   2   |   ICPSR. Intern-university Consortium for Political and Social Research (ICPSR)    |                                    <http://www.icpsr.umich.edu/icpsrweb/ICPSR/>                                    |    Global     |
+|   3   |               International IPUMS. (Harmonized international census)               |                                  <https://international.ipums.org/international/>                                  |    Global     |
+|   4   |                                 Harvard Dataverse.                                 |                                          <https://dataverse.harvard.edu/>                                          |    Global     |
+|   5   |                  Harvard Dataverse. Randomized controlled trials                   |                                   <https://dataverse.harvard.edu/dataverse/jpal>                                   |    Global     |
+|   6   |               PovertyActionLab. Catalog of Administrative Data Sets                |                        <https://www.povertyactionlab.org/catalog-administrative-data-sets>                         |    Global     |
+|   7   |                                WORLD BANK OPEN DATA                                |                                           <https://data.worldbank.org/>                                            |    Global     |
+|   8   |                           UN. World Population Prospects                           |                                          <https://population.un.org/wpp/>                                          |    Global     |
+|   9   |              SHARE. Survey of health, ageing and retirement in Europe              |                                              <https://share-eric.eu/>                                              |    Europa     |
+|  10   |                EHPS. European Historical Population Samples Network                |                                          <https://ehps-net.eu/databases>                                           |    Europa     |
+|  11   |                                 Our World in Data                                  |                                           <https://ourworldindata.org/>                                            |    Global     |
+|  12   |                                  Amazon dataverse                                  |                                          <https://registry.opendata.aws/>                                          |    Global     |
+|  13   |                    J-PAL. Catalog of Administrative Data Sets.                     |                        <https://www.povertyactionlab.org/catalog-administrative-data-sets>                         |    Global     |
+|  14   |                     DHS. Demographic and Health Surveys (DHS).                     |                                             <https://dhsprogram.com/>                                              |    Global     |
+|  15   |                                     OECD data                                      |                                 [ https://data.oecd.org/](https://data.oecd.org/)                                  |     OECD      |
+|  16   |             Latinobarómetro. Public Opinion Survey in Latin America.               |                                 <https://www.latinobarometro.org/latContents.jsp>                                  |     LATAM     |
+|  17   |                             ENDO - Encuesta a docentes                             |                  <https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/4385260>                   | Peru - MINEDU |
+|  18   |                            ENDI - Encuesta a directivos                            |                  <https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/4385260>                   | Peru - MINEDU |
+|  19   |                                  Censo Educativo                                   |                  <https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/8520583>                   | Peru - MINEDU |
+|  20   |                 Encuesta Mundial de Valores / World Values Survey                  |                            <https://www.worldvaluessurvey.org/WVSDocumentationWV7.jsp>                             |    Global     |
+|  21   |           Encuesta Nacional de Percepción de Desigualdads - ENADES 2022            | <https://peru.oxfam.org/lo-%C3%BAltimo/publicaciones/encuesta-nacional-de-percepcion-de-desigualdades-enades-2022> |     Peru      |
+|  22   |                            Encuesta Nacional de Hogares                            |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  23   |                              Censo agropecuario 2012                               |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  24   |                            Censo nacional de comisarías                            |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  25   |                     Censo nacional de población penitenciaria                      |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  26   |                  Encuesta demográfica y de salud familiar - ENDES                  |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  27   |            Encuesta Nacional a egresados universidades y universitarios            |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  28   |                        Encuesta Nacional de la Lectura 2022                        |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  29   |                      Encuesta Nacional de Uso del Tiempo 2024                      |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  30   |                      Encuesta Nacional de Relaciones Sociales                      |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  31   | Segunda encuesta dirigida a la población venezolana que reside en el país - ENPOVE |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  32   |                                **INEI. Microdatos**                                |                                    <https://proyectos.inei.gob.pe/microdatos/>                                     |  Peru - INEI  |
+|  33   |                     **INEI. Catálogo de Bases de datos 2025**                      |                                 <https://www.inei.gob.pe/media/difusion/apps/#p=1>                                 |  Peru - INEI  |
+|  34   |                 **Observatorios y Bases de Datos de Ministerios.**                 |                                                                                                                    |     Peru      |
+|  35   |                     **Plataforma Nacional de Datos Abiertos**                      |                                        <https://www.datosabiertos.gob.pe/>                                         |     Peru      |
