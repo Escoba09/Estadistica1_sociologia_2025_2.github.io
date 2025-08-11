@@ -15,295 +15,327 @@ editor_options:
     wrap: 72
 ---
 
-**FACULTAD DE CIENCIAS SOCIALES - PUCP**
+FACULTAD DE CIENCIAS SOCIALES - PUCP
 
 Curso: SOC294 - Estadística para el análisis sociológico 1
 
-Semestre 2024 - 2
+Semestre 2025 - 2
 
-# Análisis de Componentes principales
+## **ANOVA**
 
-```{r, warning=FALSE,message=FALSE}
+**¿Qué es el Análisis de Varianza (ANOVA)?**
+
+Es una prueba estadística que permite comparar la media (promedio) de
+**más de 2 grupos**. Es decir, es como una prueba T, pero de más de dos
+grupos.
+
+Al igual que con la prueba T, en esta oportunidad debemos observar el
+**p-value** de la prueba. Para ello, se establecen 2 hipótesis:
+
+H0 (p-value \> 0.05): no hay diferencia significativa entre las medias
+de ningún grupo. H1 (p-value =\< 0.05): al menos una media poblacional
+(de un grupo) es significativamente distinta a las otras
+
+**Estadístico F**
+
+Indica la variablidad entre grupos y dentro de un mismo grupo.
+
+Si F es grande, hay mucha variabilidad entre grupos y poca variabilidad
+dentro de un mismo grupo. Si F es pequeño, hay poca variabilidad entre
+grupos pero mucha variabilidad dentro de un mismo grupo.
+
+**Prueba Tukey**
+
+Prueba “post-hoc” (luego de), realizada para revisar entre qué grupos
+existe una diferencia significativa.
+
+OJO: como es una prueba complementaria a la ANOVA, **solo resulta
+necesaria si se rechaza la H0** en ANOVA. Si la H0 no se rechaza en
+ANOVA, no hay necesidad de hacer prueba Tukey.
+
+Al igual que las otras pruebas estadísticas, se debe ver el p-value en
+cada emparejamiento
+
+![](Dicpd6.png)
+
+```{r}
 library(rio)
-library(dplyr)
-library(psych)
-library(FactoMineR)
+data=import("dataWorld_q.rda")
 ```
 
-La base de datos está a nivel país distintas variables que ayudan a
-crear el indicador de desigualdad de género (DesigualdadGenero). Además,
-todas las variables han sido escaladas del 0 al 10. Estas variables son
+### ¿Existe diferencias en la tasa de fecundidad según la quinquenio (entre el 2000 y el 2019)?
 
-MLAutonomia: Mide que tanto el sistema legal protege derechos
-reporductivos de las mujeres
-
-MLViolencia: Mide que tanto el sistema legal protege a las mujeres de la
-violencia
-
-VozPolítica: Presencia de mujeres en el parlamento
-
-LibertadMov: Porcentaje de mujeres que declaran no sentirse seguras en
-las calles
-
-DesconfianzaSJ: Porcentaje de mujeres que no confian en el sistema de
-justicia
-
-SecundariaC: Porcentaje de población con secundaria completa
-
-DesempleoMuj: Ratio de desempleo de muejeres frente a hombres
-
-CuentaF: Porcentaje de mujeres que cuentan con una cuenta en el sistema
-financiero
-
-Recuerda que solo pueden entrar al análisis variables númerica, también
-dejaremos por fuera el indicador de desigualdad ya que fue creado a
-partir de las otras variables. Es decir, utilizaremos desde MLautonomia
-hasta Cuenta F
+Observemos algunos estadísticos descriptivos.
 
 ```{r}
-data0 = import("desigualdad_v2.xlsx")
-```
-
-```{r}
-names(data0)
-```
-
-Le asignamos el id de cada país a la fila, es decir, asignamos los
-valores de la primera columna como el nombre identificador de la fila.
-
-```{r}
-rownames(data0)<-data0[,1]
-```
-
-Ahora dejaremos por fuera las variables Pais y DesigualdadGenero
-
-```{r}
-data0 = data0 %>% 
-  select(-Pais,-DesigualdadGenero)
-```
-
-Revisemos que todas las variables sean numéricas
-
-```{r}
-str(data0)
-```
-
-Ahora revisemos si hay algún valor perdido. Para ello podemos pedir un
-conteo de todos los perdidos, si sale 0 quiere decir que no hay valores
-perdidos. Si los hubiera, podemos usar el comando complete.cases.
-
-```{r}
-sum(is.na(data0))
-```
-
-Ya que nos cercioramos de eso, podemos continuar.
-
-Paso 1: Realizar una matriz de correlación
-
-```{r}
-library(corrplot)
-matriz = cor(data0) #Recuerda que si fueran ordinales en escala likert, debemos usar polycor y no cor
-
-corrplot(matriz,        
-         type = "lower",    #Para que solo aparezca la mitad de la tabla de doble entrada
-         diag = TRUE,      #Para que aparezca la matriz
-         tl.col = "black") #Para que los nombres de las variables salgan en negro, por default aparecen en rojo.
-```
-
-Paso 2: ¿Se puede factorizar?
-
--   KMO
-
-```{r}
-library(psych)
-psych::KMO(matriz) 
-```
-
-Debemos analizar el overall MSA, tenemos que obtener un valor superior a
-0.5 para afirmar que se puede aplicar la técnica a este grupo de
-variables.
-
--   Test de Bartlet
-
-Al ser una prueba, el Test de Bartlett tiene una hipótesis nula que es
-"la matriz de identidad y la matriz de correlación de las variables son
-iguales". Si el pvalue es menor o igual a 0.05, podemos rechazar que
-sean iguales.
-
-```{r}
-cortest.bartlett(matriz,n=nrow(data0))$p.value>0.05  
-```
-
-Este código solicita solo el pvalue de la prueba y pregunta si el valor
-supera el 0.05, si el resultado es TRUE quiere decir que el pvalue
-supera el 0.05. Es decir, para poder afirmar que ambas matrices son
-distintas debemos esperar que el resultado sea FALSE
-
-Paso 3: Determinar cuántos factores o variables latentes puede
-redimensionar la data
-
-Por el gráfico de sedimentación
-
-```{r}
-fa.parallel(matriz, fm="pa", fa="pc", main = "Scree Plot")
-```
-
-¿Cómo se interpreta el gráfico?
-
-Se cuenta los puntos (en este caso triángulos) que están por encima de
-la linea roja. En este caso se propone un factor o variable latente.
-
--   Criterio de la varianza
-
-```{r}
-eigenf = eigen(matriz)
-eigenf$values
-```
-
-El número de fatores que se propone depende de cuántos números son
-mayores a 1. En este caso son 3 números, por lo tanto se concluye que se
-podría agrupar en 3 factores.
-
-Se puede obtener la misma conclusión usando el comando PCA
-
-```{r}
-library(factoextra)
-library(FactoMineR)
-res.pca <- PCA(data0, graph = FALSE)
-eig.val <- get_eig(res.pca)
-eig.val
-```
-
-Paso 3: Análizar qué variables componen cada variable latente
-Consideremos el número de factores propuesto por la segunda técnica. Si
-hubieramos optado por realizar un solo factor, deberiamos cambiar lo que
-sigue luego de nfactors.
-
-```{r}
-pc <- principal(data0, nfactors = 3)
-print(pc$loadings,cutoff = 0.5) #Para ver las variables y cuanto aportan a cada factor
-```
-
--   Ver qué variables tiene cada componente
--   Ver la carga, que tanto aporta cada variable al componente.
-
-Paso 4: Agregar las variables latentes a la base de datos original
-Recuerda que los factores se agregan en puntuación z.
-
-```{r}
-matriz = as.data.frame(pc$scores) #Guardamos los factores en una base de datos
-data_final = cbind(data0,matriz)
-head(data_final)[5:11]
-```
-
-# Repaso
-
-```{r, warning=FALSE,message=FALSE}
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(lsr)
-```
 
-```{r}
-data = import("Data-provincias.xlsx")
-```
+library(dplyr)
 
-## Prueba T
+data <- data %>%
+  filter(quinq %in% c("2000-2004", "2005-2009", "2010-2014", "2015-2019"))
 
-¿Existe alguna diferencia en el promedio del voto (%) por Keiko Fujimori
-(FP) en segunda vuelta según el nivel de IDH (alto/bajo)?
 
-```{r}
-tabla1 = data %>% 
-  group_by(IDH_cat) %>% 
-  summarise(Media = mean(FP, na.rm=T),
-            LimSup = ciMean(FP, na.rm=T)[1],
-            LimInf = ciMean(FP, na.rm=T)[2])
+tabla1 = data %>%
+  group_by(quinq) %>%
+  summarise(Media = mean(tfr, na.rm = T),
+            Mediana = median(tfr, na.rm = T),
+            Desviacion = sd(tfr, na.rm = T),
+            Inferior = ciMean(tfr, na.rm = T)[1],
+            Superior = ciMean(tfr, na.rm = T)[2])
 
 tabla1
 ```
 
+Veámoslo en gráficos
+
 ```{r}
-ggplot(tabla1, aes(x=IDH_cat, y=Media))+
-  geom_errorbar(aes(ymin = LimInf, ymax= LimSup),width=0.3)+
-  theme_light()+
-  xlab("Nivel de IDH")+ylab("% de voto a Keiko Fujimori")
+library(ggplot2)
+ggplot(tabla1, aes(x=quinq, y=Media, fill = quinq))+
+  geom_bar(stat="identity")+
+  geom_errorbar(aes(ymin=Inferior, ymax=Superior), width=0.2)+
+  geom_text(aes(label=paste(round(Media, 1))), vjust=-2, size=3)+
+  xlab("Quinquenio") + ylab("Tasa global de fecundidad")+
+  ylim(0, 5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Realicemos un ANOVA
+
+```{r}
+anova1 = aov(data$tfr ~ data$quinq)
+summary(anova1)
+```
+
+Observamos que el p-value es menor a 0.05, lo que significa que al menos
+un grupo tiene la media estadísticamente significativa respecto del
+resto.
+
+Para saber qué media es distinta, aplicamos la prueba Tukey.
+
+```{r}
+comparacion = TukeyHSD(anova1)
+comparacion
+```
+
+solo la comparación 2015-2019 vs. 2000-2004 tiene un valor p ajustado de
+0.0189, que es menor que 0.05, lo cual indica que esta diferencia es
+estadísticamente significativa.
+
+## **Diagramas de dispersión y correlación**
+
+### Ideas clave
+
+La correlación es en esencia una medida normalizada de asociación o
+covariación lineal entre dos variables.
+
+-   La **correlación** es una medida de la relación (covariación) entre
+    **dos variables cuantitativas.**
+
+-   La manera más sencilla de saber si dos variables están
+    correlacionadas es determinar si co-varían (varían conjuntamente).
+
+-   Es importante hacer notar que **esta covariación o relación no
+    implica necesariamente causalidad**: La correlación puede ser
+    fortuita, como en el caso clásico de la correlación entre el número
+    de venta de helados e incendios, debido al efecto de una tercera
+    variable, la temperatura ambiental. A este tipo de relación se le
+    llama "espuria".
+
+### Hipótesis de la prueba de correlación
+
+-   H0 : No existe correlación entre las variables
+-   H1 : Existe correlación entre las variables
+
+### Coeficiente de Correlación de Pearson
+
+-   "El Coeficiente de Correlación de Pearson es un estadístico
+    paramétrico, pues se asume que ambas variables tienen una
+    distribución aproximadamente normal, o sea, distribución normal
+    bivariante".
+
+-   Es una medida que **puede variar entre -1 y +1**, ambos extremos
+    indicando correlaciones perfectas, negativa y positiva
+    respectivamente.
+
+-   Un valor de r = 0 indica que no existe relación lineal entre las dos
+    variables.
+
+![](G1.png)
+
+### Gráfico de dispersión
+
+![](G2.png)
+
+Otros ejemplos:
+
+![](G3.png)
+
+### Aplicación práctica
+
+# ¿Que factores se relacionan con la tasa de fecundidad en los países entre los años 2015-2019?
+
+Como vimos anteriormente, nuestra data abarca distintos periodos. Analicemos los factores que se relacionan con la tasa de fecundidad en el periodo más reciente: 2015-2019
+
+Primero revisemos como está escrito y luego filtremos
+
+```{r}
+table(data$quinq)
+```
+```{r}
+data2 = data %>% 
+  filter(quinq=="2015-2019")
+```
+
+Ahora sí, analicemos!
+
+
+### ¿Existe una relación entre la tasa de fecundidad y el trabajo femenino?
+
+**Paso 1**: Exploramos variables de interés
+
+```{r}
+data2 %>%
+ summarize(Min = min(tfr, na.rm = TRUE),
+           Media = mean(tfr, na.rm = TRUE),
+           Mediana = median(tfr, na.rm = TRUE),
+           Max = max(tfr, na.rm = TRUE))
+
+data2 %>%
+ summarize(Min = min(femWork, na.rm = TRUE),
+           Media = mean(femWork, na.rm = TRUE),
+           Mediana = median(femWork, na.rm = TRUE),
+           Max = max(femWork, na.rm = TRUE))
+```
+
+**Paso 2**: Realizamos el gráfico
+
+```{r}
+ggplot(data2, aes(x=tfr, y=femWork)) +
+  geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Participación femenina en la fuerza laboral") +
+  ggtitle("Relación entre la tasa de fecundidad y el trabajo femenino") +
+  theme_light()+ geom_smooth(method=lm,se=F)
+```
+
+**Paso 3**: Realizamos el ANOVA
+
+```{r}
+cor.test(data2$femWork, data2$tfr)
+```
+
+-   p \< 0.05 Rechazas la H0 (por lo tanto, sí hay correlación)
+
+-   P \> 0.05 No rechazas la H0
+
+¿Qué nos dice el resultado? Recuerda que en la interpretación no debe
+faltar: (i) intepretación del p-valor y (ii) interpretación del
+coeficiente de correlación (cor)
+
+Reporte: Dado que el p-valor es mayor a 0.05, no hay evidencia suficiente para rechazar la H0. Por lo tanto, podemos afirmar que no existe correlación entre el porcentaje de mujeres que trabajan y la tasa de fecundidad
+
+
+### ¿Existe una relación entre la tasa de fecundidad y el trabajo masculino?
+
+```{r}
+data2 %>%
+ summarize(Min = min(maleWork, na.rm = TRUE),
+           Media = mean(maleWork, na.rm = TRUE),
+           Mediana = median(maleWork, na.rm = TRUE),
+           Max = max(maleWork, na.rm = TRUE))
+```
+
+```{r, warning=FALSE,message=FALSE}
+ggplot(data2, aes(x=tfr, y=maleWork)) +
+  geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Participación masculina en la fuerza laboral") +
+  ggtitle("Relación entre la tasa de fecundidad y el trabajo femenino") +
+  theme_light()+ geom_smooth(method=lm,se=F)
 ```
 
 ```{r}
-t.test(data$FP ~ data$IDH_cat)
+cor.test(data2$maleWork, data2$tfr)
 ```
 
-## Anova
+Se puede apreciar que, al igual que con el trabajo femenino, el p-valor
+es menor a 0.05, por lo que se rechaza la H0. El coeficiente es de 0.21, lo que indica una correlación positiva pequeña. 
+
+Entonces, a mayor número promedio de hijos, aumenta la participación de la fuerza laboral, tanto de hombres como mujeres. ¿Cuál podría ser una posible explicación? Se puede pensar en la necesidad de suplir las demandas que requieren los hijos en términos monetarios, lo que lleva a un mayor trabajo. Se puede pensar en las políticas públicas de apoyo y como estas permiten continuar trabajar a los padres de familia. ¿Alguna otra posible explicación?
+
+### ¿Existe una relación entre la tasa de fecundidad y la esperanza de vida de las mujeres?
 
 ```{r}
-tabla2 = data %>% 
-  group_by(Reg_nat) %>% 
-  summarise(Media = mean(FP, na.rm=T),
-            LimSup = ciMean(FP, na.rm=T)[1],
-            LimInf = ciMean(FP, na.rm=T)[2])
-
-tabla2
+data2 %>%
+ summarize(Min = min(lifExpFem, na.rm = TRUE),
+           Media = mean(lifExpFem, na.rm = TRUE),
+           Mediana = median(lifExpFem, na.rm = TRUE),
+           Max = max(lifExpFem, na.rm = TRUE))
 ```
+Podemos apreciar que la esperanza de vida de las mujeres entre países tiene un rango de 35 años entre el menor valor y el mayor. En la mayoría de los países, este valor supera a los 76 años. 
+
+```{r warning=FALSE, message=FALSE}
+ggplot(data2, aes(x=tfr, y=lifExpFem)) +
+  geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Esperanza de vida de las mujeres") +
+  ggtitle("Relación entre la tasa de fecundidad y la esperanza de vida de las mujeres") +
+  theme_light()+ geom_smooth(method=lm,se=F)
+```
+El gráfico nos permite observar que existe una relación inversa entre las variables, además se puede esperar que esta relación sea grande ya que la mayoría de puntos se están ajustando a la recta que se modela.
 
 ```{r}
-ggplot(tabla2, aes(x=Reg_nat, y=Media))+
-  geom_errorbar(aes(ymin = LimInf, ymax= LimSup),width=0.3)+
-  theme_light()+
-  xlab("Región natural")+ylab("% de voto a Keiko Fujimori")
+cor.test(data2$tfr, data2$lifExpFem)
 ```
+La prueba de correlación no permite comprobar lo que visualizamos en el gráfico. Es así que obtenemos tres conclusiones principales. 1. A un 95% de confianza tenemos la evidencia suficiente para rechazar que no haya relación entre la tasa de fecundidad y la esperanza de vida de las mujeres en los países. 2. Esta relación es negativa, lo que implica que en los países que tienen una tasa de fecundidad más elevada, se espera que la esperanza de vida sea menor. 3. El coeficiente nos indica que es una relación grande, lo que se puede ver claramente en el gráfico. Esta relación podría explicarse por el nivel de desarrollo de algunos países donde el acceso a servicios de salud y de educación sexual es limitado. Esto implica que las mujeres enfrenten mayores obstáculos en cuanto a cuidados prenatales, nutrición y/o atención médica, lo cual afecta su salud, y así también la esperanza de vida de las mismas. 
+
+### ¿Existe una relación entre la tasa de fecundidad y el ingreso per cápita en los países?
 
 ```{r}
-anova=aov(data$FP~data$Reg_nat)
-summary(anova)
+data2 %>%
+ summarize(Min = min(incomePp, na.rm = TRUE),
+           Media = mean(incomePp, na.rm = TRUE),
+           Mediana = median(incomePp, na.rm = TRUE),
+           Max = max(incomePp, na.rm = TRUE))
+```
+Para esta variable vemos aún más dispersión de los datos, ya que el valor puede ir desde 626 dólares hasta más de 110 mil dólares. 
+
+```{r warning=FALSE, message=FALSE}
+ggplot(data2, aes(x=tfr, y=incomePp)) +
+  geom_point(colour="skyblue") +  xlab("Tasa global de fecundidad, número promedio de hijos por mujer") +  ylab("Ingreso per cápita") +
+  ggtitle("Relación entre la tasa de fecundidad y el ingreso per cápita") +
+  theme_light()+ geom_smooth(method=lm,se=F)
 ```
 
-## Chi cuadrado
-
-¿Existe alguna diferencia en el voto (%) por Keiko Fujimori (FP) (en
-segunda vuelta según si es de la sierra o no (Sierra_no)?
+Nuevamente, podemos esperar una relación negativa entre las variables. En esta ocasión es más sencillo notar la presencia de los datos atípicos.
 
 ```{r}
-tabla3 = table(data$FP_cat,data$Años_educ)
-tabla3
+cor.test(data2$tfr, data2$incomePp)
+```
+Finalmente la prueba evidencia que podemos rechazar la ausencia de relación entre ambas variables. Y así afirmar que la tasa de fecundidad y el ingreso per capita tienen una relación inversa, lo que quiere decir que se espera que a medida que aumente el ingreso per capita, disminuya la tasa de fecundidad, y viceversa. Además, esta relación es también grande. 
+
+#### Conclusión
+
+```{r, echo=FALSE}
+library(knitr)
+results <- data.frame(
+  Variables = c("Tasa de fec. y trabajo femenino", 
+                "Tasa de fec. y trabajo masculino", 
+                "Tasa de fec. y esperanza de vida de las mujeres", 
+                "Tasa de fec. e ingreso per cápita"),
+  `R de Pearson` = c(
+    "No hay correlación",
+    cor.test(data2$tfr, data2$maleWork)$estimate,
+    cor.test(data2$tfr, data2$lifExpFem)$estimate,
+    cor.test(data2$tfr, data2$incomePp)$estimate
+  )
+)
+names(results)[2]="Coeficiente"
+kable(results, caption = "Correlación entre variables y tasa de fecundidad")
 ```
 
-```{r}
-prop= as.data.frame(prop.table(tabla3,2))
-prop
-```
+Finalmente, podemos concluir que todas las variables analizadas se relacionan con la tasa de fecundidad a nivel país, menos la fuerza laboral femenina. Además, la variable que se relaciona más sería la esperanza de vida de las mujeres, ya que su coeficiente es el más cercano a 1, aún cuando su relación sea negativa. 
 
-```{r}
-names(prop)=c("Voto","Años_educ","Porcentaje")
-```
+## Ejercicios para clase
 
-```{r}
-ggplot(prop, aes(x=Años_educ,y=Porcentaje*100, fill=Voto))+
-  geom_bar(stat="identity", position="stack")+
-  geom_text(aes(label=paste(round(Porcentaje*100,1),"%")),
-  position = position_stack(vjust = 0.5))+
-  ylab("Porcentaje(%)")+xlab("Años de educación")+
-  theme_minimal()
-```
+1.  ¿Cómo se relaciona la tasa de fecundidad (tfr) con la equidad de
+    género en la educación en los países (schGenEq)?
 
-```{r}
-chisq.test(tabla3)$expected
-```
-
-```{r}
-chisq.test(tabla3)
-```
-
-## Correlación
-
-```{r}
-ggplot(data, aes(x=FP, y=ingresos))+
-  geom_point()+
-  geom_smooth(method="lm")+
-  xlab("Voto por Keiko Fujimori (%)")+
-  theme_minimal()
-```
-
-```{r}
-cor.test(data$FP,data$ingresos)
-```
+2.  ¿Cómo se relaciona la tasa de fecundidad (tfr) con el porcentaje de
+    personas con acceso a agua en los países (water)?
