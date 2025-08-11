@@ -1,5 +1,5 @@
 ---
-title: "Práctica dirigida 7"
+title: "Práctica dirigida 5"
 output:
   html_document:
     toc: yes
@@ -19,278 +19,413 @@ editor_options:
 
 Curso: SOC294 - Estadística para el análisis sociológico 1
 
-Semestre 2024 - 2
+Semestre 2025 - 2
 
-# **I. Análisis de regresión lineal simple (RLS): ideas clave**
+# Chi cuadrado y repaso
 
-Técnica estadística que predice el valor de una variable con los valores de otra. La regresión lineal simple es un método útil para predecir una respuesta cuantitativa **Y** partiendo de una sola variable predictora **X**, asumiendo que hay una relación aproximadamente lineal entre X e Y. Matemáticamente, esta relación lineal se representa como
+## **Tablas de contingencia**
 
-**Y = a + bX + E**
+-   Son tablas de doble entrada, en las cuales se cruzan las categorías
+    de dos variables de interés.
 
--   Y = variable dependiente o explicada. Variable cuyos valores se desea predecir o resumir. Un modelo de regresión lineal tiene como variable dependiente una variable numérica
+-   En las casillas de la tabla se ubica la frecuencia o el número de
+    casos de cada cruce.
 
--   a = Constante: ordenada en el origen, valor esperado de "Y" cuando X=0
+-   Conceptos importantes: Frecuencias observadas y frecuencias
+    esperadas.
 
--   b = Pendiente: mide el cambio de la variable "Y" por cada unidad de cambio de "X". Su magnitud sirve para predecir en cuánto aumentará "y" cada vez que "x" se incremente en una unidad.Su signo puede ser positivo o negativo, y en esto la interpretación coincide con la correlación.
-
--   X = variable utilizada para predecir el valor de la variable dependiente. También se denomina variable predictora o variable explicativa. Las variables explicativas que son parte del modelo suelen ser numéricas o intervalares; sin embargo, es posible incorporar variables explicativas ordinales o categóricas.
-
--   E = Corresponde a las desviaciones de los valores verdaderos de Y con respecto a los valores esperados de "Y" (diferencia entre lo observado y estimado por el modelo). Asumimos que es independiente de "X".
-
-La relación entre las variables depende de la pendiente:
-
--   Si b es positivo, Y aumenta cuando X aumenta. Es una relación directa / positiva.
-
--   Si b es negativo, Y aumenta cuando X disminuye. Es una relación inversa / negativa.
-
--   Si b es cero.Y no cambia cuando X varía. No existe relación entre las variables.
-
-Asimismo, con el método de la regresión lineal se puede responder las siguientes preguntas:
-
--   Analizar si hay una **asociación** entre las variables mediante un test de independencia estadística.
-
--   Analizar la **dirección** de la asociación (directa o inversa).
-
--   Evaluar la **fuerza** de la asociación usando una medida de asociación llamada *correlación de Pearson*.
-
--   Estimar una ecuación de regresión que **"predice"** los valores de la variable dependiente para valores de la variable independiente.
-
-# **II. Análisis de regresión lineal múltiple (RLM): ideas clave**
-
-Hasta el momento, nos hemos encontrado en el campo del análisis bivariado.
-Sin embargo, en el mundo social, difícilmente se pueden explicar los fenómenos de interés con una sola variable.
-Incluso si nos interesa evaluar el efecto de un a variable en específico sobre un fenómeno de estudio, hay muchos otros factores que podrían influir en aquello que nos interesa explorar.
-Por ello, necesitamos recurrir al **análisis multivariado** y conocer el concepto de **control estadístico**.
-
-El control estadístico nos permite aislar el efecto de otras variables.
-La idea es:
-
--   Evaluar si la asociación entre X e Y permanece si se remueve el efecto de otra variable, es decir, si se controla por una tercera variable.
-
--   Se analiza la relación entre X e Y para valores similares o iguales de una variable Z.
-    De esta manera se elimina la influencia de Z en la relación entre X e Y.
-    Lo anterior nos ayuda a acercarnos a una interpretación causar X -\> Y.
-
--   Si la relación entre X e Y desaparece cuando se controla por Z, se dice que la relación era espúrea.
-    En otras palabras, la relación dependendia de la influencia de Z y no de una conexión directa entre X e Y.
-
-Sobre la regresión lineal múltiple:
-
-```{r,echo=FALSE, out.width="100%",fig.align="center"}
-knitr::include_graphics("pd12_diap1.png") 
+```{r, echo=FALSE, out.width="50%",fig.align="center"}
+knitr::include_graphics("Tabla_contingencia1.png") 
 ```
 
-------------------------------------------------------------------------
+## **Frecuencias observadas y esperadas**
 
-Seguiremos los siguientes pasos para el análisis:
+-   Frecuencia esperada: Estas son las frecuencia que deberían darse si
+    las variables fueran independientes.
 
-1. Creación del modelo
-2. Analizar si el modelo es válido -> p value
-3. ¿Qué tanto explica mi modelo? -> Coeficiente de determinación - R2
-4. ¿Las variables Xs aportan al modelo? -> p value de cada variable
-5. ¿Qué variable aporta más? -> coeficientes estandarizados
-6. Identificación de coeficientes y construcció de la ecuació
+-   Frecuencia observada: Estas son las frecuencias reales que se
+    observa en nuestra data.
 
-# Aplicación
+Ejemplo:
+
+```{r, echo=FALSE, out.width="50%",fig.align="center"}
+knitr::include_graphics("Tabla_contingencia2.png") 
+```
+
+## **Prueba Chi2**
+
+Chi2 es una prueba para estimar el grado de asociación entre variables
+categóricas:
+
+-   "Nominal - Nominal",
+
+-   "Nominal - Ordinal"
+
+-   "Ordinal - Ordinal"
+
+Esto significa que una parte de la variabilidad de una variable puede
+ser explicada por otra variable.
+
+Supuestos:
+
+Para analizar asociación se requiere que el número de observaciones
+esperadas en cada celda de la tabla de contingencia debe ser
+suficientemente grande.
+
+Para fines de este curso, al menos cada celda de la tabla de
+contingencia de frecuencias esperadas debe ser de 5.
+
+Ten en cuenta que si estas condiciones no se cumplen, entonces la prueba
+podría no funcionar adecuadamente y los resultados de la prueba podrían
+no ser válidos.
+
+Hipótesis:
+
+-   Hipótesis nula (H0): Las variables son estadísticamente
+    independientes (No hay asociación) 🚫
+
+-   Hipótesis alternativa (H1): Las variables son estadísticamente
+    dependientes (Sí hay asociación)✅
+
+Que dos variables estén asociadas significa que parte de la variabilidad
+en una variable puede ser explicada por la otra variable.
+
+El Chi2 específica grado de asociación, **NO LA FORMA DE ASOCIACIÓN**.
+
+## **Ejercicio**
+
+Para la clase de hoy, se usará la base de datos de la ENPOVE 2022, el
+módulo de empleo. Esta "es una investigación estadística que permite
+suministrar información estadística que refleje la situación migratoria
+de la población venezolana refugiada y migrante en el Perú, con énfasis
+en el contexto de la pandemia por la COVID-19, para así apoyar a tomar
+las decisiones de política pública basadas en datos sólidos y
+confiables"
+
+```{r, echo=FALSE, out.width="50%",fig.align="center"}
+knitr::include_graphics("DicPD5.png") 
+```
+
+```{r}
+library(rio) #Convocamos el paquete   
+data=import("PD5_enpove2022.sav")
+```
+
+### **¿Existe una relación significativa entre el estrato con el envío deremesas?**
+
+**PASO 1: Tabla de contingencia**
 
 ```{r, warning=FALSE,message=FALSE}
-library(rio)
 library(dplyr)
+data = data %>% 
+  mutate(estrato = factor(estrato,labels=c("Bajo","Medio bajo","Medio","Medio alto","Alto"))) %>% 
+  mutate(remesas = factor(remesas,labels=c("Sí","No")))
+```
+
+```{r}
+table(data$remesas)
+```
+
+```{r}
+tabla1=table(data$estrato,data$remesas)
+tabla1
+```
+
+Revisamos el supuesto
+
+```{r}
+chisq.test(tabla1)$expected
+```
+
+En este caso sí cumple el supuesto!😎
+
+Creamos porcentajes por columna, para ello tenemos que agregar
+prop.table al comando anterior. El argumento de prop.table puede ser
+
+1: para calcular porcentaje por fila
+
+2: para calcular por columna ⚠️ Recuerda que es recomendable calcular
+los porcentajes sobre la variable sociodemográfica o aquella que
+antecede a la otra.
+
+```{r}
+tablapor1 = tabla1 %>%
+           prop.table(1) %>%  
+           round(2) #redondear el resultado a 2 decimales
+tablapor1
+```
+
+**PASO 2: Tabla de contingencia**
+
+```{r}
+toPlot1 = as.data.frame(tablapor1) 
+names(toPlot1) = c("Estrato", "Remesa", "Porcentaje")
+```
+
+```{r, warning=FALSE,message=FALSE}
 library(ggplot2)
-library(jtools)
+  ggplot(toPlot1, aes(x=Estrato, y=Porcentaje*100, fill=Remesa)) +
+  geom_bar(position="stack", stat="identity")+ #Stack indica que son barras apiladas
+  geom_text(aes(label=paste0(Porcentaje*100,"%")), 
+            position = position_stack(vjust = 0.5), 
+             size = 4,
+             fontface="bold")+
+  labs(x="Estrato", y="Porcentaje", fill="¿Envía remesa?")+
+  theme_minimal()
 ```
 
-```{r}
-data = import("Data-provincias.xlsx")
-str(data)
+De forma preliminar ¿Hay diferencias entre la forma cómo se distribuye
+la variable "Situación Económica" en cada subgrupo (hombre y mujer)?
+
+**PASO 3: Prueba Chi2**
+
+```{r, warning=FALSE,message=FALSE}
+chisq.test(tabla1)
 ```
 
-**¿Qué factores explican se relacionan con el voto por Fuerza Popular (FP) en segunda vuelta a nivel provincial (2021)?**
+De acuerdo al p-value obtenido en la prueba de hipótesis de Chi2, al ser
+menor de 0.05, podemos rechazar la hipótesis nula (Las variables son
+independientes)
 
-## Ejercicios regresión lineal simple
+Por lo tanto, podemos concluir que existe dependencia entre las
+variables escogidas. Esto quiere decir que el estrato SÍ se vincula con
+el envío de remesas.
 
-1. ¿Los años de educación promedio en una provincia podrá ayudar a predecir el % de voto por Fuerza Popular en segunda vuelta?
+## **Repaso**
 
-### Creación del modelo
+Ten en consideración que evitar borrar los datos perdidos pero no
+considerarlos en el análisis podemos agregar un filtro:
+**filter(!is.na(variableatrabajar))** recuerda que esto debe ir antes
+del summarise.
 
-```{r}
-modelo1=lm(FP~educacion,data=data)
-summary(modelo1)
+No olvides llamar a los paquetes necesarios y setear tu directorio.
+
+### **1. Análisis descriptivo**
+
+#### ¿Cuál es la proporción de venezolanos con empleo? (trabajo)
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+data = data %>% 
+  mutate(trabajo =factor(trabajo,labels=c("Si","No")))
 ```
 
-### Interpretación
-
-#### Primero: p-value
-
-Sabremos si la variable independiente impacta en la dependiente al revisar la significancia del p valor.
-
-Establezcamos nuestras hipótesis:
-
--   H0: El modelo de regresión no es válido
-
--   H1: El modelo de regresión es válido (variable X aporta al modelo)
-
-Como el p valor es **7.668e-08**, entonces podemos afirmar que hay suficiente evidencia para rechazar la H0, por lo que concluimos que el modelo sí es válido como modelo de predicción. Es decir, podemos decir que hay evidencia estadística suficiente para afirmar que existe una relación significativa entre los años de educación en promedio y el porcentaje de voto obtenido por Fuerza Popular en las provincias.
-
-En otras palabras, podemos decir que los años de educación en promedio *sí influyen* en el porcentaje de voto obtenido por Fuerza Popular en las provincias.
-
-#### Segundo: pendiente/b
-
-Explica cómo es el efecto de x en y. Para ello analizamos el valor del parámetro de la pendiente.
-
-En este caso, al ser este valor **3.8947**, concluimos que cada vez que el promedio de años de educación aumenta en 1, el % de votos por Fuerza Popular aumenta en 3.89. Es decir, tenemos una *relación directa o positiva*.
-
-#### Tercero: R^2^
-
-Analizar cuánto de la variabilidad de la variable dependiente (y) es explicada por la variable independiente (x), para ello revisamor el **R^2^** (Multiple R-squared). Los valores van de 0 a 1. Mientras más cercano esté el R2 a 1, mayor será la variabilidad explicada. El R2 es un indicador de ajuste del modelo.
-
-En nuestro modelo, este arrojó el valor de **0.1393**, por lo que podemos concluir que aproximadamente el **13.9%** (0.1393\*100)del % de votos por Fuerza Popular es explicado por el promedio de años de educación.
-
-Esto significa que la cantidad de variabilidad explicada es baja; en este caso, los cambios en los años de educación explican solo una pequeña proporción de la variación en el porcentaje de votos por Fuerza Popular.
-
-#### Cuarto: Ecuación de la recta
-
-Hallar la ecuación de la recta del modelo. Para lograrlo, revisemos los dos valores de la tabla que se encuentran en la columna de "Estimate", el valor de la primera fila es el del intercepto (a) y el de la segunda es el de la pendiente (b).
-
-Del segundo paso, ya conocíamos que el valor de la pendiente es **+3.8947** Si volvemos a revisar nuestra tabla podemos observar que en el cruce de Estimate e Intercept está el valor de **5.3652**, este sería nuestro intercepto. Ahora, armemos nuestra ecuación de la recta:
-
-$$
-Y = 5.36520 + (3.89471)\times \text{educacion}
-$$
-
-Donde:
-
--   X = Años de educación en promedio - (independiente)
--   Y = % de voto por Fuerza Popular - (dependiente)
-
-También podemos obtener los coeficientes de intercepción/intercepto y pendiente de la siguiente forma:
-
-```{r}
-modelo1$coefficients
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+tabla1 = data %>% 
+  filter(!is.na(trabajo)) %>% 
+  group_by(trabajo) %>% 
+  summarise(Freq=n()) %>% 
+  mutate(Porcentaje = (Freq/sum(Freq))*100)
+tabla1
 ```
 
-#### Quinto: Predecir
+En la muestra, un 59% de venezolanos que residen en Perú, contaba con
+empleo.
 
-Sustituyendo el valor de "x" en la ecuación, tenemos:
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+ggplot(tabla1, aes(x=trabajo,y=Porcentaje,fill=trabajo))+
+  geom_bar(stat="identity")+
+  geom_text(aes(label=paste(round(Porcentaje,1),"%")),vjust=1.30, color="black", size=3)+
+  ggtitle("Venezolanos en Perú con empleo (%)")+xlab("¿La semana pasada tuvo algún trabajo?")+theme_classic()
 
-Para realizar una predicción debemos proponer un valor que se encuentre dentro de los valores de la X.
-```{r}
-summary(data$educacion)
 ```
 
-Como educación puede ir de 3 a 11, podemos proponer cualquier valor dentro de ese rango. Veamos qué se espera de una provincia en la que los años de educación en promedio sean 11.
+#### ¿Cuánto ganan los venezolanos con empleo en el Perú?
 
-
-```{r}
-Y =  5.36520 +3.89471*11
-Y
+```{r, include=FALSE, echo=T}
+data %>% 
+  summarise(minimo=min(ingreso,na.rm = T),
+            maximo=max(ingreso,na.rm = T),
+            media=mean(ingreso,na.rm = T),
+            mediana=median(ingreso,na.rm = T),
+            sd=sd(ingreso,na.rm = T),
+            Q1=quantile(ingreso,na.rm = T,0.25),
+            Q3=quantile(ingreso,na.rm = T,0.75))
 ```
 
-Cuando los años de educación en promedio son 11, se espera que en esa provincia Fuerza Popular haya obtenido un 48 % de los votos. 
+La muestra indica que los venezolan\@s ganan entre 0 y 9500 soles por
+cada pago, y en promedio ganan 511 soles. Además la mitad de los
+venezolanos gana de 330 soles o menos. Hay que tomar este dato con
+precaución ya que depende de la frecuencia de pago. Es decir, puede que
+reciban 300 soles en cada pago pero este se realiza de manera quincenal,
+lo que serían 1200 soles mensuales.
 
-## Ejercicios regresión lineal múltiple
+Visualicemos lo hallado
 
-¿Qué sucede si agregamos una variable a nuestro modelo anterior?
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+data %>%
+  ggplot(aes(x = ingreso)) + 
+  geom_histogram(color = "black", fill = "hotpink1", bins = 40) +
+  ggtitle("Salario de la población venezolana en Perú ") +
+  ylab("Frecuencia")+xlab("Salario")+
+  geom_vline(xintercept =  mean(data$ingreso, na.rm = TRUE), color = "red", linetype = "dashed", size = 1) + # Línea de la media
+  geom_vline(xintercept = median(data$ingreso, na.rm = TRUE), color = "grey", linetype = "dashed", size = 1) + # Línea de la mediana
+  theme_minimal()
 
-**¿Los años de educación y los ingresos mensuales en promedio en una provincia pueden ayudar a explicar el porcentaje de voto que obtuvo Fuerza Popular?**
-
-## **Modelo 2**
-
-```{r}
-modelo2 = lm(FP ~ educacion + ingresos, data)
-summary(modelo2)
 ```
 
-## **Interpretamos 😎**
+### **2. Intervalo de confianza para proporción**
 
-### **¿El modelo es válido?**
+Encontramos que la proporción de venezolan\@s con empleo en el Perú es
+de 59%, calculemos cuanto será este valor en la población.
 
-Establezcamos nuestras hipótesis:
+Previamente ya habíamos calculado la frecuencia de los que contaban con
+empleo y los que no, ingresemos esos datos en el prop.test
 
--   H0: El modelo de regresión no es válido
--   H1: El modelo de regresión es válido (las variables independientes aportan al modelo)
-
-Luego nos fijamos en el **p-value** Como el p valor es \< 6.291e-11 entonces podemos afirmar que hay suficiente evidencia para rechazar la H0, por lo que concluimos que el modelo es válido como modelo de predicción.
-
-### **¿Qué tanto explica el modelo?**
-
-Observamos el **R2 ajustado**.
-
-Analizar cuánto de la variabilidad de la variable dependiente (y) es explicada por las variables independientes elegidas, para ello revisamos el R2 (Adjusted R-squared, por ser un modelo lineal múltiple). 
-
-En nuestro modelo, este arrojó el valor de 0.2089 , por lo que podemos concluir que el modelo explica aproximadamente el 20.89% (0.2089\*100) de la variabilidad en el % de votos que obtuvo Fuerza Popular (variable dependiente). 
-
-*Recordemos que el R cuadrado puede tomar valores entre 0 y 1. Un R cuadrado de 1 indica que el modelo explica toda la variabilidad de la variable Y. Un R cuadrado de 0 indica que el modelo no explica nada de la variabilidad de la variable Y.*
-
-### **¿Las variables aportan al modelo?**
-
-Revisamos **p-value** por cada variable independiente.
-
--   Esperamos obtener un p-value \<0.05.
--   Nos damos cuenta que *no todas* las variables independientes tienen un p-value \<0.05, es el caso de: educación
-
-### **¿Cuáles son los coeficientes de la ecuación?**
-
-Podemos obtener extraer los coeficientes del modelo: 
-
-*No olvidar identificar el signo de cada coeficiente, este tendrá repercusión en la ecuación y su futura aplicación*
-
-```{r}
-round(modelo2$coefficients,3)
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+tabla1
 ```
 
-De esa manera puedo hallar la ecuación:
-
-$$
-Y = 17.445 + (-0.821) \times  \text{educacion}  + (0.032)\times  \text{ingresos} 
-$$
-
-Es decir, se tienen las siguientes relaciones entre VD y las VI:
-
-- Por cada sol adicional en ingresos, el % de voto por Fuerza Popular **aumenta en 0.032 puntos**. (relación directa).
-
-- Por cada año de educación adicional , el % de voto por Fuerza Popular **disminuye en 0.821 puntos** (relación inversa). Sin embargo, esta variable no tiene un impacto significativo en la predicción.
-
-**OJO: La ecuación de la recta debe incluir TODAS las variables analizadas, tengan o no una influencia significativa en la VD.**
-
-**¿Los años de educación, los ingresos mensuales en promedio y el tener IDH alto o no en una provincia pueden ayudar a explicar el porcentaje de voto que obtuvo Fuerza Popular?**
-
-
-## **Modelo 3**
-
-```{r}
-library(fastDummies)
-data = dummy_cols(data, select_columns="IDH_cat")
-names(data)
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+prop.test(5987,5987+4240)
 ```
 
-```{r}
-modelo3 = lm(FP ~ educacion + ingresos +IDH_cat_Alto, data)
-summary(modelo3)
-```
-1. ¿El modelo es válido?
-2. Cuanto ayuda a explicar
-3. ¿Todas las variables aportan?
-4. ¿Cómo es el impacto de las variables?
-5. ¿Qué variable aporta más?
-6. Ecuación 
+La proporción de venezolanos/as con empleo en Perú se encuentra entre
+57.5% y 59.4%, a un 95% de confianza.
 
-```{r}
-modelo3$coefficients
-```
+## **3. Intervalo de confianza para media**
 
+Anteriormente, encontramos que los venezolanos en Perú ganan en promedio
+511 soles. Calculemos cuanto es este valor en la población.
 
-### **¿Qué variable aporta más?**
+No olvides llamar al paquete lsr para hallar los intervalos de confianza
 
-Para interpretar cómo cada variable independiente contribuye a la variabilidad de la variable dependiente, podemos usar los coeficientes estandarizados. Estos coeficientes nos ayudan a comparar, en una misma escala, el impacto que tiene cada variable independiente sobre la variable dependiente, permitiéndonos identificar cuáles tienen un efecto más fuerte.
-
-```{r}
-library(jtools)
-summ(modelo3, scale=T)
-```
-Los resultados anteriores nos demuestran que las variables con mayor impacto son ingresos (11.56) y IDH_cat_Alto (-9.65)
-
-```{r}
-plot_summs(modelo1,modelo2,modelo3, scale = T)
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+library(lsr)
+data %>% 
+  summarise(media = mean(ingreso,na.rm=T),
+            Superior = ciMean(ingreso,na.rm=T),
+            Inferior = ciMean(ingreso,na.rm=T))
 ```
 
+A un 95% de confianza podemos concluir que, en promedio, un/a
+venezolan\@ que trabaja en Perú gana aproximadamente entre 492.2 y 529.7
+soles. Hay que tener en consideración que este monto es en cada pago,
+que puede ser quincenal, mensual, etc.
+
+### **4. Prueba T**
+
+#### ¿Existe diferencia entre el monto percibido (ingreso) entre los venezolanos que envían remesas (remesas) y los que no?
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+data = data %>% mutate(remesas = factor(remesas, labels = c("Si","No")))
+```
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+grafico = data %>% 
+  filter(!is.na(remesas)) %>% 
+  group_by(remesas) %>% 
+  summarise(media = mean(ingreso,na.rm=T),
+            Superior = ciMean(ingreso,na.rm=T)[1],
+            Inferior = ciMean(ingreso,na.rm=T)[2])
+grafico
+```
+
+En la muestra si existe una diferencia entre los ingresos de los que
+envían remesas y los que no. Siendo el ingreso más alto el de los que sí
+envían. Analicemos si esto se cumple en la población de venezolanos en
+Perú.
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+t.test(ingreso~remesas,data)
+```
+
+H0: No existe diferencia entre los promedios de ingreso de los que
+envían remesas y los que no. /H1: Existe diferencia entre los promedios
+de ingreso de los que envían remesas y los que no.
+
+Analizando el pvalor, podemos rechazar la hipótesis nula y así afirmar
+que las medias de ingreso de los que envían remesas y los que no, no son
+iguales.
+
+Constatemos cual es la media más alta con un gráfico:
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+ggplot(grafico,aes(x=remesas,y=media))+
+  geom_errorbar(aes(ymin=Inferior,ymax=Superior),width=0.4)+
+  xlab("Ingreso")+
+  ylab("¿Envía remesa?")+theme_classic()
+```
+
+### **5. Prueba Chi Cuadrado**
+
+¿De qué manera se relaciona el sexo con si la ocupacion de la persona es
+empleado o no?
+
+Nos basaremos en la variable ocupación, si es 3 será "Empleado" todos
+los demás casos serán "No empleado".
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+table(data$ocupacion)
+```
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+data = data %>% 
+  mutate(empleado = ifelse(ocupacion == 3,"Empleado","No empleado"))
+```
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+table(data$empleado)
+```
+
+Agreguemos etiquetas a la variable sexo
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+data = data %>% 
+  mutate(sexo = factor(sexo, labels=c("Hombre","Mujer")))
+```
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+tabla1=table(data$sexo,data$empleado)
+tabla1
+```
+
+Revisemos el supuesto: Recuerda que debe haber por lo menos 5 casos por
+celda.
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+chisq.test(tabla1)$expected
+```
+
+Sí cumple con el mínimo por celda.
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+tablapor1 = tabla1 %>%
+           prop.table(1) %>%  
+           round(2) #redondear el resultado a 2 decimales
+tablapor1
+```
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+toPlot1 = as.data.frame(tablapor1) 
+names(toPlot1) = c("Sexo", "Ocupacion", "Porcentaje")
+```
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+  ggplot(toPlot1, aes(x=Sexo, y=Porcentaje*100, fill=Ocupacion)) +
+  geom_bar(position="stack", stat="identity")+ #Stack indica que son barras apiladas
+  geom_text(aes(label=paste0(Porcentaje*100,"%")), 
+            position = position_stack(vjust = 0.5), 
+             size = 4,
+             fontface="bold")+
+  labs(x="Sexo", y="Porcentaje", fill="¿Es empleador?")+
+  theme_minimal()
+```
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+chisq.test(tabla1)
+```
+
+La prueba confirma lo expuesto en el gráfico. A un 95% de confianza
+podemos afirmar que existe relación entre ser hombre o mujer y el ser
+empleado. Apoyándonos en el gráfico, podemos afirmar que habrá una mayor
+proporción de mujeres cuya ocupación es ser dependiente o empleada que
+en el caso de los hombres.
+
+## Ejercicios:
+
+1.  Describe a la variable frecuencia de pago, realiza el gráfico
+    respectivo e interpreta los resultados.
+2.  Ahora analiza si que una persona vive en Lima se relaciona con la
+    frecuencia de pago (frecuencia).
+3.  Analiza si existe diferencias entre el promedio de horas de trabajo
+    a la semana (horas_trabajo) según modalidad de trabajo (modalidad2)
