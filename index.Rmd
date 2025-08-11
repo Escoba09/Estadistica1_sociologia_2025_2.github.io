@@ -39,10 +39,11 @@ Es un curso teórico y/o práctico que contribuye al logro de las competencias d
 
 ## 2. Presentación
 
-El curso de Estadística para el Análisis Sociológico 1 busca presentar al estudiante con herramientas que le permitan familiarizarse con el análisis cuantitativo de fenómenos sociales. Construiremos sobre la base de conocimientos previos para comprender mejor el análisis descriptivo e inferencial bivariado.
+El curso de Estadística para el Análisis Sociológico 1 tiene el objetivo de desarrollar competencias  y brindar herramientas para una interpretación rigurosa y crítica de datos estadísticos aplicados al análisis de fenómenos sociales. A partir de conocimientos previos, permite comprender el análisis descriptivo y el análisis inferencial bivariado.
 
-El curso se divide en sesiones teóricas y prácticas. Las sesiones teóricas buscan presentar y discutir los fundamentos del análisis cuantitativo. Las sesiones prácticas se enfocarán en el manejo de R con ejemplos prácticos.
+La metodología del curso se divide en sesiones teóricas y prácticas. Las sesiones teóricas buscan presentar y discutir los fundamentos del análisis cuantitativo. Las sesiones prácticas se enfocan en la aplicación de estos conceptos, mediante el uso de R. 
 
 ## 3. Evaluación
 
 ![](tablaindex.png)
+
