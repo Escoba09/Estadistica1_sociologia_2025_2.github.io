@@ -16,7 +16,7 @@ output:
 
 Curso: SOC294 - Estadística para el análisis sociológico 1
 
-Semestre 2024 - 2
+Semestre 2025 - 2
 
 ```{=html}
 <style>
