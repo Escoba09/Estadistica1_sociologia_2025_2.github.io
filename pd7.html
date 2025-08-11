@@ -530,6 +530,14 @@ directorio.</p>
 <div id="cuál-es-la-proporción-de-venezolanos-con-empleo-trabajo"
 class="section level4">
 <h4>¿Cuál es la proporción de venezolanos con empleo? (trabajo)</h4>
+<pre class="r"><code>data = data %&gt;% 
+  mutate(trabajo =factor(trabajo,labels=c(&quot;Si&quot;,&quot;No&quot;)))</code></pre>
+<pre class="r"><code>tabla1 = data %&gt;% 
+  filter(!is.na(trabajo)) %&gt;% 
+  group_by(trabajo) %&gt;% 
+  summarise(Freq=n()) %&gt;% 
+  mutate(Porcentaje = (Freq/sum(Freq))*100)
+tabla1</code></pre>
 <pre><code>## # A tibble: 2 × 3
 ##   trabajo  Freq Porcentaje
 ##   &lt;fct&gt;   &lt;int&gt;      &lt;dbl&gt;
@@ -537,11 +545,27 @@ class="section level4">
 ## 2 No       4240       41.5</code></pre>
 <p>En la muestra, un 59% de venezolanos que residen en Perú, contaba con
 empleo.</p>
+<pre class="r"><code>ggplot(tabla1, aes(x=trabajo,y=Porcentaje,fill=trabajo))+
+  geom_bar(stat=&quot;identity&quot;)+
+  geom_text(aes(label=paste(round(Porcentaje,1),&quot;%&quot;)),vjust=1.30, color=&quot;black&quot;, size=3)+
+  ggtitle(&quot;Venezolanos en Perú con empleo (%)&quot;)+xlab(&quot;¿La semana pasada tuvo algún trabajo?&quot;)+theme_classic()</code></pre>
 <p><img src="pd7_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 <div id="cuánto-ganan-los-venezolanos-con-empleo-en-el-perú"
 class="section level4">
 <h4>¿Cuánto ganan los venezolanos con empleo en el Perú?</h4>
+<pre class="r"><code>summary= data %&gt;% 
+  summarise(minimo=min(ingreso,na.rm = T),
+            maximo=max(ingreso,na.rm = T),
+            media=mean(ingreso,na.rm = T),
+            mediana=median(ingreso,na.rm = T),
+            sd=sd(ingreso,na.rm = T),
+            Q1=quantile(ingreso,na.rm = T,0.25),
+            Q3=quantile(ingreso,na.rm = T,0.75))
+
+summary</code></pre>
+<pre><code>##   minimo maximo    media mediana      sd  Q1  Q3
+## 1      0   9500 511.0324     330 620.282 200 600</code></pre>
 <p>La muestra indica que los venezolan@s ganan entre 0 y 9500 soles por
 cada pago, y en promedio ganan 511 soles. Además la mitad de los
 venezolanos gana de 330 soles o menos. Hay que tomar este dato con
@@ -549,6 +573,14 @@ precaución ya que depende de la frecuencia de pago. Es decir, puede que
 reciban 300 soles en cada pago pero este se realiza de manera quincenal,
 lo que serían 1200 soles mensuales.</p>
 <p>Visualicemos lo hallado</p>
+<pre class="r"><code>data %&gt;%
+  ggplot(aes(x = ingreso)) + 
+  geom_histogram(color = &quot;black&quot;, fill = &quot;hotpink1&quot;, bins = 40) +
+  ggtitle(&quot;Salario de la población venezolana en Perú &quot;) +
+  ylab(&quot;Frecuencia&quot;)+xlab(&quot;Salario&quot;)+
+  geom_vline(xintercept =  mean(data$ingreso, na.rm = TRUE), color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) + # Línea de la media
+  geom_vline(xintercept = median(data$ingreso, na.rm = TRUE), color = &quot;grey&quot;, linetype = &quot;dashed&quot;, size = 1) + # Línea de la mediana
+  theme_minimal()</code></pre>
 <p><img src="pd7_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 </div>
@@ -558,11 +590,13 @@ lo que serían 1200 soles mensuales.</p>
 de 59%, calculemos cuanto será este valor en la población.</p>
 <p>Previamente ya habíamos calculado la frecuencia de los que contaban
 con empleo y los que no, ingresemos esos datos en el prop.test</p>
+<pre class="r"><code>tabla1</code></pre>
 <pre><code>## # A tibble: 2 × 3
 ##   trabajo  Freq Porcentaje
 ##   &lt;fct&gt;   &lt;int&gt;      &lt;dbl&gt;
 ## 1 Si       5987       58.5
 ## 2 No       4240       41.5</code></pre>
+<pre class="r"><code>prop.test(5987,5987+4240)</code></pre>
 <pre><code>## 
 ##  1-sample proportions test with continuity correction
 ## 
@@ -584,6 +618,11 @@ con empleo y los que no, ingresemos esos datos en el prop.test</p>
 promedio 511 soles. Calculemos cuanto es este valor en la población.</p>
 <p>No olvides llamar al paquete lsr para hallar los intervalos de
 confianza</p>
+<pre class="r"><code>library(lsr)
+data %&gt;% 
+  summarise(media = mean(ingreso,na.rm=T),
+            Superior = ciMean(ingreso,na.rm=T),
+            Inferior = ciMean(ingreso,na.rm=T))</code></pre>
 <pre><code>##      media Superior.2.5% Superior.97.5% Inferior.2.5% Inferior.97.5%
 ## 1 511.0324      492.2745       529.7902      492.2745       529.7902</code></pre>
 <p>A un 95% de confianza podemos concluir que, en promedio, un/a
@@ -597,6 +636,14 @@ id="existe-diferencia-entre-el-monto-percibido-ingreso-entre-los-venezolanos-que
 class="section level4">
 <h4>¿Existe diferencia entre el monto percibido (ingreso) entre los
 venezolanos que envían remesas (remesas) y los que no?</h4>
+<pre class="r"><code>data = data %&gt;% mutate(remesas = factor(remesas, labels = c(&quot;Si&quot;,&quot;No&quot;)))</code></pre>
+<pre class="r"><code>grafico = data %&gt;% 
+  filter(!is.na(remesas)) %&gt;% 
+  group_by(remesas) %&gt;% 
+  summarise(media = mean(ingreso,na.rm=T),
+            Superior = ciMean(ingreso,na.rm=T)[1],
+            Inferior = ciMean(ingreso,na.rm=T)[2])
+grafico</code></pre>
 <pre><code>## # A tibble: 2 × 4
 ##   remesas media Superior Inferior
 ##   &lt;fct&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
@@ -606,6 +653,7 @@ venezolanos que envían remesas (remesas) y los que no?</h4>
 envían remesas y los que no. Siendo el ingreso más alto el de los que sí
 envían. Analicemos si esto se cumple en la población de venezolanos en
 Perú.</p>
+<pre class="r"><code>t.test(ingreso~remesas,data)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -624,6 +672,10 @@ de ingreso de los que envían remesas y los que no.</p>
 afirmar que las medias de ingreso de los que envían remesas y los que
 no, no son iguales.</p>
 <p>Constatemos cual es la media más alta con un gráfico:</p>
+<pre class="r"><code>ggplot(grafico,aes(x=remesas,y=media))+
+  geom_errorbar(aes(ymin=Inferior,ymax=Superior),width=0.4)+
+  xlab(&quot;Ingreso&quot;)+
+  ylab(&quot;¿Envía remesa?&quot;)+theme_classic()</code></pre>
 <p><img src="pd7_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 </div>
 </div>
@@ -633,29 +685,53 @@ no, no son iguales.</p>
 es empleado o no?</p>
 <p>Nos basaremos en la variable ocupación, si es 3 será “Empleado” todos
 los demás casos serán “No empleado”.</p>
+<pre class="r"><code>table(data$ocupacion)</code></pre>
 <pre><code>## 
 ##    1    2    3    4    5    6    7 
 ##   90 1947 3987  110   28  221    4</code></pre>
+<pre class="r"><code>data = data %&gt;% 
+  mutate(empleado = ifelse(ocupacion == 3,&quot;Empleado&quot;,&quot;No empleado&quot;))</code></pre>
+<pre class="r"><code>table(data$empleado)</code></pre>
 <pre><code>## 
 ##    Empleado No empleado 
 ##        3987        2400</code></pre>
 <p>Agreguemos etiquetas a la variable sexo</p>
+<pre class="r"><code>data = data %&gt;% 
+  mutate(sexo = factor(sexo, labels=c(&quot;Hombre&quot;,&quot;Mujer&quot;)))</code></pre>
+<pre class="r"><code>tabla1=table(data$sexo,data$empleado)
+tabla1</code></pre>
 <pre><code>##         
 ##          Empleado No empleado
 ##   Hombre     2372        1220
 ##   Mujer      1615        1180</code></pre>
 <p>Revisemos el supuesto: Recuerda que debe haber por lo menos 5 casos
 por celda.</p>
+<pre class="r"><code>chisq.test(tabla1)$expected</code></pre>
 <pre><code>##         
 ##          Empleado No empleado
 ##   Hombre 2242.258    1349.742
 ##   Mujer  1744.742    1050.258</code></pre>
 <p>Sí cumple con el mínimo por celda.</p>
+<pre class="r"><code>tablapor1 = tabla1 %&gt;%
+           prop.table(1) %&gt;%  
+           round(2) #redondear el resultado a 2 decimales
+tablapor1</code></pre>
 <pre><code>##         
 ##          Empleado No empleado
 ##   Hombre     0.66        0.34
 ##   Mujer      0.58        0.42</code></pre>
+<pre class="r"><code>toPlot1 = as.data.frame(tablapor1) 
+names(toPlot1) = c(&quot;Sexo&quot;, &quot;Ocupacion&quot;, &quot;Porcentaje&quot;)</code></pre>
+<pre class="r"><code>  ggplot(toPlot1, aes(x=Sexo, y=Porcentaje*100, fill=Ocupacion)) +
+  geom_bar(position=&quot;stack&quot;, stat=&quot;identity&quot;)+ #Stack indica que son barras apiladas
+  geom_text(aes(label=paste0(Porcentaje*100,&quot;%&quot;)), 
+            position = position_stack(vjust = 0.5), 
+             size = 4,
+             fontface=&quot;bold&quot;)+
+  labs(x=&quot;Sexo&quot;, y=&quot;Porcentaje&quot;, fill=&quot;¿Es empleador?&quot;)+
+  theme_minimal()</code></pre>
 <p><img src="pd7_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<pre class="r"><code>chisq.test(tabla1)</code></pre>
 <pre><code>## 
 ##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
 ## 

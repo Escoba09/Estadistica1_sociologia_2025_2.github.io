@@ -204,12 +204,12 @@ No olvides llamar a los paquetes necesarios y setear tu directorio.
 
 #### ¿Cuál es la proporción de venezolanos con empleo? (trabajo)
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 data = data %>% 
   mutate(trabajo =factor(trabajo,labels=c("Si","No")))
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 tabla1 = data %>% 
   filter(!is.na(trabajo)) %>% 
   group_by(trabajo) %>% 
@@ -221,18 +221,17 @@ tabla1
 En la muestra, un 59% de venezolanos que residen en Perú, contaba con
 empleo.
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 ggplot(tabla1, aes(x=trabajo,y=Porcentaje,fill=trabajo))+
   geom_bar(stat="identity")+
   geom_text(aes(label=paste(round(Porcentaje,1),"%")),vjust=1.30, color="black", size=3)+
   ggtitle("Venezolanos en Perú con empleo (%)")+xlab("¿La semana pasada tuvo algún trabajo?")+theme_classic()
-
 ```
 
 #### ¿Cuánto ganan los venezolanos con empleo en el Perú?
 
-```{r, include=FALSE, echo=T}
-data %>% 
+```{r, warning=FALSE,message=FALSE}
+summary= data %>% 
   summarise(minimo=min(ingreso,na.rm = T),
             maximo=max(ingreso,na.rm = T),
             media=mean(ingreso,na.rm = T),
@@ -240,6 +239,8 @@ data %>%
             sd=sd(ingreso,na.rm = T),
             Q1=quantile(ingreso,na.rm = T,0.25),
             Q3=quantile(ingreso,na.rm = T,0.75))
+
+summary
 ```
 
 La muestra indica que los venezolan\@s ganan entre 0 y 9500 soles por
@@ -251,7 +252,7 @@ lo que serían 1200 soles mensuales.
 
 Visualicemos lo hallado
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 data %>%
   ggplot(aes(x = ingreso)) + 
   geom_histogram(color = "black", fill = "hotpink1", bins = 40) +
@@ -260,7 +261,6 @@ data %>%
   geom_vline(xintercept =  mean(data$ingreso, na.rm = TRUE), color = "red", linetype = "dashed", size = 1) + # Línea de la media
   geom_vline(xintercept = median(data$ingreso, na.rm = TRUE), color = "grey", linetype = "dashed", size = 1) + # Línea de la mediana
   theme_minimal()
-
 ```
 
 ### **2. Intervalo de confianza para proporción**
@@ -271,11 +271,11 @@ de 59%, calculemos cuanto será este valor en la población.
 Previamente ya habíamos calculado la frecuencia de los que contaban con
 empleo y los que no, ingresemos esos datos en el prop.test
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 tabla1
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 prop.test(5987,5987+4240)
 ```
 
@@ -289,7 +289,7 @@ Anteriormente, encontramos que los venezolanos en Perú ganan en promedio
 
 No olvides llamar al paquete lsr para hallar los intervalos de confianza
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 library(lsr)
 data %>% 
   summarise(media = mean(ingreso,na.rm=T),
@@ -306,11 +306,11 @@ que puede ser quincenal, mensual, etc.
 
 #### ¿Existe diferencia entre el monto percibido (ingreso) entre los venezolanos que envían remesas (remesas) y los que no?
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 data = data %>% mutate(remesas = factor(remesas, labels = c("Si","No")))
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 grafico = data %>% 
   filter(!is.na(remesas)) %>% 
   group_by(remesas) %>% 
@@ -325,7 +325,7 @@ envían remesas y los que no. Siendo el ingreso más alto el de los que sí
 envían. Analicemos si esto se cumple en la población de venezolanos en
 Perú.
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 t.test(ingreso~remesas,data)
 ```
 
@@ -339,7 +339,7 @@ iguales.
 
 Constatemos cual es la media más alta con un gráfico:
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 ggplot(grafico,aes(x=remesas,y=media))+
   geom_errorbar(aes(ymin=Inferior,ymax=Superior),width=0.4)+
   xlab("Ingreso")+
@@ -354,27 +354,27 @@ empleado o no?
 Nos basaremos en la variable ocupación, si es 3 será "Empleado" todos
 los demás casos serán "No empleado".
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 table(data$ocupacion)
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 data = data %>% 
   mutate(empleado = ifelse(ocupacion == 3,"Empleado","No empleado"))
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 table(data$empleado)
 ```
 
 Agreguemos etiquetas a la variable sexo
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 data = data %>% 
   mutate(sexo = factor(sexo, labels=c("Hombre","Mujer")))
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 tabla1=table(data$sexo,data$empleado)
 tabla1
 ```
@@ -382,25 +382,25 @@ tabla1
 Revisemos el supuesto: Recuerda que debe haber por lo menos 5 casos por
 celda.
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 chisq.test(tabla1)$expected
 ```
 
 Sí cumple con el mínimo por celda.
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 tablapor1 = tabla1 %>%
            prop.table(1) %>%  
            round(2) #redondear el resultado a 2 decimales
 tablapor1
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 toPlot1 = as.data.frame(tablapor1) 
 names(toPlot1) = c("Sexo", "Ocupacion", "Porcentaje")
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
   ggplot(toPlot1, aes(x=Sexo, y=Porcentaje*100, fill=Ocupacion)) +
   geom_bar(position="stack", stat="identity")+ #Stack indica que son barras apiladas
   geom_text(aes(label=paste0(Porcentaje*100,"%")), 
@@ -411,7 +411,7 @@ names(toPlot1) = c("Sexo", "Ocupacion", "Porcentaje")
   theme_minimal()
 ```
 
-```{r,warning=FALSE,message=FALSE,echo=FALSE}
+```{r, warning=FALSE,message=FALSE}
 chisq.test(tabla1)
 ```
 
