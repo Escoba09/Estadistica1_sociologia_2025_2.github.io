@@ -25,7 +25,11 @@ Curso: SOC294 - Estadística para el análisis sociológico 1
 
 Semestre 2025 - 2
 
-Antes de iniciar, abrimos las librerias que usaremos en el laboratorio  `rio`, `dplyr`, `psych`
+# Exploración de datos en RStudio
+
+Antes de iniciar, abrimos las librerias que usaremos en el laboratorio
+`rio`, `dplyr`, `psych`
+
 ```{r a, include=FALSE, warning = FALSE}
 library(rio) #abre archivos en diferentes formatos
 library(openxlsx) #abre archivos en excel
@@ -40,10 +44,11 @@ library(e1071) # conocer simetria
 library(moments) #conocer curtosis
 ```
 
+# 1. FUSIONAR BASES DE DATOS (MERGE)
 
-# 1. FUSIONAR BASES DE DATOS (MERGE) 
-
-Para fusionar bases de datos, es necesario identificar la(s) variable(s) llave/clave y definir qué bases y casos se quiere priorizar para el análisis.\
+Para fusionar bases de datos, es necesario identificar la(s) variable(s)
+llave/clave y definir qué bases y casos se quiere priorizar para el
+análisis.\
 En este caso, `hogar` es la variable clave.
 
 ```{r b}
@@ -54,6 +59,7 @@ hogar2
 ```
 
 Se pueden fusionar bases con `merge` o `dplyr` es la variable clave.
+
 ```{r c}
 hogaresA = merge(hogar1, hogar2, all=FALSE)
 hogaresB = merge(hogar2, hogar1, all= FALSE)
@@ -66,7 +72,9 @@ inner_hogar = dplyr::inner_join(hogar1, hogar2, by ="hogar")
 full_hogar = dplyr::full_join(hogar1, hogar2, by = "hogar")
 ```
 
-¿Hay diferencia entre `hogarC` o `full_hogar`? Observa detalladamente cada una de las bases, para entender la lógica.
+¿Hay diferencia entre `hogarC` o `full_hogar`? Observa detalladamente
+cada una de las bases, para entender la lógica.
+
 ```{r d}
 hogaresC
 full_hogar 
@@ -74,57 +82,83 @@ full_hogar
 
 ## Ejercicios
 
-**Ejercicio 1:** Descarga la base de datos `P2. Universidades Peru`. Importa cada hoja de excel como una base de datos diferente.\ 
-**Ejercicio 2:** Identifica la variable  `clave` y fusiona ambas bases de datos en una nueva bases de datos llamada  `universidades`. Esta nueva base de datos debe contener información de todas las universidades, incluyendo las fechas en las que salieron la resolución de las denegatorias\
-**Ejercicio 3:** Crea tres nuevas variables: i) una variable (`licensed`) que identifique con un `0` las universidades con licencia denegada y con un `1` con licencia aprobada, ii) una variable (`gestion_tipo`), que tenga las categorias `privada asociativa`, `privada societaria` y `publica`, iii) una variable (`years_operation`) que identifique el total de años que la universidad se encuentra o estuvo operativa. 
-**Nota** Para crear nuevas variables, recuerda que R también cuenta con `operadores matemáticos`, `operadores relacionales`, `operadores lógicos`. Puedes encontrar más detalle [aquí](https://rpubs.com/sebas_Alf/727818)
-
+**Ejercicio 1:** Descarga la base de datos `P2. Universidades Peru`.
+Importa cada hoja de excel como una base de datos diferente. 
+**Ejercicio 2:** Identifica la variable `clave` y fusiona ambas bases de
+datos en una nueva bases de datos llamada `universidades`. Esta nueva
+base de datos debe contener información de todas las universidades,
+incluyendo las fechas en las que salieron la resolución de las
+denegatorias\
+**Ejercicio 3:** Crea tres nuevas variables: i) una variable
+(`licensed`) que identifique con un `0` las universidades con licencia
+denegada y con un `1` con licencia aprobada, ii) una variable
+(`gestion_tipo`), que tenga las categorias `privada asociativa`,
+`privada societaria` y `publica`, iii) una variable (`years_operation`)
+que identifique el total de años que la universidad se encuentra o
+estuvo operativa. **Nota** Para crear nuevas variables, recuerda que R
+también cuenta con `operadores matemáticos`, `operadores relacionales`,
+`operadores lógicos`. Puedes encontrar más detalle
+[aquí](https://rpubs.com/sebas_Alf/727818)
 
 # 2. DATOS ATÍPICOS
 
-Recordemos iniciar estableciendo nuestro directorio de trabajo. Previamente ya hemos instalado, los paquetes.
+Recordemos iniciar estableciendo nuestro directorio de trabajo.
+Previamente ya hemos instalado, los paquetes.
 
 ```{r e, include=TRUE}
 getwd() # muestra el directorio de trabajo actual
 setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io") #indica el directorio de trabajo donde quiero trabajar.
 ```
 
-En esta sección veremos algunos ejemplos de tratamiento de datos atipicos.\
-Los datos atipicos pueden influir en los resulados afectando la validez e interpretacion de los resultados de un modelo.\
-Muchos modelos estadisticos asumen una distribucion normal de datos, la presencia de datos atipicos pueden ir en contra de estos supuestos.\
-De otro lado, si se trabaja con datos desbalanceados, el modelo puede sesgarse hacia la clase mayoritaria.\
+En esta sección veremos algunos ejemplos de tratamiento de datos
+atipicos.\
+Los datos atipicos pueden influir en los resulados afectando la validez
+e interpretacion de los resultados de un modelo.\
+Muchos modelos estadisticos asumen una distribucion normal de datos, la
+presencia de datos atipicos pueden ir en contra de estos supuestos.\
+De otro lado, si se trabaja con datos desbalanceados, el modelo puede
+sesgarse hacia la clase mayoritaria.\
 
-Para esto trabajaremos con la base de datos obtenida de [Datos Abiertos Peru](https://expresateperu.datosabiertos.gob.pe/dataset/estad%C3%ADsticas-de-proyectos-de-investigaci%C3%B3n-cient%C3%ADfica-por-fuentes-de-financiamiento-de-0#) sobre estadísticas de proyectos de investigacion cientifica por fuentes de financiamiento prociencia [Estadísticas ProCiencia CONCYTEC 2015-2021]
-
+Para esto trabajaremos con la base de datos obtenida de [Datos Abiertos
+Peru](https://expresateperu.datosabiertos.gob.pe/dataset/estad%C3%ADsticas-de-proyectos-de-investigaci%C3%B3n-cient%C3%ADfica-por-fuentes-de-financiamiento-de-0#)
+sobre estadísticas de proyectos de investigacion cientifica por fuentes
+de financiamiento prociencia [Estadísticas ProCiencia CONCYTEC
+2015-2021]
 
 ```{r f, include=FALSE}
 prociencia <- read.xlsx("base_lab3.xlsx")
 ```
 
+## Identificar los datos atípicos
 
-## Identificar los datos atípicos 
+Para identificar los valores atípicos, empezamos explorando la base de
+datos. Generalmente en indicadores monetarios, suelen encontrarse datos
+atípicos.
 
-Para identificar los valores atípicos, empezamos explorando la base de datos. Generalmente en indicadores monetarios, suelen encontrarse datos atípicos. 
 ```{r g, include=TRUE}
 names(prociencia)
 head(prociencia)
 ```
 
 Visualmente, podemos identificarlo con algunos gráficos
+
 ```{r h, include=TRUE}
 hist(prociencia$MONTO)
 boxplot(prociencia$MONTO)
 ```
 
-Es posible observar varios valores atípicos.\ 
-El 13% de los datos puede cambiar significativamente la interpretacion de nuestra informacion. 
+Es posible observar varios valores atípicos.  El 13% de los datos puede
+cambiar significativamente la interpretacion de nuestra informacion.
+
 ```{r i, include=TRUE}
 outliers <- boxplot.stats(prociencia$MONTO)$out #126 outliers
 outliers_data <- prociencia[prociencia$MONTO %in% outliers, ] #elaboro una base que incluya solo a los outliers
 nrow(outliers_data) # 
 nrow(outliers_data)/nrow(prociencia)*100 #el porcentaje de "datos atípicos"
 ```
-Comparemos un gráfico con outliers y sin outliers. 
+
+Comparemos un gráfico con outliers y sin outliers.
+
 ```{r j, include=TRUE}
 prociencia_sinout <- prociencia[!prociencia$MONTO %in% outliers, ]#783
 nrow(prociencia_sinout) #909-126
@@ -139,14 +173,21 @@ abline(lm(MONTO ~ 1, data = prociencia), col = "blue", lwd = 3, lty = 1)
 plot((prociencia_sinout$MONTO), main = "Sin outliers") #grafico sin outliers
 abline(lm(MONTO ~ 1, data = prociencia_sinout), col = "blue", lwd = 3, lty = 1)
 ```
-La información es muuy diferente. Si observamos la base de datos, podemos ver que en una misma columna se han considerado monedas diferentes. 
-**Cuando observamos tantos datos atípicos, es importante explorar las causas del porqué**. En este caso, es un error de interpretación, proveniente de una base no tan limpia.
 
+La información es muuy diferente. Si observamos la base de datos,
+podemos ver que en una misma columna se han considerado monedas
+diferentes. **Cuando observamos tantos datos atípicos, es importante
+explorar las causas del porqué**. En este caso, es un error de
+interpretación, proveniente de una base no tan limpia.
 
 ## Exploraciones visuales de datos atípicos
-Conocer con qué entidad se ha realizado convenio o la entidad que financia las investigaciones, puede ayudar a explicar porqué tanta diversidad 
+
+Conocer con qué entidad se ha realizado convenio o la entidad que
+financia las investigaciones, puede ayudar a explicar porqué tanta
+diversidad
 
 Exploramos el datos resumen, desviacion estandar y otros datos
+
 ```{r l, include=TRUE}
 mean(prociencia$IMPORTE_FONDECYT, na.rm = TRUE) #estamos calculando suprimiendo los datos vacios.
 median(prociencia$IMPORTE_FONDECYT, na.rm = TRUE) #estamos calculando suprimiendo los datos vacios.
@@ -154,14 +195,15 @@ mean_value <- mean(prociencia$IMPORTE_FONDECYT, na.rm = TRUE)
 sd_value <- sd(prociencia$IMPORTE_FONDECYT, na.rm = TRUE)
 ```
 
-Histogramas con 3 desviaciones estándar. 
+Histogramas con 3 desviaciones estándar.
 
 ```{r m, include=TRUE}
 fig1 <- plot_ly(data = prociencia, x = ~IMPORTE_FONDECYT, type = 'histogram')
 fig1
 ```
 
-También podemos identificar a todos aquellos datos que estan por encima de las 3 desviaciones estandar 
+También podemos identificar a todos aquellos datos que estan por encima
+de las 3 desviaciones estandar
 
 ```{r n, include=TRUE}
 fig2 <- fig1 %>%
@@ -180,30 +222,32 @@ fig2
 ```
 
 ## Tratar datos atípicos
-Cuando se encuentran datos atípicos, hay dos cosas que NO deben hacerse: 
-1. Ignorarlos
-2. Eliminarlos automáticamente, sin mayor consideración. 
 
-Lo que puede hacerse es: 
-1. Tratar valores atípicos con la imputación de media y mediana 
-2. Trimming (elimina el 0.5, 0.95 en adelante, a 3 desviaciones estándar)
-3. Recorte (capping), se define el rango intercuartilico
-4. No hacer nada
-5. Correr los datos con y sin outliers
+Cuando se encuentran datos atípicos, hay dos cosas que NO deben
+hacerse: 1. Ignorarlos 2. Eliminarlos automáticamente, sin mayor
+consideración.
 
-En las ciencias sociales, lo mejor suele ser la opción 4 y la 5. 
+Lo que puede hacerse es: 1. Tratar valores atípicos con la imputación de
+media y mediana 2. Trimming (elimina el 0.5, 0.95 en adelante, a 3
+desviaciones estándar) 3. Recorte (capping), se define el rango
+intercuartilico 4. No hacer nada 5. Correr los datos con y sin outliers
+
+En las ciencias sociales, lo mejor suele ser la opción 4 y la 5.
 
 ## EJERCICIO
-**Ejercicio 4:** Haz el mismo ejercicio con la variable `IMPORTE_FONDECYT`.\ 
-El 14% de los datos puede cambiar significativamente la interpretacion de nuestra informacion.
+
+**Ejercicio 4:** Haz el mismo ejercicio con la variable
+`IMPORTE_FONDECYT`.  El 14% de los datos puede cambiar
+significativamente la interpretacion de nuestra informacion.
 
 # 3. EXPLORANDO EL LATINBAROMETRO 2020
 
 Profundizaremos en la exploración, limpieza y edición de bases de datos\
-Repasaremos conceptos de medidas de tendencia central, desviación, estandar y normalidad.\
-Para este laboratorio usaremos una versión reducida del [Latinobarometro2020](https://www.latinobarometro.org/latContents.jsp>)\
+Repasaremos conceptos de medidas de tendencia central, desviación,
+estandar y normalidad.\
+Para este laboratorio usaremos una versión reducida del
+[Latinobarometro2020](https://www.latinobarometro.org/latContents.jsp%3E)\
 Siempre es necesario revisar la encuesta y el diccionario.
-
 
 ```{r o, include = FALSE}
 latinbar_spss <- read_spss("Latinobarometro_2020.sav")
@@ -213,7 +257,9 @@ latinbar_spss <- read_spss("Latinobarometro_2020.sav")
 names(latinbar_spss) 
 ```
 
-Queremos explorar la opinión a favor/en contra de la inmigración, según edad y sexo. Por tanto, me interesan las siguientes variables: SEXO, EDAD, P37N.A, P37N.B, P37N.C. y P37N.D\
+Queremos explorar la opinión a favor/en contra de la inmigración, según
+edad y sexo. Por tanto, me interesan las siguientes variables: SEXO,
+EDAD, P37N.A, P37N.B, P37N.C. y P37N.D\
 Podemos hacerlo de dos maneras:
 
 ```{r q}
@@ -223,12 +269,18 @@ milatinbarometro2 <- subset(latinbar_spss, select = c(SEXO, EDAD, P37N.A, P37N.B
 ```
 
 ## Adecuando la base a las necesidades de nuestra pregunta
-Cambiemos de nombre a las variables: `outLA` refiere a `inmigrantes no latinoamericanos` y `deAL` refiere a `inmigrantes latinoamericanos`.
+
+Cambiemos de nombre a las variables: `outLA` refiere a
+`inmigrantes no latinoamericanos` y `deAL` refiere a
+`inmigrantes latinoamericanos`.
+
 ```{r r}
 colnames(milatinbarometro1) <- c("sexo", "edad", "outAL", "deAL", "haiti", "venezuela")
 ```
 
-La función "cut" se utiliza para dividir o recodificar un vector numérico o continue en grupos o intervalos basados en límites específicos.\
+La función "cut" se utiliza para dividir o recodificar un vector
+numérico o continue en grupos o intervalos basados en límites
+específicos.\
 Primero generaremos una nueva variable denominada "edad_quinquenal".
 
 ```{r s}
@@ -236,11 +288,13 @@ milatinbarometro1$edad_quinquenal <- cut(milatinbarometro1$edad, breaks = seq(15
 ```
 
 Crear dos categorías (mayor y menor de 64 años)
+
 ```{r t}
 milatinbarometro1$edad65 <- cut(milatinbarometro1$edad, breaks = c(-Inf, 64, Inf), labels = c("Menos de 65", "Mayor o igual a 65"))
 ```
 
 Crer categoría de adulto
+
 ```{r u}
 milatinbarometro1$edadadulto <- cut(milatinbarometro1$edad, breaks = c(15, 18, 64, 110), labels = c("16-18", "18-64", "65+"))
 cortes <- c(15, 18, 64, 110)
@@ -248,11 +302,15 @@ milatinbarometro1$edadadulto <- cut(milatinbarometro1$edad, breaks = cortes, lab
 ```
 
 ## Identificar "a favor" y "en contra" de la migración
-En el cuestionario y en la base, aquellos que han marcado 3 y 4 están en contra de la migración. 
-Cambiaré la codificación de las variables para poder identificar más facilmente a aquellos en contra de la inmigración. 
-No hay una única manera de hacer esto, lo importante es poder identificar a aquellos que están en contra.\ 
-En este caso, recategorizaré las variables a 0 y 1, donde 1 es que está en contra y 0 a favor de la migración. 
-Si en todas las preguntas contestó 0, podríamos decir que está a favor de la inmigración en general. 
+
+En el cuestionario y en la base, aquellos que han marcado 3 y 4 están en
+contra de la migración. Cambiaré la codificación de las variables para
+poder identificar más facilmente a aquellos en contra de la inmigración.
+No hay una única manera de hacer esto, lo importante es poder
+identificar a aquellos que están en contra.  En este caso,
+recategorizaré las variables a 0 y 1, donde 1 es que está en contra y 0
+a favor de la migración. Si en todas las preguntas contestó 0, podríamos
+decir que está a favor de la inmigración en general.
 
 ```{r v}
 milatinbarometro1$sioutAL<- ifelse(milatinbarometro1$outAL%in% c("1", "2"), 1, ifelse(milatinbarometro1$outAL%in% c("3", "4"), 0, NA))
@@ -261,23 +319,28 @@ milatinbarometro1$sihaiti<- ifelse(milatinbarometro1$haiti%in% c("1", "2"), 1, i
 milatinbarometro1$sivenezuela<- ifelse(milatinbarometro1$venezuela%in% c("1", "2"), 1, ifelse(milatinbarometro1$venezuela%in% c("3", "4"), 0, NA))
 ```
 
-Sumo todas las opiniones (0,1) sobre la inmigración, para crear la variable sobre la aceptacion de la inmigración `siinmigracion` 
+Sumo todas las opiniones (0,1) sobre la inmigración, para crear la
+variable sobre la aceptacion de la inmigración `siinmigracion`
+
 ```{r w}
 milatinbarometro1$siinmigracion = milatinbarometro1$sioutAL + milatinbarometro1$sideAL + milatinbarometro1$sihaiti + milatinbarometro1$sivenezuela 
 table(milatinbarometro1$siinmigracion)
 ```
-Ahora creo la variable general que defina claramente si acepta o no la inmigración `inmigracion` 
+
+Ahora creo la variable general que defina claramente si acepta o no la
+inmigración `inmigracion`
+
 ```{r x}
 milatinbarometro1$inmigracion <- cut(milatinbarometro1$siinmigracion, breaks = c(-Inf, 0, Inf), labels = c("No inmigración", "Si inimigración"))
 
 summary(milatinbarometro1$inmigracion)
 ```
-**Valores perdidos (NA)**
-si se suma una NA con otro valor, el resultado será NA.
-Los encuestados no contestaron en varias respuestas. No podemos asumir por ellos si estaban a favor o en contra. 
-vemos que no hay valores perdidos en las variables de edad. 
-En este caso, procederemos a eliminar aquellos casos perdidos. 
 
+**Valores perdidos (NA)** si se suma una NA con otro valor, el resultado
+será NA. Los encuestados no contestaron en varias respuestas. No podemos
+asumir por ellos si estaban a favor o en contra. vemos que no hay
+valores perdidos en las variables de edad. En este caso, procederemos a
+eliminar aquellos casos perdidos.
 
 ## Medidas de Tendencia Central, Dispersión y Posición
 
@@ -304,9 +367,14 @@ sqrt(var2) #considerando la fórmula
 coef_variacion <- (sd/mean(milatinbarometro1$edad))*100
 ```
 
-Segun esto la varianza es de 273.52 y la desviación estándar es de 16.54.\
-Notase que la desviación estandar esta en años, mientras que la varianza no puede interpretarse tan directamente.\
-De otro lado, el coeficiente de variacion del 40.3% nos indica que la variabilidad relativa de las edades es moderada en relacion al valor promedio. En promedio, los valores de edades se desvian en un 40% de su valor promedio.
+Segun esto la varianza es de 273.52 y la desviación estándar es de
+16.54.\
+Notase que la desviación estandar esta en años, mientras que la varianza
+no puede interpretarse tan directamente.\
+De otro lado, el coeficiente de variacion del 40.3% nos indica que la
+variabilidad relativa de las edades es moderada en relacion al valor
+promedio. En promedio, los valores de edades se desvian en un 40% de su
+valor promedio.
 
 **Medidas de posición**
 
@@ -317,24 +385,37 @@ k1 <- quantile(milatinbarometro1$edad, 0.20)
 d90 <- quantile(milatinbarometro1$edad, 0.90)
 ```
 
-**Medidas de forma (o distribucion)**
-Para calcular la simetria o la curtosis, trabajamos con los paquetes  `e1071` y  `moments`
+**Medidas de forma (o distribucion)** Para calcular la simetria o la
+curtosis, trabajamos con los paquetes `e1071` y `moments`
 
 Coeficiente de simetria de fisher (0)
+
 ```{r ac}
 skewness(milatinbarometro1$edad)
 ```
 
-si el coeficiente de fisher es mayor que cero, es probable que sea asimétrica hacia la derecha. Esto indica una cola larga de valores mayores en el lado derecho de la distribucion, mientras que la mayoría de edades se concentran en el lado izquierdo (la media podría ser mayor que la mediana)
+si el coeficiente de fisher es mayor que cero, es probable que sea
+asimétrica hacia la derecha. Esto indica una cola larga de valores
+mayores en el lado derecho de la distribucion, mientras que la mayoría
+de edades se concentran en el lado izquierdo (la media podría ser mayor
+que la mediana)
 
 Coeficiente de curtosis de fisher (3)
 
 ```{r ad}
 kurtosis(milatinbarometro1$edad)
 ```
-Si la curtosis de Fisher es menor que tres es probable que la distribucion sea platicurtica. Esto significa que tiene colas ligeras y es m?s aplanada que una distribuci?n normal.
+
+Si la curtosis de Fisher es menor que tres es probable que la
+distribucion sea platicurtica. Esto significa que tiene colas ligeras y
+es m?s aplanada que una distribuci?n normal.
 
 ## Ejercicio
-**Ejercicio 5:** Crea una base de datos que se llame `latinbarfinal` donde solo esten aquellos casos válidos (no NAs) en la variable `inmigracion`.\ 
 
-**Ejercicio 6:** En esa nueva base de datos, calcula las medidas de tendencia central, dispersión y posición en la variable edad. Y, evalúa qué tanto distan de los datos obtenidos en la data original. 
+**Ejercicio 5:** Crea una base de datos que se llame `latinbarfinal`
+donde solo esten aquellos casos válidos (no NAs) en la variable
+`inmigracion`. 
+
+**Ejercicio 6:** En esa nueva base de datos, calcula las medidas de
+tendencia central, dispersión y posición en la variable edad. Y, evalúa
+qué tanto distan de los datos obtenidos en la data original.

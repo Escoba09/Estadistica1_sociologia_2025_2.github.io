@@ -25,8 +25,11 @@ Curso: SOC294 - Estadística para el análisis sociológico 1
 
 Semestre 2025 - 2
 
+# Gráficos con ggplot
 
-Antes de iniciar, abrimos las librerias que usaremos en el laboratorio  `ggplot`, `ggplot2`, `rio`, `haven`, `dplyr`
+Antes de iniciar, abrimos las librerias que usaremos en el laboratorio
+`ggplot`, `ggplot2`, `rio`, `haven`, `dplyr`
+
 ```{r a, include=FALSE, warning = FALSE}
 library(rio) #abre archivos en diferentes formatos
 library(openxlsx) #abre archivos en excel
@@ -39,29 +42,40 @@ library(plotly) # para crear gráficos interactivos
 library(ggplot2) #para gráficos 
 ```
 
-Trabajaremos con la base de datos `latinarfinal.sav`. Esta base de datos es la misma que se usó en la P2, con la diferencia de que se han eliminado aquellos datos vacíos en la variable creada `inmigracion`.\
-La fuente original está en [Latinobarometro2020](https://www.latinobarometro.org/latContents.jsp)
+Trabajaremos con la base de datos `latinarfinal.sav`. Esta base de datos
+es la misma que se usó en la P2, con la diferencia de que se han
+eliminado aquellos datos vacíos en la variable creada `inmigracion`.\
+La fuente original está en
+[Latinobarometro2020](https://www.latinobarometro.org/latContents.jsp)
 
 Establecemos el directorio de trabajo y abrimos la base de datos.
+
 ```{r b}
 getwd() 
 setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
 latinbarfinal <- read_spss("latinbarfinal.sav")
 ```
 
-Los nombres son los mismmos que fueron creados en la PC2. 
+Los nombres son los mismmos que fueron creados en la PC2.
+
 ```{r c}
 names(latinbarfinal) 
 ```
-# PIE 
+
+# PIE
 
 ```{r d}
 pie(table(latinbarfinal$sioutAL), main = "Opinion inmigracion de Haiti")
 ```
 
-Recordemos que segun lo que hemos visto (0 = En contra de inmigración, 1 = A favor de inmigración)\
-Además, quiero hacer un gráfico para cada una de las variables `sioutLA`, `sideAL`, `sihaiti`, `sivenezuela`.\ 
-Podría repetir la siguiente linea 4 veces: `pie(table(latinbarfinal$sioutAL), labels = c("En contra", "A favor"), main = "Opinion inmigracion de fuera de AL")` o puedo hacer un **bucle¨** usando el comando `for`.
+Recordemos que segun lo que hemos visto (0 = En contra de inmigración, 1
+= A favor de inmigración)\
+Además, quiero hacer un gráfico para cada una de las variables
+`sioutLA`, `sideAL`, `sihaiti`, `sivenezuela`.  Podría repetir la
+siguiente linea 4 veces:
+`pie(table(latinbarfinal$sioutAL), labels = c("En contra", "A favor"), main = "Opinion inmigracion de fuera de AL")`
+o puedo hacer un **bucle¨** usando el comando `for`.
+
 ```{r e}
 par(mfrow = c(2, 2)) #hace que cada uno de los gráficos que voy a hacer aparezcan al mismo tiempo. Si quito este código, irá apareciendo uno por uno. 
 
@@ -82,9 +96,12 @@ for (i in seq_along(vars)) { #Inicia un bucle for que va a recorrer las posicion
 }
 ```
 
-Si quisiera agregar más variables sobre percepción de la inmigración hacia otras nacionalidades, solo agregaría las variables y los subtítulos 
+Si quisiera agregar más variables sobre percepción de la inmigración
+hacia otras nacionalidades, solo agregaría las variables y los
+subtítulos
 
-Agregar porcentajes al gráfico pie.  
+Agregar porcentajes al gráfico pie.
+
 ```{r f}
 par(mfrow = c(2, 2))
 
@@ -96,23 +113,29 @@ for (i in seq_along(vars)) {
 }
 ```
 
-Observamos en ambos casos, que la creación de un gráfico pie, implica la tabulación de los datos e identificación de las frecuencias de cada categoría.
+Observamos en ambos casos, que la creación de un gráfico pie, implica la
+tabulación de los datos e identificación de las frecuencias de cada
+categoría.
 
-# BOXPLOT 
+# BOXPLOT
 
 Distribución de las edades
+
 ```{r g}
 boxplot(latinbarfinal$edad, main = "Boxplot de edades", ylab = "Edad", col = "lightblue")
 ```
 
-Comparación de opiniones según grupos de edad. 
+Comparación de opiniones según grupos de edad.
+
 ```{r h}
 boxplot(latinbarfinal$edad ~ latinbarfinal$inmigracion, data = latinbarfinal, main = "Boxplot de edad, segun opiniones", xlab = "Opinión sobre inmigración", ylab = "Edad", col = c("lightblue", "lightgreen"), names = c("siempre en contra","al menos una vez a favor")) 
 ```
-Recordemos que 1 es siempre en contra de la inmigración y 2 a favor por lo menos en algún tipo de inmigración.
-En este caso, la media de edad es más alta en aquellos que están siempre en contra de la inmigración. 
 
-# GRÁFICOS DE BARRAS 
+Recordemos que 1 es siempre en contra de la inmigración y 2 a favor por
+lo menos en algún tipo de inmigración. En este caso, la media de edad es
+más alta en aquellos que están siempre en contra de la inmigración.
+
+# GRÁFICOS DE BARRAS
 
 ```{r i}
 frecuencias <- table(latinbarfinal$edad)
@@ -154,24 +177,32 @@ ggplot(latinbarfinal, aes(x = edad_quinquenal, fill = inmigracion)) +
 ```
 
 ## Ejercicio
-**Ejercicio1**: Con un boxplot, explora como se distribuyen las edades según sexo. ¿Observas alguna diferencia?\ 
-**Ejercicio2**: Elabora un gráfico de barras apilado, donde se vea como se distribuye la opinión general sobre la inmigración entre adultos mayores de 65 y menores de 65. 
+
+**Ejercicio1**: Con un boxplot, explora como se distribuyen las edades
+según sexo. ¿Observas alguna diferencia?  **Ejercicio2**: Elabora un
+gráfico de barras apilado, donde se vea como se distribuye la opinión
+general sobre la inmigración entre adultos mayores de 65 y menores de
+65.
 
 # HISTOGRAMA Y CURVA DE DENSIDAD
+
 Habiamos medido en la PC2, la asimetría y curtosis de la variable edad.
-Ahora visualizaremos dichos valores. 
+Ahora visualizaremos dichos valores.
 
 **Histograma**
 
 ```{r m}
 hist(latinbarfinal$edad, main = "Histograma de edades", xlab = "Edad", ylab = "Frecuencia", col = "lightblue", ylim = c(0, 2500))
 ```
+
 **Gráfico de denisdad**
+
 ```{r n}
 plot(density(latinbarfinal$edad), main = "Distribuci?n de Edades", xlab = "Edad", ylab = "Densidad")
 ```
 
 **Gráfico de densidad e histograma**
+
 ```{r o}
 hist(latinbarfinal$edad, main = "Distribución de Edades", freq = FALSE, col = "lightblue")
 densidad <- density(latinbarfinal$edad)
@@ -180,11 +211,15 @@ lines(densidad, col = "red")
 
 # GRÁGICOS CON GGPLOT2
 
-Hemos observado que los gráficos se van trabajando en capas, con indicaciones de cálculo internas. Generar un gráfico más personalizado puede tomar varias línesa de código. El paquete de ggplot ofrece varias opciones de personalización. 
+Hemos observado que los gráficos se van trabajando en capas, con
+indicaciones de cálculo internas. Generar un gráfico más personalizado
+puede tomar varias línesa de código. El paquete de ggplot ofrece varias
+opciones de personalización.
 
 **Nivel de aceptación de la inmigración**
 
-Primero, colocamos etiquetas a los valores. 
+Primero, colocamos etiquetas a los valores.
+
 ```{r p}
 latinbarfinal <- latinbarfinal %>%
   mutate(siinmigracion = factor(siinmigracion,
@@ -200,7 +235,8 @@ latinbarfinal <- latinbarfinal %>%
   
 ```
 
-Segundo, creamos la tabla con la que trabajaremos 
+Segundo, creamos la tabla con la que trabajaremos
+
 ```{r q}
 acepta_migra <- table(latinbarfinal$siinmigracion)
 acepta_migra = as.data.frame(acepta_migra)
@@ -220,12 +256,19 @@ vjust = 0.5, color = "black", size = 4)
 
 grafico
 ```
+
 ## Ejercicio
-**Ejercicio3**: Con ggplot, elabora gráfico donde podamos observar la dispersión de edades según el nivel de aceptación de la inmigración. 
+
+**Ejercicio3**: Con ggplot, elabora gráfico donde podamos observar la
+dispersión de edades según el nivel de aceptación de la inmigración.
 
 # GRÁGICOS DE DISPERSIÓN
 
-Realicemos un último ejercicio con bases de datos de [OurWorldInData](ourworldindata.org). Trabajemos con la base de GDP y el índice de corrupción, basado en estimados del índice de V-Dem (Varieties of Democracy). Disponinble en: https://ourworldindata.org/grapher/political-corruption-index?tab=table.\  
+Realicemos un último ejercicio con bases de datos de
+[OurWorldInData](ourworldindata.org). Trabajemos con la base de GDP y el
+índice de corrupción, basado en estimados del índice de V-Dem (Varieties
+of Democracy). Disponinble en:
+[https://ourworldindata.org/grapher/political-corruption-index?tab=table.\\](https://ourworldindata.org/grapher/political-corruption-index?tab=table.\){.uri}
 
 ```{r ra}
 icorrupcion <- read.csv("political-corruption-index.csv")
@@ -233,41 +276,48 @@ gdp <- read.csv("gdp-per-capita-wb.csv")
 ```
 
 Exploramos las bases de datos
+
 ```{r s}
 head(icorrupcion)
 head(gdp)
 ```
 
-Les cambiamos los nombres y fusionamos las bases de datos, con la variable clave "code"
+Les cambiamos los nombres y fusionamos las bases de datos, con la
+variable clave "code"
 
 ```{r t}
 names(icorrupcion) <- c("entidad", "code", "year", "pci")
 names(gdp) <- c("entidad", "code", "year", "gdp")
 ```
 
-trabajaremos solo con aquellos casos del año 2022. 
+trabajaremos solo con aquellos casos del año 2022.
+
 ```{r u}
 icorrupcion_22 <- subset(icorrupcion, year == 2022)
 gdp_22 <- subset(gdp, year == 2022)
 ```
 
 Fusionamos la base de datos
+
 ```{r v}
 corrupgdp_mfalse <- merge(icorrupcion_22, gdp_22, by = "code", all = FALSE)
 ```
- 
-Elimina los datos vacíos 
+
+Elimina los datos vacíos
+
 ```{r w}
 corrupgdp <- corrupgdp_mfalse[!(corrupgdp_mfalse$code == "" | corrupgdp_mfalse$code == "OWID_WRL"), ] #me quedo con 164 países
 ```
 
 Selecciono solo las variables que me interesan y les cambio de nombre.
+
 ```{r x}
 corrupgdp <- select(corrupgdp, "code", "entidad.x", "year.x", "pci", "gdp")
 names(corrupgdp) <- c("code", "entidad", "year", "pci", "gdp")
 ```
 
 **Ploteo el gráfico de dispersión**
+
 ```{r y}
 plot(corrupgdp$gdp, corrupgdp$pci)
 ```

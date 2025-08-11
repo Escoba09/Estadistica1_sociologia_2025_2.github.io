@@ -18,6 +18,8 @@ Curso: SOC294 - Estadística para el análisis sociológico 1
 
 Semestre 2025 - 2
 
+# Introducción a RStudio 
+
 En R, tenemos vectores, matrices, data.frames y listas.\
 Entender la lógica de estos objetos es importante antes de iniciar el trabajo con data secundaria.
 
@@ -49,7 +51,6 @@ miembro_CAN=c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)
 
 **Para visualizar los vectores que hemos creado** podemos colocar el nombre de los vectores creados (`pais`, `hab2022_millones`, `miembro_CAN`) o utilizar la funcion `print`.
 
-
 ## UNIR VECTORES EN UNA MATRIZ
 
 Los vectores pueden unirse en una matriz. Una matri es una estructura de datos bidimensional (files y columnas) que coniene elementos del mismo tipo (solo datos numéricos o solo caracteres).
@@ -63,7 +64,9 @@ datosA
 datosB <-rbind(pais, hab2022_millones, miembro_CAN) # rbind() une vectores, interpretando cada uno como una fila
 datosB 
 ```
-Como es posible observar, a pesar de que los vectores iniciales eran numéricos, de texto y lógicos, al unirse en una matriz, todos son interpretados como `cadenas de texto (chr)`. 
+
+Como es posible observar, a pesar de que los vectores iniciales eran numéricos, de texto y lógicos, al unirse en una matriz, todos son interpretados como `cadenas de texto (chr)`.
+
 ```{r f}
 str(datosA)
 ```
@@ -102,13 +105,13 @@ str(datosC) #cada vector mantiene su estructura original.
 
 ## ESTABLECER DIRECTORIO DE TRABAJO
 
-
 Cuando trabajamos en R es importante definir cual es nuestro espacio de trabajo (la carpeta en la que trabajaremos y se almacenaran nuestras BD, imagenes, etc.) `getwd()` muestra el directorio de trabajo actual, mientras que `setwd()`establece el directorio de trabajo.
 
 ```{r j, include=TRUE}
 getwd() # muestra el directorio de trabajo actual
 setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io") #indica el directorio de trabajo donde quiero trabajar.
 ```
+
 ## INSTALAR PAQUETES
 
 Para importar/exportar algunos formatos es necesario instalar y abrir algunos paquetes.\
@@ -116,6 +119,7 @@ En caso no se encuentren disponibles podras instalarlos con `install.packages(""
 Los paquetes que te permitiran abrir archivos en diferentes formatos son: `openxlsx` (*para archivos en xlsx*), `readxl` (*para archivos en xlsx*), `haven` (*para archivos de stata y spss*), `rio` (*para archivos en diferentes formatos*) entre otros.\
 
 Instalamos las librerias que usaremos en este laboratorio `rio`, `dplyr`, `lubridate`, `psych`
+
 ```{r k, include=FALSE, warning = FALSE}
 library(rio) #abre archivos en diferentes formatos
 library(dplyr) #permite manipular datos (filtrar)
@@ -151,6 +155,7 @@ write.xlsx(siseve, file="siseve.xlsx")
 # 3. EXPLORACIONES PRELIMINARES
 
 Realizamos algunas exploraciones
+
 ```{r n, include = TRUE}
 names(siseve) # brinda el nombre de las variables 
 head(siseve) # brinda una idea de la estructura de la base (10 primeros casos)
@@ -159,53 +164,67 @@ summary(siseve) #brinda un resumen de las variables de la base
 describe(siseve) #brinda informacion general
 ```
 
-Algunas bases de datos pueden incluir miles de variables o casos que no necesariamente son de nuestro interes. Por tanto, realizaremos algunas ediciones.\ 
-*Ojo: Es importante registrar siempre las ediciones y decisiones que realizamos para garantizar la replicabilidad*
+Algunas bases de datos pueden incluir miles de variables o casos que no necesariamente son de nuestro interes. Por tanto, realizaremos algunas ediciones.  *Ojo: Es importante registrar siempre las ediciones y decisiones que realizamos para garantizar la replicabilidad*
 
 ## CAMBIAR NOMBRES DE LA BASE DE DATOS
+
 Para duplicar la base de datos con otro nombre
+
 ```{r o, include = TRUE}
 siseve24 <- siseve
 rm(siseve) #eliminamos siseve para no confundirnos
 ```
 
-## CAMBIAR NOMBRES A VARIABLES 
-Esta base de datos cuenta con variables que son autoexplicativas, pero no siempre es asi. Al nombrar variables, se sugiere trabajar siempre con minusculas y sin muchos "-". 
+## CAMBIAR NOMBRES A VARIABLES
+
+Esta base de datos cuenta con variables que son autoexplicativas, pero no siempre es asi. Al nombrar variables, se sugiere trabajar siempre con minusculas y sin muchos "-".
+
 ```{r p, include = TRUE}
 names(siseve24) <- c("fecha", "dre", "ugel", "nivel_educativo", "tipo_reporte", "tipo_violencia", "subtipo_violencia", "estado_reporte")
 names(siseve24) 
 ```
-Tambien puedo cambiar solo el nombre de una variable. Por ejemplo, quiero cambiar el nombre de "dre" a "region". 
+
+Tambien puedo cambiar solo el nombre de una variable. Por ejemplo, quiero cambiar el nombre de "dre" a "region".
+
 ```{r q, include = TRUE, warning = FALSE}
 siseve24 <- rename(siseve24, region = dre)
 names(siseve24) 
 ```
-## SELECCIONAR CASOS 
-Esta base de datos incluye casos desde el 2013 hasta el 2024, pero solo me interesan aquellos casos del 2023. Para esto, filtramos los casos que corresponden al 2023.\ 
-*Ojo: No siempre el numero de casos coincide con el numero de filas*
+
+## SELECCIONAR CASOS
+
+Esta base de datos incluye casos desde el 2013 hasta el 2024, pero solo me interesan aquellos casos del 2023. Para esto, filtramos los casos que corresponden al 2023.  *Ojo: No siempre el numero de casos coincide con el numero de filas*
 
 ```{r r, include = TRUE, warning = FALSE}
 siseve23 <- siseve24 %>% 
   filter(year(fecha) == 2023) #estoy creando una nueva base
 ```
+
 ```{r s, include = TRUE, warning = FALSE}
 nrow(siseve24) #en este caso cada fila corresponde a un caso 
 nrow(siseve23) #en este caso cada fila corresponde a un caso 
 ```
+
 ## SELECCIONAR VARIABLES
-Ahora que todos los casos pertenecen son del 2023, la variable `fecha` deja de ser relevante para mi analisis. Para eliminar la variable: 
+
+Ahora que todos los casos pertenecen son del 2023, la variable `fecha` deja de ser relevante para mi analisis. Para eliminar la variable:
+
 ```{r t, include = TRUE, warning = FALSE}
 siseve23.1 <- siseve23 %>%
   select(-fecha)
 names(siseve23.1) 
 ```
+
 Solo me interesa trabajar con las variables `region`, `nivel_educativo`, `tipo_violencia`
+
 ```{r u, include = TRUE, warning = FALSE}
 siseve23.2 <- siseve23.1 %>%
   select(region, nivel_educativo, tipo_violencia)
 names(siseve23.2)  
 ```
+
 *Este procedimiento hace mas sentido en bases de mas variables*
 
 ## EJERCICIO
+
 **Ejercicio 3:** Crea una base de datos que solo incluya informacion del nivel secundaria del año 2023.\

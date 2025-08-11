@@ -365,6 +365,8 @@ div.tocify {
 <p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
 <p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
 <p>Semestre 2025 - 2</p>
+<div id="gráficos-con-ggplot" class="section level1">
+<h1>Gráficos con ggplot</h1>
 <p>Antes de iniciar, abrimos las librerias que usaremos en el
 laboratorio <code>ggplot</code>, <code>ggplot2</code>, <code>rio</code>,
 <code>haven</code>, <code>dplyr</code></p>
@@ -385,6 +387,7 @@ latinbarfinal &lt;- read_spss(&quot;latinbarfinal.sav&quot;)</code></pre>
 ##  [5] &quot;haiti&quot;           &quot;venezuela&quot;       &quot;edad_quinquenal&quot; &quot;edad65&quot;         
 ##  [9] &quot;sioutAL&quot;         &quot;sideAL&quot;          &quot;sihaiti&quot;         &quot;sivenezuela&quot;    
 ## [13] &quot;siinmigracion&quot;   &quot;inmigracion&quot;</code></pre>
+</div>
 <div id="pie" class="section level1">
 <h1>PIE</h1>
 <pre class="r"><code>pie(table(latinbarfinal$sioutAL), main = &quot;Opinion inmigracion de Haiti&quot;)</code></pre>
@@ -439,10 +442,11 @@ categoría.</p>
 <p><img src="pd4_files/figure-html/g-1.png" width="672" /></p>
 <p>Comparación de opiniones según grupos de edad.</p>
 <pre class="r"><code>boxplot(latinbarfinal$edad ~ latinbarfinal$inmigracion, data = latinbarfinal, main = &quot;Boxplot de edad, segun opiniones&quot;, xlab = &quot;Opinión sobre inmigración&quot;, ylab = &quot;Edad&quot;, col = c(&quot;lightblue&quot;, &quot;lightgreen&quot;), names = c(&quot;siempre en contra&quot;,&quot;al menos una vez a favor&quot;)) </code></pre>
-<p><img src="pd4_files/figure-html/h-1.png" width="672" /> Recordemos
-que 1 es siempre en contra de la inmigración y 2 a favor por lo menos en
-algún tipo de inmigración. En este caso, la media de edad es más alta en
-aquellos que están siempre en contra de la inmigración.</p>
+<p><img src="pd4_files/figure-html/h-1.png" width="672" /></p>
+<p>Recordemos que 1 es siempre en contra de la inmigración y 2 a favor
+por lo menos en algún tipo de inmigración. En este caso, la media de
+edad es más alta en aquellos que están siempre en contra de la
+inmigración.</p>
 </div>
 <div id="gráficos-de-barras" class="section level1">
 <h1>GRÁFICOS DE BARRAS</h1>
@@ -496,8 +500,8 @@ adultos mayores de 65 y menores de 65.</p>
 edad. Ahora visualizaremos dichos valores.</p>
 <p><strong>Histograma</strong></p>
 <pre class="r"><code>hist(latinbarfinal$edad, main = &quot;Histograma de edades&quot;, xlab = &quot;Edad&quot;, ylab = &quot;Frecuencia&quot;, col = &quot;lightblue&quot;, ylim = c(0, 2500))</code></pre>
-<p><img src="pd4_files/figure-html/m-1.png" width="672" />
-<strong>Gráfico de denisdad</strong></p>
+<p><img src="pd4_files/figure-html/m-1.png" width="672" /></p>
+<p><strong>Gráfico de denisdad</strong></p>
 <pre class="r"><code>plot(density(latinbarfinal$edad), main = &quot;Distribuci?n de Edades&quot;, xlab = &quot;Edad&quot;, ylab = &quot;Densidad&quot;)</code></pre>
 <p><img src="pd4_files/figure-html/n-1.png" width="672" /></p>
 <p><strong>Gráfico de densidad e histograma</strong></p>
@@ -540,19 +544,24 @@ geom_text(aes(label = Freq),
 vjust = 0.5, color = &quot;black&quot;, size = 4)
 
 grafico</code></pre>
-<p><img src="pd4_files/figure-html/r-1.png" width="672" /> ## Ejercicio
-<strong>Ejercicio3</strong>: Con ggplot, elabora gráfico donde podamos
-observar la dispersión de edades según el nivel de aceptación de la
-inmigración.</p>
+<p><img src="pd4_files/figure-html/r-1.png" width="672" /></p>
+<div id="ejercicio-1" class="section level2">
+<h2>Ejercicio</h2>
+<p><strong>Ejercicio3</strong>: Con ggplot, elabora gráfico donde
+podamos observar la dispersión de edades según el nivel de aceptación de
+la inmigración.</p>
+</div>
 </div>
 <div id="grágicos-de-dispersión" class="section level1">
 <h1>GRÁGICOS DE DISPERSIÓN</h1>
 <p>Realicemos un último ejercicio con bases de datos de <a
 href="ourworldindata.org">OurWorldInData</a>. Trabajemos con la base de
 GDP y el índice de corrupción, basado en estimados del índice de V-Dem
-(Varieties of Democracy). Disponinble en: <a
+(Varieties of Democracy). Disponinble en: [<a
+href="https://ourworldindata.org/grapher/political-corruption-index?tab=table.\\"
+class="uri">https://ourworldindata.org/grapher/political-corruption-index?tab=table.\\</a>](<a
 href="https://ourworldindata.org/grapher/political-corruption-index?tab=table.\"
-class="uri">https://ourworldindata.org/grapher/political-corruption-index?tab=table.\</a></p>
+class="uri">https://ourworldindata.org/grapher/political-corruption-index?tab=table.\</a>){.uri}</p>
 <pre class="r"><code>icorrupcion &lt;- read.csv(&quot;political-corruption-index.csv&quot;)
 gdp &lt;- read.csv(&quot;gdp-per-capita-wb.csv&quot;)</code></pre>
 <p>Exploramos las bases de datos</p>
