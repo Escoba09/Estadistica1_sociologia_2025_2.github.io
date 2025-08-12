@@ -18,15 +18,15 @@ Curso: SOC294 - Estadística para el análisis sociológico 1
 
 Semestre 2025 - 2
 
-# **Bases de datos** {style="black"}
+# Bases de datos
 
 |       |                                                                                    |                                                                                                                    |               |
-|:--------------:|:--------------:|:----------------------:|:--------------:|
+|:-----:|:----------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------:|:-------------:|
 | **n** |                                     **Nombre**                                     |                                                     **Enlace**                                                     |  **Alcance**  |
-|   1   |                                       IPUMS.                                       |       [https://www.ipums.org](https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/958881)        |    Global     |
+|   1   |                                       IPUMS.                                       |       [ https://www.ipums.org](https://escale.minedu.gob.pe/uee/-/document_library_display/GMv7/view/958881)       |    Global     |
 |   2   |   ICPSR. Intern-university Consortium for Political and Social Research (ICPSR)    |                                    <http://www.icpsr.umich.edu/icpsrweb/ICPSR/>                                    |    Global     |
 |   3   |               International IPUMS. (Harmonized international census)               |                                  <https://international.ipums.org/international/>                                  |    Global     |
-|   4   |                                 Harvard Dataverse.                                 |                                          <https://dataverse.harvard.edu/>                                          |    Global     |
+|   4   |                                 Harvard Dataverse.                                 |                         [https://dataverse.harvard.edu/ ](https://dataverse.harvard.edu/)                          |    Global     |
 |   5   |                  Harvard Dataverse. Randomized controlled trials                   |                                   <https://dataverse.harvard.edu/dataverse/jpal>                                   |    Global     |
 |   6   |               PovertyActionLab. Catalog of Administrative Data Sets                |                        <https://www.povertyactionlab.org/catalog-administrative-data-sets>                         |    Global     |
 |   7   |                                WORLD BANK OPEN DATA                                |                                           <https://data.worldbank.org/>                                            |    Global     |
