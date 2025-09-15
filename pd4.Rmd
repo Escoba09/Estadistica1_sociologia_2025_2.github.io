@@ -42,9 +42,8 @@ library(plotly) # para crear gráficos interactivos
 library(ggplot2) #para gráficos 
 ```
 
-Trabajaremos con la base de datos `latinarfinal.sav`. Esta base de datos
-es la misma que se usó en la P2, con la diferencia de que se han
-eliminado aquellos datos vacíos en la variable creada `inmigracion`.\
+Trabajaremos con la base de datos `latinarfinal.sav`.
+
 La fuente original está en
 [Latinobarometro2020](https://www.latinobarometro.org/latContents.jsp)
 
@@ -52,11 +51,9 @@ Establecemos el directorio de trabajo y abrimos la base de datos.
 
 ```{r b}
 getwd() 
-setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
-latinbarfinal <- read_spss("latinbarfinal.sav")
+setwd("C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
+latinbarfinal <- read_spss("C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io/latinbarfinal.sav")
 ```
-
-Los nombres son los mismmos que fueron creados en la PC2.
 
 ```{r c}
 names(latinbarfinal) 
@@ -69,7 +66,7 @@ pie(table(latinbarfinal$sioutAL), main = "Opinion inmigracion de Haiti")
 ```
 
 Recordemos que segun lo que hemos visto (0 = En contra de inmigración, 1
-= A favor de inmigración)\
+= A favor de inmigración)/
 Además, quiero hacer un gráfico para cada una de las variables
 `sioutLA`, `sideAL`, `sihaiti`, `sivenezuela`.  Podría repetir la
 siguiente linea 4 veces:
@@ -268,7 +265,7 @@ Realicemos un último ejercicio con bases de datos de
 [OurWorldInData](ourworldindata.org). Trabajemos con la base de GDP y el
 índice de corrupción, basado en estimados del índice de V-Dem (Varieties
 of Democracy). Disponinble en:
-[https://ourworldindata.org/grapher/political-corruption-index?tab=table.\\](https://ourworldindata.org/grapher/political-corruption-index?tab=table.\){.uri}
+[https://ourworldindata.org/grapher/political-corruption-index?tab=table.//](https://ourworldindata.org/grapher/political-corruption-index?tab=table./){.uri}
 
 ```{r ra}
 icorrupcion <- read.csv("political-corruption-index.csv")

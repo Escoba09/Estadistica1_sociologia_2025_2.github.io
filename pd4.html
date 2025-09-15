@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 4</title>
 
-<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -345,6 +345,9 @@ div.tocify {
 <li>
   <a href="pd8.html">Práctica dirigida 8</a>
 </li>
+<li>
+  <a href="pd9.html">Práctica dirigida 9</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -370,18 +373,14 @@ div.tocify {
 <p>Antes de iniciar, abrimos las librerias que usaremos en el
 laboratorio <code>ggplot</code>, <code>ggplot2</code>, <code>rio</code>,
 <code>haven</code>, <code>dplyr</code></p>
-<p>Trabajaremos con la base de datos <code>latinarfinal.sav</code>. Esta
-base de datos es la misma que se usó en la P2, con la diferencia de que
-se han eliminado aquellos datos vacíos en la variable creada
-<code>inmigracion</code>.<br />
-La fuente original está en <a
+<p>Trabajaremos con la base de datos <code>latinarfinal.sav</code>.</p>
+<p>La fuente original está en <a
 href="https://www.latinobarometro.org/latContents.jsp">Latinobarometro2020</a></p>
 <p>Establecemos el directorio de trabajo y abrimos la base de datos.</p>
 <pre class="r"><code>getwd() </code></pre>
-<pre><code>## [1] &quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;</code></pre>
-<pre class="r"><code>setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;)
-latinbarfinal &lt;- read_spss(&quot;latinbarfinal.sav&quot;)</code></pre>
-<p>Los nombres son los mismmos que fueron creados en la PC2.</p>
+<pre><code>## [1] &quot;C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;</code></pre>
+<pre class="r"><code>setwd(&quot;C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;)
+latinbarfinal &lt;- read_spss(&quot;C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io/latinbarfinal.sav&quot;)</code></pre>
 <pre class="r"><code>names(latinbarfinal) </code></pre>
 <pre><code>##  [1] &quot;sexo&quot;            &quot;edad&quot;            &quot;outAL&quot;           &quot;deAL&quot;           
 ##  [5] &quot;haiti&quot;           &quot;venezuela&quot;       &quot;edad_quinquenal&quot; &quot;edad65&quot;         
@@ -393,10 +392,10 @@ latinbarfinal &lt;- read_spss(&quot;latinbarfinal.sav&quot;)</code></pre>
 <pre class="r"><code>pie(table(latinbarfinal$sioutAL), main = &quot;Opinion inmigracion de Haiti&quot;)</code></pre>
 <p><img src="pd4_files/figure-html/d-1.png" width="672" /></p>
 <p>Recordemos que segun lo que hemos visto (0 = En contra de
-inmigración, 1 = A favor de inmigración)<br />
-Además, quiero hacer un gráfico para cada una de las variables
-<code>sioutLA</code>, <code>sideAL</code>, <code>sihaiti</code>,
-<code>sivenezuela</code>.  Podría repetir la siguiente linea 4 veces:
+inmigración, 1 = A favor de inmigración)/ Además, quiero hacer un
+gráfico para cada una de las variables <code>sioutLA</code>,
+<code>sideAL</code>, <code>sihaiti</code>, <code>sivenezuela</code>. 
+Podría repetir la siguiente linea 4 veces:
 <code>pie(table(latinbarfinal$sioutAL), labels = c("En contra", "A favor"), main = "Opinion inmigracion de fuera de AL")</code>
 o puedo hacer un <strong>bucle¨</strong> usando el comando
 <code>for</code>.</p>
@@ -557,11 +556,9 @@ la inmigración.</p>
 <p>Realicemos un último ejercicio con bases de datos de <a
 href="ourworldindata.org">OurWorldInData</a>. Trabajemos con la base de
 GDP y el índice de corrupción, basado en estimados del índice de V-Dem
-(Varieties of Democracy). Disponinble en: [<a
-href="https://ourworldindata.org/grapher/political-corruption-index?tab=table.\\"
-class="uri">https://ourworldindata.org/grapher/political-corruption-index?tab=table.\\</a>](<a
-href="https://ourworldindata.org/grapher/political-corruption-index?tab=table.\"
-class="uri">https://ourworldindata.org/grapher/political-corruption-index?tab=table.\</a>){.uri}</p>
+(Varieties of Democracy). Disponinble en: <a
+href="https://ourworldindata.org/grapher/political-corruption-index?tab=table./"
+class="uri">https://ourworldindata.org/grapher/political-corruption-index?tab=table.//</a></p>
 <pre class="r"><code>icorrupcion &lt;- read.csv(&quot;political-corruption-index.csv&quot;)
 gdp &lt;- read.csv(&quot;gdp-per-capita-wb.csv&quot;)</code></pre>
 <p>Exploramos las bases de datos</p>
