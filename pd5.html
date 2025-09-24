@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Práctica dirigida 5</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Material para pds</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Inicio</a>
+</li>
+<li>
+  <a href="pd1.html">Práctica dirigida 1</a>
+</li>
+<li>
+  <a href="pd2.html">Práctica dirigida 2</a>
+</li>
+<li>
+  <a href="pd3.html">Práctica dirigida 3</a>
+</li>
+<li>
+  <a href="pd4.html">Práctica dirigida 4</a>
+</li>
+<li>
+  <a href="pd5.html">Práctica dirigida 5</a>
+</li>
+<li>
+  <a href="pd6.html">Práctica dirigida 6</a>
+</li>
+<li>
+  <a href="pd7.html">Práctica dirigida 7</a>
+</li>
+<li>
+  <a href="pd8.html">Práctica dirigida 8</a>
+</li>
+<li>
+  <a href="pd9.html">Práctica dirigida 9</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Práctica dirigida 5</h1>
+
+</div>
+
+
+<p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
+<p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
+<div id="muestreo-técnicas-de-muestreo" class="section level1">
+<h1><strong>Muestreo (Técnicas de muestreo)</strong></h1>
+<div id="tipos-de-muestreo-en-investigación-social"
+class="section level2">
+<h2><strong>Tipos de muestreo en investigación social</strong></h2>
+<p>Cuando investigamos en ciencias sociales no siempre podemos estudiar
+a toda la población (por ejemplo, a todos los jóvenes de una ciudad).
+Por eso usamos muestras, es decir, un grupo reducido de personas que nos
+permiten aproximarnos a la realidad del conjunto.</p>
+<p>Existen distintos tipos de muestreo:</p>
+<ul>
+<li><p>Muestreo aleatorio simple: Cada persona de la población tiene la
+misma probabilidad de ser seleccionada. Es como sacar un papelito de una
+tómbola.</p></li>
+<li><p>Muestreo sistemático: Se selecciona cada “k-ésimo” elemento de
+una lista ordenada. Por ejemplo, elegir a cada décima persona que entra
+a la universidad.</p></li>
+<li><p>Muestreo estratificado: La población se divide en estratos (por
+ejemplo: hombres y mujeres, o grupos de edad), y se toman muestras de
+cada estrato de manera proporcional. Esto asegura representación de los
+diferentes subgrupos.</p></li>
+<li><p>Muestreo por conglomerados (clusters): En lugar de seleccionar
+individuos, se eligen grupos completos (como colegios, barrios o
+universidades) y luego se estudia a las personas dentro de esos
+grupos.</p></li>
+</ul>
+<p>En resumen:</p>
+<ul>
+<li><p>El muestreo aleatorio simple busca igualdad de
+oportunidades.</p></li>
+<li><p>El sistemático usa un patrón fijo.</p></li>
+<li><p>El estratificado garantiza representación de subgrupos.</p></li>
+<li><p>El por conglomerados trabaja con grupos enteros para ahorrar
+tiempo y costos.</p></li>
+</ul>
+</div>
+<div id="conceptos-clave-para-entender-el-muestreo"
+class="section level2">
+<h2><strong>Conceptos clave para entender el muestreo</strong></h2>
+<p>Cuando tomamos una muestra, estamos usando herramientas estadísticas
+que nos permiten aproximarnos a la realidad de la población. Tres ideas
+centrales son:</p>
+<p><strong>Variables aleatorias</strong>. Una variable aleatoria es un
+número que resulta de un proceso de azar.</p>
+<p>Ejemplo: si encuestamos al azar a un estudiante y registramos su
+edad, esa edad es el valor de una variable aleatoria.</p>
+<p>En sociología, nuestras encuestas generan variables aleatorias porque
+dependen de a quién entrevistemos.</p>
+<p><strong>Ley de los grandes</strong> <strong>números.</strong> Dice
+que, a medida que aumenta el tamaño de la muestra, el promedio de la
+muestra se acerca cada vez más al promedio verdadero de la
+población.</p>
+<p>Ejemplo: si preguntamos a 10 personas cuánto leen al mes, el promedio
+puede variar mucho; pero si preguntamos a 1,000 personas, ese promedio
+será muy parecido al real de toda la ciudad.</p>
+<p><strong>Teoría del límite central.</strong> Afirma que, aunque las
+variables originales no tengan forma de campana, la distribución de los
+promedios de muchas muestras tiende a ser normal (curva de campana).</p>
+<p>Esto explica por qué los sociólogos podemos usar intervalos de
+confianza y pruebas estadísticas: aunque la población sea muy diversa,
+los promedios de las muestras siguen un patrón predecible.</p>
+<pre class="r"><code>setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;)</code></pre>
+<pre class="r"><code>library(survey)</code></pre>
+<pre><code>## Warning: package &#39;survey&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Loading required package: grid</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## Warning: package &#39;survival&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## 
+## Attaching package: &#39;survey&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     dotchart</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ tidyr::expand() masks Matrix::expand()
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ✖ tidyr::pack()   masks Matrix::pack()
+## ✖ tidyr::unpack() masks Matrix::unpack()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(foreign)
+library(haven)
+library(dplyr)
+
+cpv &lt;- read_dta(&quot;cpv2017_pob07mod.dta&quot;)
+#View(cpv2017_pob07mod)</code></pre>
+<div id="muestreo-aleatorio-simple-mas" class="section level3">
+<h3><strong>Muestreo Aleatorio Simple (MAS)</strong></h3>
+<pre class="r"><code>set.seed(123456) # Clave para poder replicar
+mas1 &lt;- cpv[sample(1:nrow(cpv) , size = 994), ]
+
+mas2 &lt;- cpv %&gt;% 
+  slice_sample(prop = 0.001)
+
+mas3 &lt;- cpv %&gt;%
+  slice_sample(n = 994)</code></pre>
+</div>
+<div id="muestreo-aleatorio-estratificado-mae" class="section level3">
+<h3><strong>Muestreo Aleatorio Estratificado (MAE)</strong></h3>
+<pre class="r"><code>set.seed(123456)# Clave para poder replicar
+
+mae1 &lt;- cpv %&gt;%
+  group_by(c5_p2) %&gt;%
+  slice_sample(prop = 0.001)</code></pre>
+</div>
+<div id="cómo-introducir-diseño-muestral" class="section level3">
+<h3><strong>¿Cómo introducir diseño muestral?</strong></h3>
+<pre class="r"><code>set.seed(123456) # Clave para poder replicar
+data(api) # Ejemplo de Lumley
+
+## MAS ##
+mas_d &lt;- svydesign(id = ~1 , fpc = ~fpc , data = apisrs)
+svytotal(~enroll , mas_d)</code></pre>
+<pre><code>##          total     SE
+## enroll 3621074 169520</code></pre>
+<pre class="r"><code>svymean(~enroll , mas_d)</code></pre>
+<pre><code>##          mean     SE
+## enroll 584.61 27.368</code></pre>
+<pre class="r"><code>## MAE ##
+set.seed(123456) # Clave para poder replicar
+mae_d &lt;- svydesign(id = ~1 , fpc = ~fpc , data = apistrat , strata = ~stype)
+svytotal(~enroll , mae_d)</code></pre>
+<pre><code>##          total     SE
+## enroll 3687178 114642</code></pre>
+<pre class="r"><code>svymean(~enroll , mae_d)</code></pre>
+<pre><code>##          mean     SE
+## enroll 595.28 18.509</code></pre>
+</div>
+<div id="extraer-muestra-introducir-diseño-muestral"
+class="section level3">
+<h3><strong>Extraer muestra + introducir diseño muestral</strong></h3>
+<div id="mas" class="section level4">
+<h4><strong>MAS</strong></h4>
+<pre class="r"><code>## MAS 
+# Extraemos muestra (MAS)
+mas4 &lt;- cpv %&gt;%
+  slice_sample(prop = 0.001)
+
+mas4 = mutate(mas4 , fpc = 994494 , pw = 994494/994 , n = 1 , .keep = &quot;all&quot;)
+mas4_d = svydesign(id = ~1 , fpc = ~fpc , data = mas4)
+mas4_dw = svydesign(id = ~1 , fpc = ~fpc , weights =~pw , data = mas4)
+
+#Promedios
+svymean(~c5_p4_1 , mas4_d)</code></pre>
+<pre><code>##          mean     SE
+## c5_p4_1 32.58 0.6669</code></pre>
+<pre class="r"><code>svymean(~c5_p4_1 , mas4_dw)</code></pre>
+<pre><code>##          mean     SE
+## c5_p4_1 32.58 0.6669</code></pre>
+</div>
+<div id="mae" class="section level4">
+<h4><strong>MAE</strong></h4>
+<pre class="r"><code># Dummy de sexo
+cpv = mutate(cpv , sexo = ifelse(c5_p2 == 1 , 1 , 0) , .keep = &quot;all&quot;)
+
+# Contamos para fpc (estrato)
+cpv %&gt;%
+  count(sexo)</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##    sexo      n
+##   &lt;dbl&gt;  &lt;int&gt;
+## 1     0 508712
+## 2     1 485782</code></pre>
+<pre class="r"><code># Extraemos muestra (MAE)
+mae4 &lt;- cpv %&gt;%
+   group_by(sexo) %&gt;%
+  slice_sample(prop = 0.001)
+
+mae4 &lt;- mae4 %&gt;%
+  mutate(fpce = case_when(
+    sexo == 0 ~ 508712 ,
+    sexo == 1 ~ 485782) , .keep = &quot;all&quot;)
+
+mae4_d = svydesign(id = ~1 , fpc = ~fpce , data = mae4 , strata = ~sexo)
+
+svymean(~c5_p4_1 , mae4_d)</code></pre>
+<pre><code>##           mean     SE
+## c5_p4_1 32.392 0.6658</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

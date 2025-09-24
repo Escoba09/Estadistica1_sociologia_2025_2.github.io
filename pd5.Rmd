@@ -1,0 +1,194 @@
+---
+title: "Práctica dirigida 5"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    collapsed: no
+    number_sections: no
+    toc_depth: 3
+    theme: flatly
+    highlight: textmate
+    always_allow_html: yes
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+**FACULTAD DE CIENCIAS SOCIALES - PUCP**
+
+Curso: SOC294 - Estadística para el análisis sociológico 1
+
+# **Muestreo (Técnicas de muestreo)**
+
+## **Tipos de muestreo en investigación social**
+
+Cuando investigamos en ciencias sociales no siempre podemos estudiar a
+toda la población (por ejemplo, a todos los jóvenes de una ciudad). Por
+eso usamos muestras, es decir, un grupo reducido de personas que nos
+permiten aproximarnos a la realidad del conjunto.
+
+Existen distintos tipos de muestreo:
+
+-   Muestreo aleatorio simple: Cada persona de la población tiene la
+    misma probabilidad de ser seleccionada. Es como sacar un papelito de
+    una tómbola.
+
+-   Muestreo sistemático: Se selecciona cada "k-ésimo" elemento de una
+    lista ordenada. Por ejemplo, elegir a cada décima persona que entra
+    a la universidad.
+
+-   Muestreo estratificado: La población se divide en estratos (por
+    ejemplo: hombres y mujeres, o grupos de edad), y se toman muestras
+    de cada estrato de manera proporcional. Esto asegura representación
+    de los diferentes subgrupos.
+
+-   Muestreo por conglomerados (clusters): En lugar de seleccionar
+    individuos, se eligen grupos completos (como colegios, barrios o
+    universidades) y luego se estudia a las personas dentro de esos
+    grupos.
+
+En resumen:
+
+-   El muestreo aleatorio simple busca igualdad de oportunidades.
+
+-   El sistemático usa un patrón fijo.
+
+-   El estratificado garantiza representación de subgrupos.
+
+-   El por conglomerados trabaja con grupos enteros para ahorrar tiempo
+    y costos.
+
+## **Conceptos clave para entender el muestreo**
+
+Cuando tomamos una muestra, estamos usando herramientas estadísticas que
+nos permiten aproximarnos a la realidad de la población. Tres ideas
+centrales son:
+
+**Variables aleatorias**. Una variable aleatoria es un número que
+resulta de un proceso de azar.
+
+Ejemplo: si encuestamos al azar a un estudiante y registramos su edad,
+esa edad es el valor de una variable aleatoria.
+
+En sociología, nuestras encuestas generan variables aleatorias porque
+dependen de a quién entrevistemos.
+
+**Ley de los grandes** **números.** Dice que, a medida que aumenta el
+tamaño de la muestra, el promedio de la muestra se acerca cada vez más
+al promedio verdadero de la población.
+
+Ejemplo: si preguntamos a 10 personas cuánto leen al mes, el promedio
+puede variar mucho; pero si preguntamos a 1,000 personas, ese promedio
+será muy parecido al real de toda la ciudad.
+
+**Teoría del límite central.** Afirma que, aunque las variables
+originales no tengan forma de campana, la distribución de los promedios
+de muchas muestras tiende a ser normal (curva de campana).
+
+Esto explica por qué los sociólogos podemos usar intervalos de confianza
+y pruebas estadísticas: aunque la población sea muy diversa, los
+promedios de las muestras siguen un patrón predecible.
+
+```{r}
+setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
+```
+
+```{r}
+library(survey)
+library(tidyverse)
+library(foreign)
+library(haven)
+library(dplyr)
+
+cpv <- read_dta("cpv2017_pob07mod.dta")
+#View(cpv2017_pob07mod)
+```
+
+### **Muestreo Aleatorio Simple (MAS)**
+
+```{r}
+set.seed(123456) # Clave para poder replicar
+mas1 <- cpv[sample(1:nrow(cpv) , size = 994), ]
+
+mas2 <- cpv %>% 
+  slice_sample(prop = 0.001)
+
+mas3 <- cpv %>%
+  slice_sample(n = 994)
+```
+
+### **Muestreo Aleatorio Estratificado (MAE)**
+
+```{r}
+set.seed(123456)# Clave para poder replicar
+
+mae1 <- cpv %>%
+  group_by(c5_p2) %>%
+  slice_sample(prop = 0.001)
+```
+
+### **¿Cómo introducir diseño muestral?**
+
+```{r}
+set.seed(123456) # Clave para poder replicar
+data(api) # Ejemplo de Lumley
+
+## MAS ##
+mas_d <- svydesign(id = ~1 , fpc = ~fpc , data = apisrs)
+svytotal(~enroll , mas_d)
+svymean(~enroll , mas_d)
+```
+
+```{r}
+## MAE ##
+set.seed(123456) # Clave para poder replicar
+mae_d <- svydesign(id = ~1 , fpc = ~fpc , data = apistrat , strata = ~stype)
+svytotal(~enroll , mae_d)
+svymean(~enroll , mae_d)
+
+```
+
+### **Extraer muestra + introducir diseño muestral**
+
+#### **MAS**
+
+```{r}
+## MAS 
+# Extraemos muestra (MAS)
+mas4 <- cpv %>%
+  slice_sample(prop = 0.001)
+
+mas4 = mutate(mas4 , fpc = 994494 , pw = 994494/994 , n = 1 , .keep = "all")
+mas4_d = svydesign(id = ~1 , fpc = ~fpc , data = mas4)
+mas4_dw = svydesign(id = ~1 , fpc = ~fpc , weights =~pw , data = mas4)
+
+#Promedios
+svymean(~c5_p4_1 , mas4_d)
+svymean(~c5_p4_1 , mas4_dw)
+```
+
+#### **MAE**
+
+```{r}
+# Dummy de sexo
+cpv = mutate(cpv , sexo = ifelse(c5_p2 == 1 , 1 , 0) , .keep = "all")
+
+# Contamos para fpc (estrato)
+cpv %>%
+  count(sexo)
+
+# Extraemos muestra (MAE)
+mae4 <- cpv %>%
+   group_by(sexo) %>%
+  slice_sample(prop = 0.001)
+
+mae4 <- mae4 %>%
+  mutate(fpce = case_when(
+    sexo == 0 ~ 508712 ,
+    sexo == 1 ~ 485782) , .keep = "all")
+
+mae4_d = svydesign(id = ~1 , fpc = ~fpce , data = mae4 , strata = ~sexo)
+
+svymean(~c5_p4_1 , mae4_d)
+```
