@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 5</title>
 
-<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -428,25 +428,33 @@ promedios de muchas muestras tiende a ser normal (curva de campana).</p>
 <p>Esto explica por qué los sociólogos podemos usar intervalos de
 confianza y pruebas estadísticas: aunque la población sea muy diversa,
 los promedios de las muestras siguen un patrón predecible.</p>
-<pre class="r"><code>setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;)</code></pre>
+<pre class="r"><code>setwd(&quot;C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;)</code></pre>
 <pre class="r"><code>library(survey)</code></pre>
-<pre><code>## Warning: package &#39;survey&#39; was built under R version 4.3.3</code></pre>
-<pre><code>## Loading required package: grid</code></pre>
-<pre><code>## Loading required package: Matrix</code></pre>
-<pre><code>## Loading required package: survival</code></pre>
-<pre><code>## Warning: package &#39;survival&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;survey&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Cargando paquete requerido: grid</code></pre>
+<pre><code>## Cargando paquete requerido: Matrix</code></pre>
+<pre><code>## Cargando paquete requerido: survival</code></pre>
 <pre><code>## 
-## Attaching package: &#39;survey&#39;</code></pre>
+## Adjuntando el paquete: &#39;survey&#39;</code></pre>
 <pre><code>## The following object is masked from &#39;package:graphics&#39;:
 ## 
 ##     dotchart</code></pre>
 <pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 4.4.3</code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.2     ✔ readr     2.1.4
-## ✔ forcats   1.0.0     ✔ stringr   1.5.0
-## ✔ ggplot2   3.5.2     ✔ tibble    3.2.1
-## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-## ✔ purrr     1.0.1</code></pre>
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.2
+## ✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+## ✔ purrr     1.1.0</code></pre>
 <pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ tidyr::expand() masks Matrix::expand()
 ## ✖ dplyr::filter() masks stats::filter()
@@ -455,14 +463,18 @@ los promedios de las muestras siguen un patrón predecible.</p>
 ## ✖ tidyr::unpack() masks Matrix::unpack()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 <pre class="r"><code>library(foreign)
-library(haven)
-library(dplyr)
+library(haven)</code></pre>
+<pre><code>## Warning: package &#39;haven&#39; was built under R version 4.4.3</code></pre>
+<pre class="r"><code>library(dplyr)
 
 cpv &lt;- read_dta(&quot;cpv2017_pob07mod.dta&quot;)
 #View(cpv2017_pob07mod)</code></pre>
 <div id="muestreo-aleatorio-simple-mas" class="section level3">
 <h3><strong>Muestreo Aleatorio Simple (MAS)</strong></h3>
 <pre class="r"><code>set.seed(123456) # Clave para poder replicar
+
+#Distintas maneras de extraer aleatoriamente
+
 mas1 &lt;- cpv[sample(1:nrow(cpv) , size = 994), ]
 
 mas2 &lt;- cpv %&gt;% 
@@ -492,6 +504,17 @@ svytotal(~enroll , mas_d)</code></pre>
 <pre class="r"><code>svymean(~enroll , mas_d)</code></pre>
 <pre><code>##          mean     SE
 ## enroll 584.61 27.368</code></pre>
+<p>id = ~1 Significa que no hay conglomerados (PSU = 1). Es decir, se
+trata de un muestreo simple, no estratificado ni por conglomerados.</p>
+<p>fpc = ~fpc fpc es la corrección por población finita (finite
+population correction). Indica el tamaño de la población total de la
+cual se extrajo la muestra. En el dataset apisrs, esa variable (fpc)
+tiene el valor de𝑁, la población total, asignado a cada observación.</p>
+<p>Esto le dice a R: “Oye, la muestra no es con reemplazo y corresponde
+a una población finita de tamaño N, así que ajusta la varianza con la
+corrección FPC”.</p>
+<p>data = apisrs El dataset de ejemplo incluido en el paquete survey. Es
+una muestra aleatoria simple (SRS) de escuelas en California.</p>
 <pre class="r"><code>## MAE ##
 set.seed(123456) # Clave para poder replicar
 mae_d &lt;- svydesign(id = ~1 , fpc = ~fpc , data = apistrat , strata = ~stype)
@@ -523,6 +546,26 @@ svymean(~c5_p4_1 , mas4_d)</code></pre>
 <pre class="r"><code>svymean(~c5_p4_1 , mas4_dw)</code></pre>
 <pre><code>##          mean     SE
 ## c5_p4_1 32.58 0.6669</code></pre>
+<ol style="list-style-type: decimal">
+<li><p>fpc = 994494 Se crea una variable fpc con valor constante =
+994,494. Esto representa el tamaño de la población total (N) de donde
+salió la muestra. Se usa como corrección por población finita (finite
+population correction) al definir el diseño muestral.</p></li>
+<li><p>pw = 994494/994 Aquí se calcula un peso muestral (pw).</p></li>
+</ol>
+<p>Significa que cada observación de la muestra representa a ~1000
+unidades de la población.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>n = 1</li>
+</ol>
+<p>Se crea una variable constante con valor 1. Muchas veces se usa como
+identificador de conglomerado (id) cuando el muestreo es aleatorio
+simple (sin estratos ni clusters).</p>
+<ol start="4" style="list-style-type: decimal">
+<li>.keep = “all”</li>
+</ol>
+<p>Instrucción de mutate para mantener todas las variables originales de
+mas4, además de las nuevas (fpc, pw, n).</p>
 </div>
 <div id="mae" class="section level4">
 <h4><strong>MAE</strong></h4>

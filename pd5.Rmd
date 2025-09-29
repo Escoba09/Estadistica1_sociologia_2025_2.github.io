@@ -91,7 +91,7 @@ y pruebas estadísticas: aunque la población sea muy diversa, los
 promedios de las muestras siguen un patrón predecible.
 
 ```{r}
-setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
+setwd("C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
 ```
 
 ```{r}
@@ -109,6 +109,9 @@ cpv <- read_dta("cpv2017_pob07mod.dta")
 
 ```{r}
 set.seed(123456) # Clave para poder replicar
+
+#Distintas maneras de extraer aleatoriamente
+
 mas1 <- cpv[sample(1:nrow(cpv) , size = 994), ]
 
 mas2 <- cpv %>% 
@@ -140,6 +143,20 @@ svytotal(~enroll , mas_d)
 svymean(~enroll , mas_d)
 ```
 
+id = ~1
+Significa que no hay conglomerados (PSU = 1). Es decir, se trata de un muestreo simple, no estratificado ni por conglomerados.
+
+fpc = ~fpc
+fpc es la corrección por población finita (finite population correction).
+Indica el tamaño de la población total de la cual se extrajo la muestra.
+En el dataset apisrs, esa variable (fpc) tiene el valor de𝑁, la población total, asignado a cada observación.
+
+Esto le dice a R: “Oye, la muestra no es con reemplazo y corresponde a una población finita de tamaño N, así que ajusta la varianza con la corrección FPC”.
+
+data = apisrs
+El dataset de ejemplo incluido en el paquete survey.
+Es una muestra aleatoria simple (SRS) de escuelas en California.
+
 ```{r}
 ## MAE ##
 set.seed(123456) # Clave para poder replicar
@@ -167,6 +184,25 @@ mas4_dw = svydesign(id = ~1 , fpc = ~fpc , weights =~pw , data = mas4)
 svymean(~c5_p4_1 , mas4_d)
 svymean(~c5_p4_1 , mas4_dw)
 ```
+
+1. fpc = 994494
+Se crea una variable fpc con valor constante = 994,494.
+Esto representa el tamaño de la población total (N) de donde salió la muestra.
+Se usa como corrección por población finita (finite population correction) al definir el diseño muestral.
+
+2. pw = 994494/994
+Aquí se calcula un peso muestral (pw).
+
+Significa que cada observación de la muestra representa a ~1000 unidades de la población.
+
+3. n = 1
+
+Se crea una variable constante con valor 1.
+Muchas veces se usa como identificador de conglomerado (id) cuando el muestreo es aleatorio simple (sin estratos ni clusters).
+
+4. .keep = "all"
+
+Instrucción de mutate para mantener todas las variables originales de mas4, además de las nuevas (fpc, pw, n).
 
 #### **MAE**
 
