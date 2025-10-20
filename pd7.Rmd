@@ -190,7 +190,7 @@ knitr::include_graphics("DicPD5.png")
 
 ```{r}
 library(rio) #Convocamos el paquete   
-data=import("PD5_enpove2022.sav")
+data=import("PD7_enpove2022.sav")
 ```
 
 ### **¿Existe una relación significativa entre el estrato con el envío deremesas?**
