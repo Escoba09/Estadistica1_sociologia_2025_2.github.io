@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 9</title>
 
-<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -470,7 +470,8 @@ variable</li>
 <pre class="r"><code>library(rio)
 library(dplyr)
 library(ggplot2)
-library(jtools)</code></pre>
+library(jtools)
+library(car)</code></pre>
 <pre class="r"><code>data = import(&quot;Data-provincias.xlsx&quot;)
 str(data)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    195 obs. of  14 variables:
@@ -643,7 +644,7 @@ summary(modelo2)</code></pre>
 ## F-statistic: 26.61 on 2 and 192 DF,  p-value: 6.291e-11</code></pre>
 </div>
 <div id="interpretamos" class="section level2">
-<h2><strong>Interpretamos 😎</strong></h2>
+<h2><strong>Interpretamos</strong></h2>
 <div id="el-modelo-es-válido" class="section level3">
 <h3><strong>¿El modelo es válido?</strong></h3>
 <p>Establezcamos nuestras hipótesis:</p>
@@ -656,6 +657,23 @@ aportan al modelo)</li>
 &lt; 6.291e-11 entonces podemos afirmar que hay suficiente evidencia
 para rechazar la H0, por lo que concluimos que el modelo es válido como
 modelo de predicción.</p>
+</div>
+<div id="variance-inflation-factor" class="section level3">
+<h3><strong>Variance Inflation Factor</strong></h3>
+<p>El VIF (Variance Inflation Factor) o Factor de Inflación de la
+Varianza mide cuánto se incrementa la varianza de los coeficientes en
+una regresión lineal múltiple debido a la colinealidad entre las
+variables independientes.</p>
+<ul>
+<li><p>VIF = 1 → No hay colinealidad.</p></li>
+<li><p>VIF entre 1 y 5 → Colinealidad moderada (normalmente
+aceptable).</p></li>
+<li><p>VIF &gt; 10 → Colinealidad severa (considerar eliminar o
+transformar variables).</p></li>
+</ul>
+<pre class="r"><code>vif(modelo2)</code></pre>
+<pre><code>## educacion  ingresos 
+##  3.629622  3.629622</code></pre>
 </div>
 <div id="qué-tanto-explica-el-modelo" class="section level3">
 <h3><strong>¿Qué tanto explica el modelo?</strong></h3>
@@ -717,7 +735,7 @@ porcentaje de voto que obtuvo Fuerza Popular?</strong></p>
 <div id="modelo-3" class="section level2">
 <h2><strong>Modelo 3</strong></h2>
 <pre class="r"><code>library(fastDummies)</code></pre>
-<pre><code>## Warning: package &#39;fastDummies&#39; was built under R version 4.3.3</code></pre>
+<pre><code>## Warning: package &#39;fastDummies&#39; was built under R version 4.4.3</code></pre>
 <pre class="r"><code>data = dummy_cols(data, select_columns=&quot;IDH_cat&quot;)
 names(data)</code></pre>
 <pre><code>##  [1] &quot;ubigeoRegion&quot;    &quot;ubigeoProvincia&quot; &quot;nombreRegion&quot;    &quot;nombreProvincia&quot;
@@ -925,7 +943,7 @@ original units.
 <p>Los resultados anteriores nos demuestran que las variables con mayor
 impacto son ingresos (11.56) y IDH_cat_Alto (-9.65)</p>
 <pre class="r"><code>plot_summs(modelo1,modelo2,modelo3, scale = T)</code></pre>
-<p><img src="pd9_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="pd9_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
 </div>
 </div>

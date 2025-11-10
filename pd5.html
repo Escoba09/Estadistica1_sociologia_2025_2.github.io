@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 5</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -428,33 +428,24 @@ promedios de muchas muestras tiende a ser normal (curva de campana).</p>
 <p>Esto explica por qué los sociólogos podemos usar intervalos de
 confianza y pruebas estadísticas: aunque la población sea muy diversa,
 los promedios de las muestras siguen un patrón predecible.</p>
-<pre class="r"><code>setwd(&quot;C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;)</code></pre>
+<pre class="r"><code>setwd(&quot;C:/Users/Lala/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;)</code></pre>
 <pre class="r"><code>library(survey)</code></pre>
-<pre><code>## Warning: package &#39;survey&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Cargando paquete requerido: grid</code></pre>
-<pre><code>## Cargando paquete requerido: Matrix</code></pre>
-<pre><code>## Cargando paquete requerido: survival</code></pre>
+<pre><code>## Loading required package: grid</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
 <pre><code>## 
-## Adjuntando el paquete: &#39;survey&#39;</code></pre>
+## Attaching package: &#39;survey&#39;</code></pre>
 <pre><code>## The following object is masked from &#39;package:graphics&#39;:
 ## 
 ##     dotchart</code></pre>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## Warning: package &#39;tidyverse&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Warning: package &#39;forcats&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Warning: package &#39;lubridate&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.4.3</code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-## ✔ forcats   1.0.0     ✔ stringr   1.5.2
-## ✔ ggplot2   3.5.2     ✔ tibble    3.3.0
-## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-## ✔ purrr     1.1.0</code></pre>
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2</code></pre>
 <pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ tidyr::expand() masks Matrix::expand()
 ## ✖ dplyr::filter() masks stats::filter()
@@ -462,10 +453,10 @@ los promedios de las muestras siguen un patrón predecible.</p>
 ## ✖ tidyr::pack()   masks Matrix::pack()
 ## ✖ tidyr::unpack() masks Matrix::unpack()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<pre class="r"><code>library(foreign)
-library(haven)</code></pre>
-<pre><code>## Warning: package &#39;haven&#39; was built under R version 4.4.3</code></pre>
-<pre class="r"><code>library(dplyr)
+<pre class="r"><code>library(foreign)</code></pre>
+<pre><code>## Warning: package &#39;foreign&#39; was built under R version 4.4.2</code></pre>
+<pre class="r"><code>library(haven)
+library(dplyr)
 
 cpv &lt;- read_dta(&quot;cpv2017_pob07mod.dta&quot;)
 #View(cpv2017_pob07mod)</code></pre>

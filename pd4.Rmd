@@ -51,8 +51,8 @@ Establecemos el directorio de trabajo y abrimos la base de datos.
 
 ```{r b}
 getwd() 
-setwd("C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
-latinbarfinal <- read_spss("C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io/latinbarfinal.sav")
+setwd("C:/Users/Lala/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
+latinbarfinal <- read_spss("C:/Users/Lala/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io/latinbarfinal.sav")
 ```
 
 ```{r c}

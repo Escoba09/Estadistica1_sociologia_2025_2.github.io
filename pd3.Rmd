@@ -107,7 +107,7 @@ Previamente ya hemos instalado, los paquetes.
 
 ```{r e, include=TRUE}
 getwd() # muestra el directorio de trabajo actual
-setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io") #indica el directorio de trabajo donde quiero trabajar.
+#setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io") #indica el directorio de trabajo donde quiero trabajar.
 ```
 
 En esta sección veremos algunos ejemplos de tratamiento de datos

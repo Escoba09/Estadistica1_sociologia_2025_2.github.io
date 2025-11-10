@@ -95,6 +95,7 @@ library(rio)
 library(dplyr)
 library(ggplot2)
 library(jtools)
+library(car)
 ```
 
 ```{r}
@@ -198,7 +199,7 @@ modelo2 = lm(FP ~ educacion + ingresos, data)
 summary(modelo2)
 ```
 
-## **Interpretamos 😎**
+## **Interpretamos**
 
 ### **¿El modelo es válido?**
 
@@ -208,6 +209,21 @@ Establezcamos nuestras hipótesis:
 -   H1: El modelo de regresión es válido (las variables independientes aportan al modelo)
 
 Luego nos fijamos en el **p-value** Como el p valor es \< 6.291e-11 entonces podemos afirmar que hay suficiente evidencia para rechazar la H0, por lo que concluimos que el modelo es válido como modelo de predicción.
+
+### **Variance Inflation Factor**
+
+El VIF (Variance Inflation Factor) o Factor de Inflación de la Varianza mide cuánto se incrementa la varianza de los coeficientes en una regresión lineal múltiple debido a la colinealidad entre las variables independientes.
+
+- VIF = 1 → No hay colinealidad.
+
+- VIF entre 1 y 5 → Colinealidad moderada (normalmente aceptable).
+
+- VIF > 10 → Colinealidad severa (considerar eliminar o transformar variables).
+
+```{r}
+vif(modelo2)
+```
+
 
 ### **¿Qué tanto explica el modelo?**
 

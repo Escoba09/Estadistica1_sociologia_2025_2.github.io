@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 8</title>
 
-<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -345,6 +345,9 @@ div.tocify {
 <li>
   <a href="pd8.html">Práctica dirigida 8</a>
 </li>
+<li>
+  <a href="pd9.html">Práctica dirigida 9</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -392,9 +395,16 @@ rechaza en ANOVA, no hay necesidad de hacer prueba Tukey.</p>
 <p>Al igual que las otras pruebas estadísticas, se debe ver el p-value
 en cada emparejamiento</p>
 <p><img src="Dicpd6.png" /></p>
-<pre class="r"><code>library(rio)</code></pre>
-<pre><code>## Warning: package &#39;rio&#39; was built under R version 4.3.1</code></pre>
-<pre class="r"><code>data=import(&quot;dataWorld_q.rda&quot;)</code></pre>
+<pre class="r"><code>library(rio)
+data=import(&quot;dataWorld_q.rda&quot;)</code></pre>
+<pre><code>## Warning: The `trust` argument of `import()` should be explicit for serialization formats
+## as of rio 1.0.3.
+## ℹ Missing `trust` will be set to FALSE by default for RData in 2.0.0.
+## ℹ The deprecated feature was likely used in the rio package.
+##   Please report the issue at &lt;https://github.com/gesistsa/rio/issues&gt;.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
 <div
 id="existe-diferencias-en-la-tasa-de-fecundidad-según-la-quinquenio-entre-el-2000-y-el-2019"
 class="section level3">
@@ -402,19 +412,20 @@ class="section level3">
 (entre el 2000 y el 2019)?</h3>
 <p>Observemos algunos estadísticos descriptivos.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.4.3</code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.1.2     ✔ readr     2.1.4
-## ✔ forcats   1.0.0     ✔ stringr   1.5.0
-## ✔ ggplot2   3.5.2     ✔ tibble    3.2.1
-## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-## ✔ purrr     1.0.1     
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<pre class="r"><code>library(lsr)</code></pre>
-<pre><code>## Warning: package &#39;lsr&#39; was built under R version 4.3.3</code></pre>
-<pre class="r"><code>library(dplyr)
+<pre class="r"><code>library(lsr)
+
+library(dplyr)
 
 data &lt;- data %&gt;%
   filter(quinq %in% c(&quot;2000-2004&quot;, &quot;2005-2009&quot;, &quot;2010-2014&quot;, &quot;2015-2019&quot;))

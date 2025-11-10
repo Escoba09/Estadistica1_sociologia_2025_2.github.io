@@ -91,7 +91,7 @@ y pruebas estadísticas: aunque la población sea muy diversa, los
 promedios de las muestras siguen un patrón predecible.
 
 ```{r}
-setwd("C:/Users/u_socialesprofesor/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
+setwd("C:/Users/Lala/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io")
 ```
 
 ```{r}
