@@ -13,7 +13,7 @@
 
 <title>Práctica dirigida 2</title>
 
-<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -345,6 +345,9 @@ div.tocify {
 <li>
   <a href="pd8.html">Práctica dirigida 8</a>
 </li>
+<li>
+  <a href="pd9.html">Práctica dirigida 9</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -493,8 +496,8 @@ BD, imagenes, etc.) <code>getwd()</code> muestra el directorio de
 trabajo actual, mientras que <code>setwd()</code>establece el directorio
 de trabajo.</p>
 <pre class="r"><code>getwd() # muestra el directorio de trabajo actual</code></pre>
-<pre><code>## [1] &quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;</code></pre>
-<pre class="r"><code>setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;) #indica el directorio de trabajo donde quiero trabajar.</code></pre>
+<pre><code>## [1] &quot;C:/Users/Lala/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;</code></pre>
+<pre class="r"><code>#setwd(&quot;C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io&quot;) #indica el directorio de trabajo donde quiero trabajar.</code></pre>
 </div>
 <div id="instalar-paquetes" class="section level2">
 <h2>INSTALAR PAQUETES</h2>
@@ -603,10 +606,8 @@ formato diferente al original.</p>
 ##                     
 ## </code></pre>
 <pre class="r"><code>describe(siseve) #brinda informacion general</code></pre>
-<pre><code>## Warning in FUN(newX[, i], ...): ningún argumento finito para min; retornando
-## Inf</code></pre>
-<pre><code>## Warning in FUN(newX[, i], ...): ningun argumento finito para max; retornando
-## -Inf</code></pre>
+<pre><code>## Warning in FUN(newX[, i], ...): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in FUN(newX[, i], ...): no non-missing arguments to max; returning -Inf</code></pre>
 <pre><code>##                      vars     n  mean    sd median trimmed   mad min  max range
 ## FECHA_REPORTE           1 81714   NaN    NA     NA     NaN    NA Inf -Inf  -Inf
 ## DRE*                    2 81714 13.43  5.94     15   13.50  4.45   1   26    25

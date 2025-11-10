@@ -109,7 +109,7 @@ Cuando trabajamos en R es importante definir cual es nuestro espacio de trabajo 
 
 ```{r j, include=TRUE}
 getwd() # muestra el directorio de trabajo actual
-setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io") #indica el directorio de trabajo donde quiero trabajar.
+#setwd("C:/Users/sr.esquivesb/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io") #indica el directorio de trabajo donde quiero trabajar.
 ```
 
 ## INSTALAR PAQUETES
