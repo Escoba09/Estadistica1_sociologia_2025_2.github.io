@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Práctica dirigida 9</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Material para pds</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Inicio</a>
+</li>
+<li>
+  <a href="pd1.html">Práctica dirigida 1</a>
+</li>
+<li>
+  <a href="pd2.html">Práctica dirigida 2</a>
+</li>
+<li>
+  <a href="pd3.html">Práctica dirigida 3</a>
+</li>
+<li>
+  <a href="pd4.html">Práctica dirigida 4</a>
+</li>
+<li>
+  <a href="pd5.html">Práctica dirigida 5</a>
+</li>
+<li>
+  <a href="pd6.html">Práctica dirigida 6</a>
+</li>
+<li>
+  <a href="pd7.html">Práctica dirigida 7</a>
+</li>
+<li>
+  <a href="pd8.html">Práctica dirigida 8</a>
+</li>
+<li>
+  <a href="pd9.html">Práctica dirigida 9</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Práctica dirigida 9</h1>
+
+</div>
+
+
+<p><strong>FACULTAD DE CIENCIAS SOCIALES - PUCP</strong></p>
+<p>Curso: SOC294 - Estadística para el análisis sociológico 1</p>
+<p>Semestre 2025 - 2</p>
+<div id="creación-de-inicadores" class="section level1">
+<h1><strong>Creación de inicadores</strong></h1>
+<p>La construcción de indicadores aditivos constituye una estrategia
+metodológica fundamental para sintetizar información proveniente de
+múltiples ítems que miden dimensiones conceptualmente relacionadas. En
+encuestas como LAPOP, donde diversas preguntas buscan captar aspectos
+complejos —por ejemplo, confianza institucional, actitudes políticas,
+participación ciudadana o percepciones socioeconómicas—, cada ítem
+aporta solo una parte del fenómeno. Al combinar estos ítems en un
+indicador aditivo, es posible obtener una medida más robusta, estable y
+conceptualmente coherente de la variable latente que se desea
+analizar.</p>
+<p>Este tipo de indicadores permite reducir el ruido asociado a
+respuestas individuales y aumentar la fiabilidad de la medición, ya que
+el uso de varios ítems atenúa los sesgos o errores específicos de cada
+pregunta. Además, facilita el análisis comparativo tanto entre
+individuos como entre países o periodos de tiempo, dado que los
+indicadores agregados suelen mostrar mayor consistencia que los ítems
+aislados. En estudios que emplean encuestas de opinión pública como
+LAPOP, la creación de estos indicadores es especialmente útil porque
+contribuye a captar patrones generales y relaciones estructurales que
+podrían pasar desapercibidos si se analizara cada pregunta de forma
+independiente.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.4.3</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(rio)</code></pre>
+<pre class="r"><code>data=import(&quot;C:/Users/Lala/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io/PD10.dta&quot;)</code></pre>
+<pre class="r"><code>data$b12 &lt;- as.numeric(data$b12)
+data$b13 &lt;- as.numeric(data$b13)
+data$b18 &lt;- as.numeric(data$b18)
+data$b21 &lt;- as.numeric(data$b21)
+data$b21a &lt;- as.numeric(data$b21a)
+data$b31 &lt;- as.numeric(data$b31)
+data$b32 &lt;- as.numeric(data$b32)
+data$b37 &lt;- as.numeric(data$b37)
+data$b47a &lt;- as.numeric(data$b47a)</code></pre>
+<p>Vamos a crear un indicador donde se utilicen preguntes de confianza.
+Es decir, veremos preguntas que midan el grado de confianza a
+instituciones políticas del país para hacer una escala y señalar qué
+tanto confían los peruanos en sus instituciones.</p>
+<pre class="r"><code>data$indicador_aditivo &lt;- rowSums(data[, c(&quot;b12&quot;, &quot;b13&quot;, &quot;b18&quot;, &quot;b21&quot;, &quot;b21a&quot;, &quot;b31&quot;, &quot;b32&quot;, &quot;b37&quot;, &quot;b47a&quot;)], na.rm = TRUE)
+
+
+min_indicador &lt;- min(data$indicador_aditivo)
+max_indicador &lt;- max(data$indicador_aditivo)
+
+data$indicador_confianza &lt;- ((data$indicador_aditivo - min_indicador) / 
+                                 (max_indicador - min_indicador)) * 100</code></pre>
+<pre class="r"><code>data %&gt;% 
+  summarise(media = mean(indicador_confianza, na.rm = T),
+            mediana = median(indicador_confianza,na.rm = T),
+            sd = sd(indicador_confianza, na.rm = T),
+            min = min(indicador_confianza, na.rm = T),
+            max = max(indicador_confianza, na.rm = T))</code></pre>
+<pre><code>##     media  mediana       sd min max
+## 1 24.7249 15.87302 23.08707   0 100</code></pre>
+<pre class="r"><code>library(psych)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;psych&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:ggplot2&#39;:
+## 
+##     %+%, alpha</code></pre>
+<p>Separamos los items utilizados</p>
+<pre class="r"><code>items_confianza &lt;- data[, c(&quot;b12&quot;, &quot;b13&quot;, &quot;b18&quot;, &quot;b21&quot;, &quot;b21a&quot;, &quot;b31&quot;, &quot;b32&quot;, &quot;b37&quot;, &quot;b47a&quot;)]
+items_confianza[items_confianza &lt; 0] &lt;- NA</code></pre>
+<p>Aplicamos el Alfa de Cronbach</p>
+<pre class="r"><code>alpha_resultados &lt;- alpha(items_confianza)</code></pre>
+<pre class="r"><code>alpha_resultados</code></pre>
+<pre><code>## 
+## Reliability analysis   
+## Call: alpha(x = items_confianza)
+## 
+##   raw_alpha std.alpha G6(smc) average_r S/N     ase mean  sd median_r
+##       0.88      0.88    0.88      0.46 7.6 0.00068  3.6 1.6     0.46
+## 
+##     95% confidence boundaries 
+##          lower alpha upper
+## Feldt     0.88  0.88  0.88
+## Duhachek  0.88  0.88  0.88
+## 
+##  Reliability if an item is dropped:
+##      raw_alpha std.alpha G6(smc) average_r S/N alpha se  var.r med.r
+## b12       0.87      0.88    0.87      0.47 7.2  0.00072 0.0064  0.48
+## b13       0.86      0.86    0.86      0.44 6.3  0.00080 0.0060  0.44
+## b18       0.87      0.87    0.86      0.46 6.8  0.00075 0.0079  0.46
+## b21       0.86      0.87    0.86      0.45 6.6  0.00077 0.0062  0.45
+## b21a      0.86      0.87    0.86      0.46 6.7  0.00077 0.0059  0.45
+## b31       0.86      0.86    0.86      0.44 6.4  0.00080 0.0063  0.45
+## b32       0.87      0.87    0.86      0.46 6.8  0.00075 0.0081  0.46
+## b37       0.88      0.88    0.87      0.49 7.5  0.00070 0.0048  0.49
+## b47a      0.86      0.87    0.86      0.45 6.6  0.00077 0.0071  0.45
+## 
+##  Item statistics 
+##          n raw.r std.r r.cor r.drop mean  sd
+## b12  25005  0.67  0.65  0.59   0.55  4.5 2.0
+## b13  30105  0.79  0.79  0.76   0.71  3.3 1.9
+## b18  33770  0.73  0.71  0.66   0.61  3.6 2.0
+## b21  30430  0.75  0.74  0.71   0.66  2.8 1.8
+## b21a 31016  0.76  0.73  0.69   0.64  3.4 2.2
+## b31  24788  0.79  0.79  0.76   0.71  3.6 1.9
+## b32  41775  0.77  0.71  0.66   0.60  3.7 2.0
+## b37  40801  0.71  0.60  0.52   0.48  3.9 1.9
+## b47a 46900  0.79  0.75  0.72   0.65  3.6 2.0
+## 
+## Non missing response frequency for each item
+##         1    2    3    4    5    6    7 miss
+## b12  0.13 0.07 0.10 0.15 0.19 0.15 0.21 0.65
+## b13  0.26 0.12 0.15 0.16 0.15 0.08 0.07 0.57
+## b18  0.22 0.12 0.14 0.16 0.16 0.10 0.11 0.52
+## b21  0.35 0.15 0.15 0.15 0.11 0.05 0.04 0.57
+## b21a 0.35 0.10 0.10 0.11 0.12 0.09 0.14 0.56
+## b31  0.21 0.11 0.15 0.17 0.16 0.10 0.09 0.65
+## b32  0.21 0.11 0.14 0.16 0.16 0.10 0.12 0.41
+## b37  0.17 0.11 0.15 0.18 0.18 0.10 0.12 0.42
+## b47a 0.24 0.10 0.14 0.16 0.16 0.10 0.10 0.34</code></pre>
+<div id="cómo-interpretamos-estos-resultados" class="section level2">
+<h2>¿Cómo interpretamos estos resultados?</h2>
+<ol style="list-style-type: decimal">
+<li>Coeficiente principal: raw_alpha o std.alpha</li>
+</ol>
+<p>Estos son los más importantes.</p>
+<ul>
+<li><p>0.70 – 0.95 → confiabilidad buena o aceptable</p></li>
+<li><p>0.60 – 0.70 → confiabilidad moderada, aceptable en ciencias
+sociales</p></li>
+<li><p>“&lt;” 0.60 → confiabilidad débil</p></li>
+<li><p>“&gt;” 0.95 → sospechoso (posible redundancia extrema entre
+ítems)</p></li>
+</ul>
+<p><strong>Si tu alfa está alrededor de 0.65 – 0.75, estás bien para
+LAPOP, que suele tener ítems heterogéneos.</strong></p>
+<ol start="2" style="list-style-type: decimal">
+<li>average_r: correlación promedio entre ítems</li>
+</ol>
+<p><strong>Indica qué tan relacionados están los ítems entre
+sí.</strong></p>
+<ul>
+<li><p>0.15–0.50 → bueno para escalas amplias</p></li>
+<li><p>Menos de 0.15 → ítems poco relacionados</p></li>
+<li><p>Más de 0.50 → ítems demasiado redundantes</p></li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Reliability if an item is dropped</li>
+</ol>
+<ul>
+<li><p>Si eliminar un ítem sube el alfa → ese ítem está restando
+consistencia a la escala.</p></li>
+<li><p>Si eliminar un ítem baja el alfa → ese ítem aporta a la escala y
+es mejor conservarlo.</p></li>
+</ul>
+<p>Por ejemplo,</p>
+<p>Al eliminar conf_medios, el alfa sube de 0.72 a 0.75 → este ítem
+podría estar midiendo algo distinto.</p>
+<p>Al eliminar conf_partidos, el alfa baja de 0.72 a 0.68 → este ítem sí
+aporta información útil.</p>
+</div>
+<div id="interpretación-de-los-resultados" class="section level2">
+<h2>Interpretación de los resultados</h2>
+<ol style="list-style-type: decimal">
+<li>Alfa de Cronbach (raw_alpha = 0.8785)</li>
+</ol>
+<p>Este valor muestra una consistencia interna alta del indicador.</p>
+<p>En ciencias sociales:</p>
+<p>≥ 0.60 → aceptable</p>
+<p>≥ 0.70 → bueno</p>
+<p>≥ 0.80 → muy bueno</p>
+<p>≥ 0.90 → demasiado alto (sugiere redundancia)</p>
+<p><strong>Alfa de 0.8785 indica excelente consistencia interna, sin
+redundancia excesiva. Esto implica que tus ítems miden de forma
+coherente un mismo constructo: confianza institucional.</strong></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Alfa estandarizado (std.alpha = 0.8826)</li>
+</ol>
+<p>Este valor asume que los ítems están estandarizados (misma
+varianza).</p>
+<p>Estando tan cerca del raw alpha:</p>
+<p><strong>Muestra que todos los ítems tienen varianzas relativamente
+similares, por lo que ninguno domina o desequilibra la
+escala.</strong></p>
+<ol start="3" style="list-style-type: decimal">
+<li>average_r = 0.4552</li>
+</ol>
+<p>Este es el promedio de las correlaciones entre ítems.</p>
+<p>Reglas típicas en escalas de opinión:</p>
+<ul>
+<li><p>0.10–0.20 → débil</p></li>
+<li><p>0.20–0.30 → moderada</p></li>
+<li><p>0.30–0.50 → buena</p></li>
+<li><p>0.50 → muy fuerte (puede sugerir redundancia)</p></li>
+</ul>
+<p>La correlación promedio de 0.46 es fuerte sin ser excesiva, lo que
+significa:</p>
+<p><strong>los ítems se relacionan bien entre sí, pero no son copias
+unos de otros, y el concepto está bien representado.</strong></p>
+<ol start="4" style="list-style-type: decimal">
+<li>ase = 0.0080 (error estándar del alfa)</li>
+</ol>
+<p>Un error estándar tan bajo indica:</p>
+<p>El alfa es una estimación precisa, muy estable.</p>
+<p>Si calcularas intervalos de confianza:</p>
+<p>IC95% ≈ 0.8785 ± 0.016</p>
+<p>IC95% ≈ (0.862–0.895)</p>
+<p><strong>Esto significa que nuestro indicador seguiría siendo
+confiable incluso en muestras distintas.</strong></p>
+<ol start="5" style="list-style-type: decimal">
+<li>mean = 3.0468 y sd = 1.1472</li>
+</ol>
+<p>Estas son las estadísticas descriptivas del puntaje promedio de los
+ítems:</p>
+<p>media ≈ 3.05 sobre una escala de 1 a 7 → nivel moderado-bajo de
+confianza</p>
+<p>sd ≈ 1.15 → hay variabilidad suficiente entre individuos, lo cual es
+bueno</p>
+<p><strong>El indicador no está “aplanado”: distingue grupos, personas y
+niveles de confianza.</strong></p>
+<ol start="6" style="list-style-type: decimal">
+<li>median_r = 0.4513</li>
+</ol>
+<p>La correlación mediana coincide con la media (~0.45), lo cual
+indica:</p>
+<p><strong>La cohesión entre ítems es homogénea. No hay ítems “rebeldes”
+que se comporten distinto del resto.</strong></p>
+</div>
+<div id="ejercicio-y-práctica-para-la-pc3" class="section level2">
+<h2>Ejercicio y práctica para la PC3</h2>
+<p>Utilizar la base PER_2023_LAPOP_AmericasBarometer_v1.0_w</p>
+<p>Se deberá construir un indicador donde se mida la percepción y apoyo
+a parejas LGTBIQ. Utilice las variable d6, D5NEWA, D7A, D5NEWB, D7B.
+Constrúyalo de manera que vaya del 0 al 100. Realice el alpha de
+cronbach e interprete sus resultados.</p>
+<p>Por otro lado, ¿la edad es una variable que afecte al indicador que
+hemos construido? Realice estadísticos descriptivos, correlaciones y,
+finalmente, una regresión lineal simple interpretando sus
+resultados.</p>
+<p>¿Existe alguna correlación entre el indicador de confianza y el
+indicador de percepción a tema LGTBIQ?</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

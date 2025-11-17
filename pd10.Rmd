@@ -18,292 +18,197 @@ Curso: SOC294 - Estadística para el análisis sociológico 1
 
 Semestre 2025 - 2
 
-# **I. Análisis de regresión lineal simple (RLS): ideas clave**
+# **Creación de inicadores**
 
-Técnica estadística que predice el valor de una variable con los valores de otra. La regresión lineal simple es un método útil para predecir una respuesta cuantitativa **Y** partiendo de una sola variable predictora **X**, asumiendo que hay una relación aproximadamente lineal entre X e Y. Matemáticamente, esta relación lineal se representa como
+La construcción de indicadores aditivos constituye una estrategia metodológica fundamental para sintetizar información proveniente de múltiples ítems que miden dimensiones conceptualmente relacionadas. En encuestas como LAPOP, donde diversas preguntas buscan captar aspectos complejos —por ejemplo, confianza institucional, actitudes políticas, participación ciudadana o percepciones socioeconómicas—, cada ítem aporta solo una parte del fenómeno. Al combinar estos ítems en un indicador aditivo, es posible obtener una medida más robusta, estable y conceptualmente coherente de la variable latente que se desea analizar.
 
-**Y = a + bX + E**
+Este tipo de indicadores permite reducir el ruido asociado a respuestas individuales y aumentar la fiabilidad de la medición, ya que el uso de varios ítems atenúa los sesgos o errores específicos de cada pregunta. Además, facilita el análisis comparativo tanto entre individuos como entre países o periodos de tiempo, dado que los indicadores agregados suelen mostrar mayor consistencia que los ítems aislados. En estudios que emplean encuestas de opinión pública como LAPOP, la creación de estos indicadores es especialmente útil porque contribuye a captar patrones generales y relaciones estructurales que podrían pasar desapercibidos si se analizara cada pregunta de forma independiente.
 
--   Y = variable dependiente o explicada. Variable cuyos valores se desea predecir o resumir. Un modelo de regresión lineal tiene como variable dependiente una variable numérica
-
--   a = Constante: ordenada en el origen, valor esperado de "Y" cuando X=0
-
--   b = Pendiente: mide el cambio de la variable "Y" por cada unidad de cambio de "X". Su magnitud sirve para predecir en cuánto aumentará "y" cada vez que "x" se incremente en una unidad.Su signo puede ser positivo o negativo, y en esto la interpretación coincide con la correlación.
-
--   X = variable utilizada para predecir el valor de la variable dependiente. También se denomina variable predictora o variable explicativa. Las variables explicativas que son parte del modelo suelen ser numéricas o intervalares; sin embargo, es posible incorporar variables explicativas ordinales o categóricas.
-
--   E = Corresponde a las desviaciones de los valores verdaderos de Y con respecto a los valores esperados de "Y" (diferencia entre lo observado y estimado por el modelo). Asumimos que es independiente de "X".
-
-La relación entre las variables depende de la pendiente:
-
--   Si b es positivo, Y aumenta cuando X aumenta. Es una relación directa / positiva.
-
--   Si b es negativo, Y aumenta cuando X disminuye. Es una relación inversa / negativa.
-
--   Si b es cero.Y no cambia cuando X varía. No existe relación entre las variables.
-
-Asimismo, con el método de la regresión lineal se puede responder las siguientes preguntas:
-
--   Analizar si hay una **asociación** entre las variables mediante un test de independencia estadística.
-
--   Analizar la **dirección** de la asociación (directa o inversa).
-
--   Evaluar la **fuerza** de la asociación usando una medida de asociación llamada *correlación de Pearson*.
-
--   Estimar una ecuación de regresión que **"predice"** los valores de la variable dependiente para valores de la variable independiente.
-
-# **II. Análisis de regresión lineal múltiple (RLM): ideas clave**
-
-Hasta el momento, nos hemos encontrado en el campo del análisis bivariado.
-Sin embargo, en el mundo social, difícilmente se pueden explicar los fenómenos de interés con una sola variable.
-Incluso si nos interesa evaluar el efecto de un a variable en específico sobre un fenómeno de estudio, hay muchos otros factores que podrían influir en aquello que nos interesa explorar.
-Por ello, necesitamos recurrir al **análisis multivariado** y conocer el concepto de **control estadístico**.
-
-El control estadístico nos permite aislar el efecto de otras variables.
-La idea es:
-
--   Evaluar si la asociación entre X e Y permanece si se remueve el efecto de otra variable, es decir, si se controla por una tercera variable.
-
--   Se analiza la relación entre X e Y para valores similares o iguales de una variable Z.
-    De esta manera se elimina la influencia de Z en la relación entre X e Y.
-    Lo anterior nos ayuda a acercarnos a una interpretación causar X -\> Y.
-
--   Si la relación entre X e Y desaparece cuando se controla por Z, se dice que la relación era espúrea.
-    En otras palabras, la relación dependendia de la influencia de Z y no de una conexión directa entre X e Y.
-
-Sobre la regresión lineal múltiple:
-
-```{r,echo=FALSE, out.width="100%",fig.align="center"}
-knitr::include_graphics("pd12_diap1.png") 
+```{r}
+library(tidyverse)
 ```
 
-------------------------------------------------------------------------
-
-Seguiremos los siguientes pasos para el análisis:
-
-1. Creación del modelo
-2. Analizar si el modelo es válido -> p value
-3. ¿Qué tanto explica mi modelo? -> Coeficiente de determinación - R2
-4. ¿Las variables Xs aportan al modelo? -> p value de cada variable
-5. ¿Qué variable aporta más? -> coeficientes estandarizados
-6. Identificación de coeficientes y construcció de la ecuació
-
-# Aplicación
-
-```{r, warning=FALSE,message=FALSE}
+```{r}
 library(rio)
-library(dplyr)
-library(ggplot2)
-library(jtools)
-library(car)
 ```
 
 ```{r}
-data = import("Data-provincias.xlsx")
-str(data)
-```
-
-**¿Qué factores explican se relacionan con el voto por Fuerza Popular (FP) en segunda vuelta a nivel provincial (2021)?**
-
-## Ejercicios regresión lineal simple
-
-1. ¿Los años de educación promedio en una provincia podrá ayudar a predecir el % de voto por Fuerza Popular en segunda vuelta?
-
-### Creación del modelo
-
-```{r}
-modelo1=lm(FP~educacion,data=data)
-summary(modelo1)
-```
-
-### Interpretación
-
-#### Primero: p-value
-
-Sabremos si la variable independiente impacta en la dependiente al revisar la significancia del p valor.
-
-Establezcamos nuestras hipótesis:
-
--   H0: El modelo de regresión no es válido
-
--   H1: El modelo de regresión es válido (variable X aporta al modelo)
-
-Como el p valor es **7.668e-08**, entonces podemos afirmar que hay suficiente evidencia para rechazar la H0, por lo que concluimos que el modelo sí es válido como modelo de predicción. Es decir, podemos decir que hay evidencia estadística suficiente para afirmar que existe una relación significativa entre los años de educación en promedio y el porcentaje de voto obtenido por Fuerza Popular en las provincias.
-
-En otras palabras, podemos decir que los años de educación en promedio *sí influyen* en el porcentaje de voto obtenido por Fuerza Popular en las provincias.
-
-#### Segundo: pendiente/b
-
-Explica cómo es el efecto de x en y. Para ello analizamos el valor del parámetro de la pendiente.
-
-En este caso, al ser este valor **3.8947**, concluimos que cada vez que el promedio de años de educación aumenta en 1, el % de votos por Fuerza Popular aumenta en 3.89. Es decir, tenemos una *relación directa o positiva*.
-
-#### Tercero: R^2^
-
-Analizar cuánto de la variabilidad de la variable dependiente (y) es explicada por la variable independiente (x), para ello revisamor el **R^2^** (Multiple R-squared). Los valores van de 0 a 1. Mientras más cercano esté el R2 a 1, mayor será la variabilidad explicada. El R2 es un indicador de ajuste del modelo.
-
-En nuestro modelo, este arrojó el valor de **0.1393**, por lo que podemos concluir que aproximadamente el **13.9%** (0.1393\*100)del % de votos por Fuerza Popular es explicado por el promedio de años de educación.
-
-Esto significa que la cantidad de variabilidad explicada es baja; en este caso, los cambios en los años de educación explican solo una pequeña proporción de la variación en el porcentaje de votos por Fuerza Popular.
-
-#### Cuarto: Ecuación de la recta
-
-Hallar la ecuación de la recta del modelo. Para lograrlo, revisemos los dos valores de la tabla que se encuentran en la columna de "Estimate", el valor de la primera fila es el del intercepto (a) y el de la segunda es el de la pendiente (b).
-
-Del segundo paso, ya conocíamos que el valor de la pendiente es **+3.8947** Si volvemos a revisar nuestra tabla podemos observar que en el cruce de Estimate e Intercept está el valor de **5.3652**, este sería nuestro intercepto. Ahora, armemos nuestra ecuación de la recta:
-
-$$
-Y = 5.36520 + (3.89471)\times \text{educacion}
-$$
-
-Donde:
-
--   X = Años de educación en promedio - (independiente)
--   Y = % de voto por Fuerza Popular - (dependiente)
-
-También podemos obtener los coeficientes de intercepción/intercepto y pendiente de la siguiente forma:
-
-```{r}
-modelo1$coefficients
-```
-
-#### Quinto: Predecir
-
-Sustituyendo el valor de "x" en la ecuación, tenemos:
-
-Para realizar una predicción debemos proponer un valor que se encuentre dentro de los valores de la X.
-```{r}
-summary(data$educacion)
-```
-
-Como educación puede ir de 3 a 11, podemos proponer cualquier valor dentro de ese rango. Veamos qué se espera de una provincia en la que los años de educación en promedio sean 11.
-
-
-```{r}
-Y =  5.36520 +3.89471*11
-Y
-```
-
-Cuando los años de educación en promedio son 11, se espera que en esa provincia Fuerza Popular haya obtenido un 48 % de los votos. 
-
-## Ejercicios regresión lineal múltiple
-
-¿Qué sucede si agregamos una variable a nuestro modelo anterior?
-
-**¿Los años de educación y los ingresos mensuales en promedio en una provincia pueden ayudar a explicar el porcentaje de voto que obtuvo Fuerza Popular?**
-
-## **Modelo 2**
-
-```{r}
-modelo2 = lm(FP ~ educacion + ingresos, data)
-summary(modelo2)
-```
-
-## **Interpretamos**
-
-### **¿El modelo es válido?**
-
-Establezcamos nuestras hipótesis:
-
--   H0: El modelo de regresión no es válido
--   H1: El modelo de regresión es válido (las variables independientes aportan al modelo)
-
-Luego nos fijamos en el **p-value** Como el p valor es \< 6.291e-11 entonces podemos afirmar que hay suficiente evidencia para rechazar la H0, por lo que concluimos que el modelo es válido como modelo de predicción.
-
-### **Variance Inflation Factor**
-
-El VIF (Variance Inflation Factor) o Factor de Inflación de la Varianza mide cuánto se incrementa la varianza de los coeficientes en una regresión lineal múltiple debido a la colinealidad entre las variables independientes.
-
-- VIF = 1 → No hay colinealidad.
-
-- VIF entre 1 y 5 → Colinealidad moderada (normalmente aceptable).
-
-- VIF > 10 → Colinealidad severa (considerar eliminar o transformar variables).
-
-```{r}
-vif(modelo2)
-```
-
-
-### **¿Qué tanto explica el modelo?**
-
-Observamos el **R2 ajustado**.
-
-Analizar cuánto de la variabilidad de la variable dependiente (y) es explicada por las variables independientes elegidas, para ello revisamos el R2 (Adjusted R-squared, por ser un modelo lineal múltiple). 
-
-En nuestro modelo, este arrojó el valor de 0.2089 , por lo que podemos concluir que el modelo explica aproximadamente el 20.89% (0.2089\*100) de la variabilidad en el % de votos que obtuvo Fuerza Popular (variable dependiente). 
-
-*Recordemos que el R cuadrado puede tomar valores entre 0 y 1. Un R cuadrado de 1 indica que el modelo explica toda la variabilidad de la variable Y. Un R cuadrado de 0 indica que el modelo no explica nada de la variabilidad de la variable Y.*
-
-### **¿Las variables aportan al modelo?**
-
-Revisamos **p-value** por cada variable independiente.
-
--   Esperamos obtener un p-value \<0.05.
--   Nos damos cuenta que *no todas* las variables independientes tienen un p-value \<0.05, es el caso de: educación
-
-### **¿Cuáles son los coeficientes de la ecuación?**
-
-Podemos obtener extraer los coeficientes del modelo: 
-
-*No olvidar identificar el signo de cada coeficiente, este tendrá repercusión en la ecuación y su futura aplicación*
-
-```{r}
-round(modelo2$coefficients,3)
-```
-
-De esa manera puedo hallar la ecuación:
-
-$$
-Y = 17.445 + (-0.821) \times  \text{educacion}  + (0.032)\times  \text{ingresos} 
-$$
-
-Es decir, se tienen las siguientes relaciones entre VD y las VI:
-
-- Por cada sol adicional en ingresos, el % de voto por Fuerza Popular **aumenta en 0.032 puntos**. (relación directa).
-
-- Por cada año de educación adicional , el % de voto por Fuerza Popular **disminuye en 0.821 puntos** (relación inversa). Sin embargo, esta variable no tiene un impacto significativo en la predicción.
-
-**OJO: La ecuación de la recta debe incluir TODAS las variables analizadas, tengan o no una influencia significativa en la VD.**
-
-**¿Los años de educación, los ingresos mensuales en promedio y el tener IDH alto o no en una provincia pueden ayudar a explicar el porcentaje de voto que obtuvo Fuerza Popular?**
-
-
-## **Modelo 3**
-
-```{r}
-library(fastDummies)
-data = dummy_cols(data, select_columns="IDH_cat")
-names(data)
+data=import("C:/Users/Lala/Documents/GitHub/Estadistica1_sociologia_2025_2.github.io/PD10.dta")
 ```
 
 ```{r}
-modelo3 = lm(FP ~ educacion + ingresos +IDH_cat_Alto, data)
-summary(modelo3)
+data$b12 <- as.numeric(data$b12)
+data$b13 <- as.numeric(data$b13)
+data$b18 <- as.numeric(data$b18)
+data$b21 <- as.numeric(data$b21)
+data$b21a <- as.numeric(data$b21a)
+data$b31 <- as.numeric(data$b31)
+data$b32 <- as.numeric(data$b32)
+data$b37 <- as.numeric(data$b37)
+data$b47a <- as.numeric(data$b47a)
 ```
-1. ¿El modelo es válido?
-2. Cuanto ayuda a explicar
-3. ¿Todas las variables aportan?
-4. ¿Cómo es el impacto de las variables?
-5. ¿Qué variable aporta más?
-6. Ecuación 
+
+Vamos a crear un indicador donde se utilicen preguntes de confianza. Es decir, veremos preguntas que midan el grado de confianza a instituciones políticas del país para hacer una escala y señalar qué tanto confían los peruanos en sus instituciones.
 
 ```{r}
-modelo3$coefficients
+data$indicador_aditivo <- rowSums(data[, c("b12", "b13", "b18", "b21", "b21a", "b31", "b32", "b37", "b47a")], na.rm = TRUE)
+
+
+min_indicador <- min(data$indicador_aditivo)
+max_indicador <- max(data$indicador_aditivo)
+
+data$indicador_confianza <- ((data$indicador_aditivo - min_indicador) / 
+                                 (max_indicador - min_indicador)) * 100
 ```
-
-
-### **¿Qué variable aporta más?**
-
-Para interpretar cómo cada variable independiente contribuye a la variabilidad de la variable dependiente, podemos usar los coeficientes estandarizados. Estos coeficientes nos ayudan a comparar, en una misma escala, el impacto que tiene cada variable independiente sobre la variable dependiente, permitiéndonos identificar cuáles tienen un efecto más fuerte.
 
 ```{r}
-library(jtools)
-summ(modelo3, scale=T)
+data %>% 
+  summarise(media = mean(indicador_confianza, na.rm = T),
+            mediana = median(indicador_confianza,na.rm = T),
+            sd = sd(indicador_confianza, na.rm = T),
+            min = min(indicador_confianza, na.rm = T),
+            max = max(indicador_confianza, na.rm = T))
 ```
-Los resultados anteriores nos demuestran que las variables con mayor impacto son ingresos (11.56) y IDH_cat_Alto (-9.65)
 
 ```{r}
-plot_summs(modelo1,modelo2,modelo3, scale = T)
+library(psych)
 ```
 
+Separamos los items utilizados
+
+```{r}
+items_confianza <- data[, c("b12", "b13", "b18", "b21", "b21a", "b31", "b32", "b37", "b47a")]
+items_confianza[items_confianza < 0] <- NA
+```
+
+Aplicamos el Alfa de Cronbach
+
+```{r}
+alpha_resultados <- alpha(items_confianza)
+```
+
+```{r}
+alpha_resultados
+```
+
+## ¿Cómo interpretamos estos resultados?
+
+1.  Coeficiente principal: raw_alpha o std.alpha
+
+Estos son los más importantes.
+
+-   0.70 – 0.95 → confiabilidad buena o aceptable
+
+-   0.60 – 0.70 → confiabilidad moderada, aceptable en ciencias sociales
+
+-   "\<" 0.60 → confiabilidad débil
+
+-   "\>" 0.95 → sospechoso (posible redundancia extrema entre ítems)
+
+**Si tu alfa está alrededor de 0.65 – 0.75, estás bien para LAPOP, que suele tener ítems heterogéneos.**
+
+2.  average_r: correlación promedio entre ítems
+
+**Indica qué tan relacionados están los ítems entre sí.**
+
+-   0.15–0.50 → bueno para escalas amplias
+
+-   Menos de 0.15 → ítems poco relacionados
+
+-   Más de 0.50 → ítems demasiado redundantes
+
+3.  Reliability if an item is dropped
+
+-   Si eliminar un ítem sube el alfa → ese ítem está restando consistencia a la escala.
+
+-   Si eliminar un ítem baja el alfa → ese ítem aporta a la escala y es mejor conservarlo.
+
+Por ejemplo,
+
+Al eliminar conf_medios, el alfa sube de 0.72 a 0.75 → este ítem podría estar midiendo algo distinto.
+
+Al eliminar conf_partidos, el alfa baja de 0.72 a 0.68 → este ítem sí aporta información útil.
+
+## Interpretación de los resultados
+
+1.  Alfa de Cronbach (raw_alpha = 0.8785)
+
+Este valor muestra una consistencia interna alta del indicador.
+
+En ciencias sociales:
+
+≥ 0.60 → aceptable
+
+≥ 0.70 → bueno
+
+≥ 0.80 → muy bueno
+
+≥ 0.90 → demasiado alto (sugiere redundancia)
+
+**Alfa de 0.8785 indica excelente consistencia interna, sin redundancia excesiva. Esto implica que tus ítems miden de forma coherente un mismo constructo: confianza institucional.**
+
+2.  Alfa estandarizado (std.alpha = 0.8826)
+
+Este valor asume que los ítems están estandarizados (misma varianza).
+
+Estando tan cerca del raw alpha:
+
+**Muestra que todos los ítems tienen varianzas relativamente similares, por lo que ninguno domina o desequilibra la escala.**
+
+3.  average_r = 0.4552
+
+Este es el promedio de las correlaciones entre ítems.
+
+Reglas típicas en escalas de opinión:
+
+-   0.10–0.20 → débil
+
+-   0.20–0.30 → moderada
+
+-   0.30–0.50 → buena
+
+-   0.50 → muy fuerte (puede sugerir redundancia)
+
+La correlación promedio de 0.46 es fuerte sin ser excesiva, lo que significa:
+
+**los ítems se relacionan bien entre sí, pero no son copias unos de otros, y el concepto está bien representado.**
+
+4.  ase = 0.0080 (error estándar del alfa)
+
+Un error estándar tan bajo indica:
+
+El alfa es una estimación precisa, muy estable.
+
+Si calcularas intervalos de confianza:
+
+IC95% ≈ 0.8785 ± 0.016
+
+IC95% ≈ (0.862–0.895)
+
+**Esto significa que nuestro indicador seguiría siendo confiable incluso en muestras distintas.**
+
+5.  mean = 3.0468 y sd = 1.1472
+
+Estas son las estadísticas descriptivas del puntaje promedio de los ítems:
+
+media ≈ 3.05 sobre una escala de 1 a 7 → nivel moderado-bajo de confianza
+
+sd ≈ 1.15 → hay variabilidad suficiente entre individuos, lo cual es bueno
+
+**El indicador no está “aplanado”: distingue grupos, personas y niveles de confianza.**
+
+6.  median_r = 0.4513
+
+La correlación mediana coincide con la media (\~0.45), lo cual indica:
+
+**La cohesión entre ítems es homogénea. No hay ítems “rebeldes” que se comporten distinto del resto.**
+
+## Ejercicio y práctica para la PC3
+
+Utilizar la base PER_2023_LAPOP_AmericasBarometer_v1.0_w
+
+Se deberá construir un indicador donde se mida la percepción y apoyo a parejas LGTBIQ. Utilice las variable d6, D5NEWA, D7A, D5NEWB, D7B. Constrúyalo de manera que vaya del 0 al 100. Realice el alpha de cronbach e interprete sus resultados.
+
+Por otro lado, ¿la edad es una variable que afecte al indicador que hemos construido? Realice estadísticos descriptivos, correlaciones y, finalmente, una regresión lineal simple interpretando sus resultados.
+
+¿Existe alguna correlación entre el indicador de confianza y el indicador de percepción a tema LGTBIQ?
